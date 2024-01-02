@@ -39,7 +39,7 @@ jobs:
       - name: Docker Image Build and Push
         run: |
           docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_SERVER }} .
-          docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }
+          docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_SERVER }}
           
           docker build -f dockerfile-nginx -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_NGINX }} .
           docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_NGINX }} 
