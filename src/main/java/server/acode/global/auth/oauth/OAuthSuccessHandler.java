@@ -1,0 +1,45 @@
+package server.acode.global.auth.oauth;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
+import org.springframework.stereotype.Component;
+import org.springframework.web.util.UriComponentsBuilder;
+import server.acode.global.auth.jwt.JwtTokenProvider;
+
+import java.io.IOException;
+
+@RequiredArgsConstructor
+@Component
+public class OAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
+
+    private final JwtTokenProvider jwtTokenProvider;
+
+    @Override
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
+            throws IOException {
+
+        OAuth2User oAuth2User = (OAuth2User)authentication.getPrincipal();
+
+        String accessToken = jwtTokenProvider.createAccessToken(oAuth2User.getName(), "USER_ROLE"); // 토큰 생성
+        System.out.println(accessToken);
+
+        String targetUrl = UriComponentsBuilder.fromUriString(setRedirectUrl(request.getServerName()))
+                .queryParam("jwtAccessToken", accessToken)
+                .build().toUriString();
+
+        getRedirectStrategy().sendRedirect(request, response, targetUrl); // access token과 함께 리다이렉트
+
+    }
+
+    /**
+     * Redirect url set
+     */
+    private String setRedirectUrl(String url) {
+        String redirect_url = "http://localhost:8080/api/oauth/kakao/success";
+        return redirect_url;
+    }
+}
