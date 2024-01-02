@@ -1,10 +1,10 @@
 # PR
 
 ## PR 요약
-> summary
+summary
 
 ## 변경된 점
-> changes
+changes
 
 ## 이슈 번호
-> issue number
+issue number
