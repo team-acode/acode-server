@@ -31,7 +31,7 @@ public class User extends BaseTimeEntity {
     @Column(columnDefinition = "integer default 0")
     private int reviewCnt;
 
-    @Column(columnDefinition="tinyint(0) default 0")
+    @Column(columnDefinition = "tinyint(0) default 0")
     private boolean isDel;
 
     @Builder
