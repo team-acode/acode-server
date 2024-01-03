@@ -5,14 +5,14 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import server.acode.domain.user.entity.Role;
+import server.acode.global.BaseTimeEntity;
 
 import java.util.Objects;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User {
+public class User extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
@@ -25,13 +25,13 @@ public class User {
     @Column(nullable = false, unique = true)
     private String authKey;
 
-    @Column(nullable = false)
+    @Column(length = 30, nullable = false)
     private String nickname;
 
     @Column(columnDefinition = "integer default 0")
     private int reviewCnt;
 
-    @Column(columnDefinition="tinyint(0) default 0")
+    @Column(columnDefinition = "tinyint(0) default 0")
     private boolean isDel;
 
     @Builder
