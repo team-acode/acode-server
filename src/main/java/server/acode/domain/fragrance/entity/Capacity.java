@@ -18,8 +18,8 @@ public class Capacity extends BaseTimeEntity {
     @Column(length = 10)
     private String capacity; // 용량
 
-    @Column(length = 10)
-    private String price; // 가격
+    @Column(columnDefinition = "integer default 0")
+    private int price; // 가격
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fragrance_id")
