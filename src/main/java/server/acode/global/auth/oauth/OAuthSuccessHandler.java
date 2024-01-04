@@ -39,7 +39,15 @@ public class OAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
      * Redirect url set
      */
     private String setRedirectUrl(String url) {
-        String redirect_url = "http://localhost:8080/api/oauth/kakao/success";
+        String redirect_url = null;
+        if (url.equals("localhost")) {
+            redirect_url = "http://localhost:8080/api/oauth/kakao/success";
+        }
+        if (url.equals("abcode.shop")) {
+            redirect_url = "http://localhost:3000/oauth/kakao/success/ing";
+        }
+
         return redirect_url;
+
     }
 }
