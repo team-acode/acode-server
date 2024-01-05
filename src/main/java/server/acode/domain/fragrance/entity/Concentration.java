@@ -1,5 +1,5 @@
 package server.acode.domain.fragrance.entity;
 
 public enum Concentration {
-    EDP, EDT, EDC
+    EDP, EDT, EDC;
 }
