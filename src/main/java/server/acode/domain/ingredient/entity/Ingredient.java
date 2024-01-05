@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import server.acode.domain.family.entity.Family;
+import server.acode.domain.fragrance.entity.Fragrance;
 import server.acode.global.common.BaseTimeEntity;
 
 @Entity
@@ -20,7 +21,7 @@ public class Ingredient extends BaseTimeEntity {
     private String korName; // 향료 한글이름
 
     @Column(length = 50)
-    private String engName; // 향료 한글이름
+    private String engName; // 향료 영어이름
 
     private String acode; // 어코드 설명
 
@@ -29,6 +30,7 @@ public class Ingredient extends BaseTimeEntity {
     private String summary; // 향료 설명 줄글
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "family_id")
-    private Family family;
+    @JoinColumn(name = "ingredient_type_id")
+    private IngredientType ingredientType;
+
 }
