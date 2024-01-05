@@ -5,7 +5,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import server.acode.domain.family.entity.Family;
-import server.acode.global.BaseTimeEntity;
+import server.acode.global.common.BaseTimeEntity;
 
 @Entity
 @Getter
@@ -17,7 +17,10 @@ public class Ingredient extends BaseTimeEntity {
     private Long id;
 
     @Column(length = 50)
-    private String name; // 향료 이름
+    private String korName; // 향료 한글이름
+
+    @Column(length = 50)
+    private String engName; // 향료 한글이름
 
     private String acode; // 어코드 설명
 

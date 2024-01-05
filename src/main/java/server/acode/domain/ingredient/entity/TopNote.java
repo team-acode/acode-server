@@ -5,7 +5,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import server.acode.domain.fragrance.entity.Fragrance;
-import server.acode.global.BaseTimeEntity;
+import server.acode.global.common.BaseTimeEntity;
 
 @Entity
 @Getter

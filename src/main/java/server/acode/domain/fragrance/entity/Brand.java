@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import server.acode.global.BaseTimeEntity;
+import server.acode.global.common.BaseTimeEntity;
 
 @Entity
 @Getter
@@ -16,5 +16,8 @@ public class Brand extends BaseTimeEntity {
     private Long id;
 
     @Column(length = 50)
-    private String name; // 브랜드 한글 이름
+    private String korName; // 브랜드 한글 이름
+
+    @Column(length = 50)
+    private String engName; // 브랜드 한글 이름
 }

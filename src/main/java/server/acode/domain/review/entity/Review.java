@@ -10,7 +10,7 @@ import server.acode.domain.review.entity.enums.Longevity;
 import server.acode.domain.review.entity.enums.SeasonEnum;
 import server.acode.domain.review.entity.enums.StyleEnum;
 import server.acode.domain.user.entity.User;
-import server.acode.global.BaseTimeEntity;
+import server.acode.global.common.BaseTimeEntity;
 
 @Entity
 @Getter
