@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import server.acode.domain.fragrance.dto.response.GetFragranceNote;
 import server.acode.domain.fragrance.dto.response.GetFragranceResponse;
-import server.acode.domain.fragrance.dto.response.GetFragranceReviewPreview;
 import server.acode.domain.fragrance.service.FragranceService;
 import server.acode.domain.user.entity.User;
 
