@@ -10,7 +10,7 @@ import server.acode.domain.review.entity.enums.Longevity;
 import server.acode.domain.review.entity.enums.SeasonEnum;
 import server.acode.domain.review.entity.enums.StyleEnum;
 import server.acode.domain.user.entity.User;
-import server.acode.global.BaseTimeEntity;
+import server.acode.global.common.BaseTimeEntity;
 
 @Entity
 @Getter
@@ -42,6 +42,7 @@ public class Review extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private StyleEnum style; // 스타일
 
+    @Column(length = 4000)
     private String textReview; // 텍스트 리뷰
 
     private String thumbnail; // 대표사진

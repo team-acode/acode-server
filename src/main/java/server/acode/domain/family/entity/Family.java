@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import server.acode.global.BaseTimeEntity;
+import server.acode.global.common.BaseTimeEntity;
 
 @Entity
 @Getter
@@ -16,7 +16,10 @@ public class Family extends BaseTimeEntity {
     private Long id;
 
     @Column(length = 50)
-    private String name; // 향 계열 이름
+    private String korName; // 향 계열 한글이름
+
+    @Column(length = 50)
+    private String engName; // 향 계열 영어이름
 
     private String summary; // 계열 설명 줄글
 
