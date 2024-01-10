@@ -67,4 +67,4 @@ jobs:
             docker image prune -f
 
             sudo touch data.sql
-            echo "${{ vars.DATA }}" | sudo tee data.sql > /dev/null
+            echo "${{ secrets.DATA }}" | sudo tee data.sql > /dev/null
