@@ -23,13 +23,20 @@ public class Fragrance extends BaseTimeEntity {
     private String engBrand; // 브랜드 영어 이름
 
 
+    @Column(columnDefinition = "integer default 0")
     private int rateSum; // 별점 총점
+
+    @Column(columnDefinition = "integer default 0")
     private int reviewCnt; // 리뷰 수
 
     @Column(length = 10)
     @Enumerated(EnumType.STRING)
     private Concentration concentration; // EDP, EDT, EDC
 
+    @Column(columnDefinition = "tinyint(0) default 0")
+    private boolean isSingle;
+
+    @Column(columnDefinition = "integer default 0")
     private int view; // 조회수
 
     private String poster; //포스터 이미지 url
