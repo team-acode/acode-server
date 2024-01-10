@@ -7,6 +7,8 @@ import server.acode.domain.family.dto.response.FragranceByCatgegory;
 import server.acode.domain.family.repository.FamilyRepository;
 import server.acode.domain.ingredient.dto.response.IngredientOfTheDay;
 import server.acode.domain.ingredient.repository.IngredientRepository;
+import server.acode.global.common.ErrorCode;
+import server.acode.global.exception.CustomException;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -21,6 +23,8 @@ public class HomeService {
     private final IngredientRepository ingredientRepository;
 
     public List<FragranceByCatgegory> search(FragranceSearchCond condition){
+
+        if(!familyRepository.existsByKorName(condition.getFamily())) throw new CustomException(ErrorCode.FAMILY_NOT_FOUND);
 
         List<FragranceByCatgegory> result = familyRepository.search(condition); // 계열과 일치하는 향수 가져오기
 

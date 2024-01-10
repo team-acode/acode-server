@@ -1,6 +1,7 @@
 package server.acode.global.exception;
 
 
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -28,5 +29,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 .message(errorCode.getMessage())
                 .build();
     }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Object> handleAllException(Exception exception) {
+        ErrorCode errorCode = ErrorCode.INTERNAL_SERVER_ERROR;
+        return handleExceptionInternal(errorCode);
+    }
+
 
 }
