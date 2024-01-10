@@ -65,6 +65,3 @@ jobs:
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_NGINX }}
             docker-compose -f docker-compose.yml --env-file ./.env up -d
             docker image prune -f
-
-            sudo touch data.sql
-            echo "${{ secrets.DATA }}" | sudo tee data.sql > /dev/null
