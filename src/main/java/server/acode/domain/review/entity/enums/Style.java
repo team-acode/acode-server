@@ -1,6 +1,6 @@
 package server.acode.domain.review.entity.enums;
 
-public enum StyleEnum {
+public enum Style {
     CHIC, // 시크한
     MATURE, // 성숙한
     LUXURIOUS, // 고급스러운
@@ -24,3 +24,4 @@ public enum StyleEnum {
     SOFT, // 부드러운
     COZY //포근한
 }
+
