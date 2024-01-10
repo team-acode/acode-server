@@ -31,14 +31,20 @@ public class FamilyRepositoryImpl implements FamilyRepositoryCustom{
     public List<FragranceByCatgegory> search(FragranceSearchCond cond) {
         return queryFactory
                 .select(new QFragranceByCatgegory(
+                        fragrance.id.as("fragranceId"),
                         fragrance.name.as("fragranceName"),
                         fragrance.korBrand.as("korBrand"),
-                        fragrance.style
+                        fragrance.style,
+                        fragrance.poster
                         ))
                 .from(fragranceFamily)
                 .join(fragranceFamily.family, family)
                 .join(fragranceFamily.fragrance, fragrance)
-                .where(family.korName.eq(cond.getFamily()))
+                .where(family.korName.eq(cond.getFamily()),
+                        fragrance.poster.isNotNull().and(fragrance.poster.ne(""))
+                )
+                .orderBy(fragrance.view.desc())
+                .limit(6)
                 .fetch();
     }
 }
