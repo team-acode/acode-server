@@ -27,8 +27,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
      */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        ContentCachingRequestWrapper cachingRequestWrapper = new ContentCachingRequestWrapper(request); // 요청 본문을 캐시에 저장
-        String token = parseBearerToken(cachingRequestWrapper); //request 헤더에서 토큰을 가져옴
+        String token = parseBearerToken(request); //request 헤더에서 토큰을 가져옴
 
         if (token != null && jwtTokenProvider.validateToken(token)) {
             //유효한 토큰이면 TokenProvider를 통해 Authentication 객체를 생성
@@ -37,7 +36,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
 
-        filterChain.doFilter(cachingRequestWrapper,response);
+        filterChain.doFilter(request,response);
     }
 
     private String parseBearerToken(HttpServletRequest request){
