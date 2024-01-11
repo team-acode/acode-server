@@ -3,7 +3,7 @@ package server.acode.domain.family.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import server.acode.domain.family.dto.request.FragranceSearchCond;
-import server.acode.domain.family.dto.response.FragranceByCatgegory;
+import server.acode.domain.family.dto.response.HomeFragrance;
 import server.acode.domain.family.repository.FamilyRepository;
 import server.acode.domain.ingredient.dto.response.IngredientOfTheDay;
 import server.acode.domain.ingredient.repository.IngredientRepository;
@@ -22,11 +22,11 @@ public class HomeService {
     private final FamilyRepository familyRepository;
     private final IngredientRepository ingredientRepository;
 
-    public List<FragranceByCatgegory> search(FragranceSearchCond condition){
+    public List<HomeFragrance> search(String familyName){
 
-        if(!familyRepository.existsByKorName(condition.getFamily())) throw new CustomException(ErrorCode.FAMILY_NOT_FOUND);
+        if(!familyRepository.existsByKorName(familyName)) throw new CustomException(ErrorCode.FAMILY_NOT_FOUND);
 
-        List<FragranceByCatgegory> result = familyRepository.search(condition); // 계열과 일치하는 향수 가져오기
+        List<HomeFragrance> result = familyRepository.search(familyName); // 계열과 일치하는 향수 가져오기
 
         result.forEach(fragrance -> {
             String[] styles = fragrance.getStyle().split(", ");
