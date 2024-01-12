@@ -2,7 +2,6 @@ package server.acode.domain.family.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import server.acode.domain.family.dto.request.FragranceSearchCond;
 import server.acode.domain.family.dto.response.HomeFragrance;
 import server.acode.domain.family.repository.FamilyRepository;
 import server.acode.domain.ingredient.dto.response.IngredientOfTheDay;

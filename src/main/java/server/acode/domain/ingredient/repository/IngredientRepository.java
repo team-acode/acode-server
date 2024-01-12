@@ -6,4 +6,6 @@ import server.acode.domain.ingredient.entity.Ingredient;
 
 @Repository
 public interface IngredientRepository extends JpaRepository<Ingredient, Long>, IngredientRepositoryCustom {
+
+    public Ingredient findByKorName(String korName);
 }

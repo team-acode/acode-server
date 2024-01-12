@@ -12,5 +12,6 @@ import java.util.List;
 @Repository
 public interface FamilyRepositoryCustom {
     List<HomeFragrance> search(String familyCond);
-    Page<DisplayFragrance> searchByCategory(FragranceFilterCond cond, String additionalFamily, Pageable pageable);
+    Page<DisplayFragrance> searchByFilter(FragranceFilterCond cond, String additionalFamily, Pageable pageable);
+    Page<DisplayFragrance> searchByIngredient(String ingredientName, Pageable pageable);
 }

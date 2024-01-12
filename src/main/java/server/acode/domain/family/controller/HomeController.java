@@ -3,14 +3,16 @@ package server.acode.domain.family.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import server.acode.domain.family.dto.request.FragranceSearchCond;
 import server.acode.domain.family.dto.response.HomeFragrance;
 import server.acode.domain.family.service.HomeService;
 import server.acode.domain.ingredient.dto.response.IngredientOfTheDay;
+import server.acode.global.auth.security.CustomUserDetails;
 
 import java.util.List;
 
@@ -33,6 +35,13 @@ public class HomeController {
     @GetMapping("/home/recommend")
     public IngredientOfTheDay recommendV1(){
         return homeService.recommendIngredient();
+    }
+
+    @GetMapping("/test/user")
+    @Operation(summary = "유저 확인 개발 테스트용")
+    public void test(){
+        UserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        System.out.println(user.getUsername());
     }
 
 }

@@ -19,6 +19,7 @@ import server.acode.domain.family.entity.QFragranceFamily;
 import server.acode.domain.fragrance.entity.QFragrance;
 
 
+
 import java.util.List;
 
 import static org.springframework.util.StringUtils.*;
@@ -26,6 +27,11 @@ import static server.acode.domain.family.entity.QFamily.*;
 import static server.acode.domain.family.entity.QFragranceFamily.*;
 import static server.acode.domain.fragrance.entity.QBrand.brand;
 import static server.acode.domain.fragrance.entity.QFragrance.*;
+import static server.acode.domain.ingredient.entity.QBaseNote.*;
+import static server.acode.domain.ingredient.entity.QIngredient.*;
+import static server.acode.domain.ingredient.entity.QMiddleNote.*;
+import static server.acode.domain.ingredient.entity.QTopNote.*;
+
 
 @Repository
 public class FamilyRepositoryImpl implements FamilyRepositoryCustom{
@@ -61,9 +67,9 @@ public class FamilyRepositoryImpl implements FamilyRepositoryCustom{
     }
 
     @Override
-    public Page<DisplayFragrance> searchByCategory(FragranceFilterCond cond, String additionalFamily, Pageable pageable) {
+    public Page<DisplayFragrance> searchByFilter(FragranceFilterCond cond, String additionalFamily, Pageable pageable) {
 
-        // TODO 필요에 따라 조인 여부 체크
+        // TODO 필요에 따라 조인 할 수 있는지 체크
         QueryResults<DisplayFragrance> results = queryFactory
                 .select(new QDisplayFragrance(
                         fragrance.id.as("fragranceId"),
@@ -84,6 +90,35 @@ public class FamilyRepositoryImpl implements FamilyRepositoryCustom{
                 .limit(pageable.getPageSize())
                 .fetchResults();
 
+
+        List<DisplayFragrance> content = results.getResults();
+        long total = results.getTotal();
+
+        return new PageImpl<>(content, pageable, total);
+    }
+
+    @Override
+    public Page<DisplayFragrance> searchByIngredient(String ingredientName, Pageable pageable) {
+
+        QueryResults<DisplayFragrance> results = queryFactory
+                .select(new QDisplayFragrance(
+                        fragrance.id.as("fragranceId"),
+                        brand.korName.as("brandName"),
+                        fragrance.name.as("fragranceName"),
+                        fragrance.thumbnail
+                ))
+                .from(fragrance)
+                .join(fragrance.brand, brand)
+                .join(topNote).on(fragrance.id.eq(topNote.fragrance.id))
+                .join(middleNote).on(fragrance.id.eq(middleNote.fragrance.id))
+                .join(baseNote).on(fragrance.id.eq(baseNote.fragrance.id))
+                .join(ingredient).on(topNote.ingredient.id.eq(ingredient.id)
+                        .or(middleNote.ingredient.id.eq(ingredient.id))
+                        .or(baseNote.ingredient.id.eq(ingredient.id))
+                )
+                .where(ingredient.korName.eq(ingredientName))
+                .groupBy(fragrance.id)
+                .fetchResults();
 
         List<DisplayFragrance> content = results.getResults();
         long total = results.getTotal();
