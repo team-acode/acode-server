@@ -23,4 +23,5 @@ public class Brand extends BaseTimeEntity {
 
     @Column(length = 50)
     private String summary; // 브랜드 설명
+    private String keyword; // 브랜드 키워드
 }
