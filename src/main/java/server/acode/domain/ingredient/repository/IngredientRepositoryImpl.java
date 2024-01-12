@@ -21,7 +21,7 @@ public class IngredientRepositoryImpl implements IngredientRepositoryCustom{
     public List<IngredientOfTheDay> getTodayIngreient() {
         return queryFactory
                 .select(new QIngredientOfTheDay(
-                        ingredient.engName.as("ingredientName"),
+                        ingredient.korName.as("ingredientName"),
                         ingredient.acode
                 ))
                 .from(ingredient)
