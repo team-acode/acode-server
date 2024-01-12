@@ -31,7 +31,7 @@ public class GetFragranceResponse {
         this.thumbnail = fragrance.getThumbnail();
         this.image1 = fragrance.getImage1();
         this.image2 = fragrance.getImage2();
-//        this.korBrand = fragrance.getKorBrand();
+        this.korBrand = fragrance.getBrand().getKorName();
         this.fragranceName = fragrance.getName();
         this.concentration = fragrance.getConcentration().name();
         this.style = fragrance.getStyle();

@@ -17,16 +17,16 @@ public class ReviewLongevity extends BaseTimeEntity {
     private Long id;
 
     @Column(columnDefinition = "integer default 0")
-    private int oneHour;
+    private int onehour;
 
     @Column(columnDefinition = "integer default 0")
-    private int fourHours;
+    private int fourhours;
 
     @Column(columnDefinition = "integer default 0")
-    private int halfDay;
+    private int halfday;
 
     @Column(columnDefinition = "integer default 0")
-    private int fullDay;
+    private int fullday;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fragrance_id")
