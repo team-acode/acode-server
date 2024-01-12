@@ -6,10 +6,12 @@ import lombok.RequiredArgsConstructor;
 
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import static org.springframework.util.StringUtils.*;
 import org.springframework.web.bind.annotation.RestController;
 import server.acode.domain.family.dto.request.FragranceFilterCond;
+import server.acode.domain.family.dto.response.DisplayBrand;
 import server.acode.domain.family.dto.response.DisplayResponse;
 import server.acode.domain.family.service.DisplayService;
 import server.acode.global.common.PageRequest;
@@ -35,5 +37,11 @@ public class DisplayController {
                 : displayService.searchFragranceList(cond, pageRequest);
 
         return response;
+    }
+
+    @Operation(summary = "브랜드 설명")
+    @GetMapping("/display/detail/{brand}")
+    public DisplayBrand displayDetailV1(@PathVariable("brand") String brand){
+        return displayService.getBrandContent(brand);
     }
 }

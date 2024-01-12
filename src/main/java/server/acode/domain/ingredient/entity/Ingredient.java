@@ -29,6 +29,7 @@ public class Ingredient extends BaseTimeEntity {
 
     //나중에 줄글 길면 도메인 수정해야 할 수도 있음
     private String summary; // 향료 설명 줄글
+    private String keyword; // 향료 키워드
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ingredient_type_id")

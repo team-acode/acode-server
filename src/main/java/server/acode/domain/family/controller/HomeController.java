@@ -12,9 +12,12 @@ import org.springframework.web.bind.annotation.RestController;
 import server.acode.domain.family.dto.response.HomeFragrance;
 import server.acode.domain.family.service.HomeService;
 import server.acode.domain.ingredient.dto.response.IngredientOfTheDay;
+import server.acode.domain.user.entity.User;
+import server.acode.domain.user.repository.UserRepository;
 import server.acode.global.auth.security.CustomUserDetails;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,6 +26,7 @@ import java.util.List;
 public class HomeController {
 
     private final HomeService homeService;
+    private final UserRepository userRepository;
 
     @Operation(summary = "계열별 향수 최대 6개",
             description = "아직 포스터 이미지가 준비되지 않아 우디에만 테스트용으로 넣어놨습니다 우디로 테스트 해주세요")
@@ -42,6 +46,9 @@ public class HomeController {
     public void test(){
         UserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         System.out.println(user.getUsername());
+        Optional<User> byAuthKey = userRepository.findByAuthKey(user.getUsername());
+        System.out.println(byAuthKey.get().getNickname());
     }
+
 
 }
