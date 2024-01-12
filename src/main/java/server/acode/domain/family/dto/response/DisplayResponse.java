@@ -5,8 +5,10 @@ import lombok.Data;
 import java.util.List;
 @Data
 public class DisplayResponse {
-    private int total;
 
-    private List<DisplayFragrance> fragrances;
+    private List<DisplayFragrance> data;
+
+    private int totalPages;
+    private long totalElements;
 
 }

@@ -22,13 +22,14 @@ public class HomeController {
 
     private final HomeService homeService;
 
-    @Operation(description = "계열별 향수 최대 6개")
+    @Operation(summary = "계열별 향수 최대 6개",
+            description = "아직 포스터 이미지가 준비되지 않아 우디에만 테스트용으로 넣어놨습니다 우디로 테스트 해주세요")
     @GetMapping("/home")
     public List<HomeFragrance> searchV1(@RequestParam String family){
         return homeService.search(family);
     }
 
-    @Operation(description = "오늘의 추천 향료")
+    @Operation(summary = "오늘의 추천 향료")
     @GetMapping("/home/recommend")
     public IngredientOfTheDay recommendV1(){
         return homeService.recommendIngredient();

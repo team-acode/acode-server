@@ -3,23 +3,17 @@ package server.acode.domain.family.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import net.minidev.json.JSONUtil;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import server.acode.domain.family.dto.request.FragranceCategoryCond;
-import server.acode.domain.family.dto.response.DisplayFragrance;
+import server.acode.domain.family.dto.request.FragranceFilterCond;
 import server.acode.domain.family.dto.response.DisplayResponse;
 import server.acode.domain.family.service.DisplayService;
-import server.acode.domain.user.entity.User;
 import server.acode.global.auth.security.CustomUserDetails;
-
-import java.util.List;
+import server.acode.global.common.PageRequest;
 
 @RestController
 @RequiredArgsConstructor
@@ -29,11 +23,15 @@ public class DisplayController {
 
     private final DisplayService displayService;
 
-    @Operation(description = "계열별/ 브랜드별 향수리스트")
+    @Operation(summary = "계열별/ 브랜드별 향수리스트",
+            description = "필요한 값만 파라미터에 넣으면 됩니다" +
+                    "계열 두 개 검색 시에는 두 계열 사이 공백 한 칸 넣어주세요 url 상으로는 %20으로 나타난다합니다")
     @GetMapping("/display")
-    public Page<DisplayFragrance> displayV1(FragranceCategoryCond cond, Pageable pageable){
-        return displayService.searchFragranceList(cond, pageable);
+    public DisplayResponse displayV1(FragranceFilterCond cond, PageRequest pageRequest){
+        return displayService.searchFragranceList(cond, pageRequest);
     }
+
+
     @GetMapping("/user")
     public void test(){
         UserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

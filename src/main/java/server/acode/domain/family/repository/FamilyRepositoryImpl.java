@@ -9,8 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
-import server.acode.domain.family.dto.request.FragranceCategoryCond;
-import server.acode.domain.family.dto.request.FragranceSearchCond;
+import server.acode.domain.family.dto.request.FragranceFilterCond;
 import server.acode.domain.family.dto.response.DisplayFragrance;
 import server.acode.domain.family.dto.response.HomeFragrance;
 import server.acode.domain.family.dto.response.QDisplayFragrance;
@@ -20,8 +19,6 @@ import server.acode.domain.family.entity.QFragranceFamily;
 import server.acode.domain.fragrance.entity.QFragrance;
 
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.springframework.util.StringUtils.*;
@@ -64,12 +61,9 @@ public class FamilyRepositoryImpl implements FamilyRepositoryCustom{
     }
 
     @Override
-    public Page<DisplayFragrance> searchByCategory(FragranceCategoryCond cond, Pageable pageable) {
-        QFragranceFamily fragranceFamilySub = new QFragranceFamily("fragranceFamilySub");
-        QFamily familySub = new QFamily("familySub");
-        QFragrance fragranceSub = new QFragrance("fragranceSub");
+    public Page<DisplayFragrance> searchByCategory(FragranceFilterCond cond, String additionalFamily, Pageable pageable) {
 
-        System.out.println("repository");
+        // TODO 필요에 따라 조인 여부 체크
         QueryResults<DisplayFragrance> results = queryFactory
                 .select(new QDisplayFragrance(
                         fragrance.id.as("fragranceId"),
@@ -83,18 +77,12 @@ public class FamilyRepositoryImpl implements FamilyRepositoryCustom{
                 .join(fragrance.brand, brand)
                 .where(brandNameEq(cond.getBrand()),
                         familyNameEq(cond.getFamily()),
-                        fragrance.id.in(
-                                JPAExpressions.select(fragranceSub.id)
-                                        .from(fragranceFamilySub)
-                                        .join(fragranceFamilySub.family, familySub)
-                                        .join(fragranceFamilySub.fragrance, fragranceSub)
-                                        .where(familySub.korName.eq("우디"))
-                        )
+                        additionalFamilyNameEq(additionalFamily)
                 )
+                .groupBy(fragrance.id)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetchResults();
-
 
 
         List<DisplayFragrance> content = results.getResults();
@@ -109,6 +97,21 @@ public class FamilyRepositoryImpl implements FamilyRepositoryCustom{
 
     private BooleanExpression familyNameEq(String familyName) {
         return hasText(familyName)? family.korName.eq(familyName): null;
+    }
+
+    private BooleanExpression additionalFamilyNameEq(String familyName){
+        // 서브 쿼리를 위한 QEntity 추가 생성
+        QFragranceFamily fragranceFamilySub = new QFragranceFamily("fragranceFamilySub");
+        QFamily familySub = new QFamily("familySub");
+        QFragrance fragranceSub = new QFragrance("fragranceSub");
+
+        return hasText(familyName)? fragrance.id.in(
+                JPAExpressions.select(fragranceSub.id)
+                        .from(fragranceFamilySub)
+                        .join(fragranceFamilySub.family, familySub)
+                        .join(fragranceFamilySub.fragrance, fragranceSub)
+                        .where(familySub.korName.eq(familyName)))
+                : null;
     }
 
 
