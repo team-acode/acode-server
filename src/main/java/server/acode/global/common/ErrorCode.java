@@ -21,6 +21,11 @@ public enum ErrorCode {
 
 
     /* 404 NOT FOUND */
+    FRAGRANCE_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 향수를 찾을 수 없습니다."),
+    REVIEW_SEASON_NOT_FOUND(HttpStatus.NOT_FOUND, "관리자에게 문의 바랍니다."),
+    REVIEW_LONGEVITY_NOT_FOUND(HttpStatus.NOT_FOUND, "관리자에게 문의 바랍니다."),
+    REVIEW_INTENSITY_NOT_FOUND(HttpStatus.NOT_FOUND, "관리자에게 문의 바랍니다."),
+    REVIEW_STYLE_NOT_FOUND(HttpStatus.NOT_FOUND, "관리자에게 문의 바랍니다."),
 
 
     /* 409 CONFLICT */
