@@ -15,6 +15,8 @@ import server.acode.domain.ingredient.dto.response.IngredientOfTheDay;
 import server.acode.domain.user.entity.User;
 import server.acode.domain.user.repository.UserRepository;
 import server.acode.global.auth.security.CustomUserDetails;
+import server.acode.global.common.ErrorCode;
+import server.acode.global.exception.CustomException;
 
 import java.util.List;
 import java.util.Optional;
@@ -42,12 +44,13 @@ public class HomeController {
     }
 
     @GetMapping("/test/user")
-    @Operation(summary = "유저 확인 개발 테스트용")
-    public void test(){
+    @Operation(summary = "유저 확인 테스트용", description = "개발자용입니다 토큰 넣고 호출 시 사용자 이름이 리턴됩니다")
+    public String test(){
         UserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        System.out.println(user.getUsername());
-        Optional<User> byAuthKey = userRepository.findByAuthKey(user.getUsername());
-        System.out.println(byAuthKey.get().getNickname());
+        User byAuthKey = userRepository.findByAuthKey(user.getUsername())
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        return byAuthKey.getNickname();
     }
 
 

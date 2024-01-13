@@ -7,4 +7,5 @@ import server.acode.domain.family.entity.Family;
 @Repository
 public interface FamilyRepository extends JpaRepository<Family, Long>, FamilyRepositoryCustom {
     boolean existsByKorName(String korName);
+    Family findByKorName(String korName);
 }

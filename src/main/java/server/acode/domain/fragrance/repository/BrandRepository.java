@@ -5,4 +5,6 @@ import server.acode.domain.fragrance.entity.Brand;
 
 public interface BrandRepository extends JpaRepository<Brand, Long> {
     public Brand findByKorName(String korName);
+
+    boolean existsByKorName(String brandName);
 }

@@ -12,6 +12,8 @@ import static org.springframework.util.StringUtils.*;
 import org.springframework.web.bind.annotation.RestController;
 import server.acode.domain.family.dto.request.FragranceFilterCond;
 import server.acode.domain.family.dto.response.DisplayBrand;
+import server.acode.domain.family.dto.response.DisplayFamily;
+import server.acode.domain.family.dto.response.DisplayIngredient;
 import server.acode.domain.family.dto.response.DisplayResponse;
 import server.acode.domain.family.service.DisplayService;
 import server.acode.global.common.PageRequest;
@@ -40,8 +42,21 @@ public class DisplayController {
     }
 
     @Operation(summary = "브랜드 설명")
-    @GetMapping("/display/detail/{brand}")
-    public DisplayBrand displayDetailV1(@PathVariable("brand") String brand){
+    @GetMapping("/display/brand/{brand}")
+    public DisplayBrand displayBrandV1(@PathVariable("brand") String brand){
         return displayService.getBrandContent(brand);
     }
+
+    @Operation(summary = "계열 설명")
+    @GetMapping("/display/family/{family}")
+    public DisplayFamily displayFamilyV1(@PathVariable("family") String family){
+        return displayService.getFamilyContent(family);
+    }
+
+    @Operation(summary = "향료 설명")
+    @GetMapping("/display/ingredient/{ingredient}")
+    public DisplayIngredient displayIngredientV1(@PathVariable("ingredient") String ingredient){
+        return displayService.getIngredientContent(ingredient);
+    }
+
 }
