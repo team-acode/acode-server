@@ -8,18 +8,21 @@ public class DisplayBrand {
     private String engName;
     private String keyword;
     private String summary;
+    private String background;
 
-    private DisplayBrand(String korName, String engName, String keyword, String summary){
+    private DisplayBrand(String korName, String engName, String keyword, String summary, String background){
         this.korName = korName;
         this.engName = engName;
         this.keyword = keyword;
         this.summary = summary;
+        this.background = background;
     }
 
     public static DisplayBrand from(Brand brand){
         return new DisplayBrand(brand.getKorName(),
                 brand.getEngName(),
                 brand.getKeyword(),
-                brand.getSummary());
+                brand.getSummary(),
+                brand.getBackgroundImg());
     }
 }

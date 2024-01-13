@@ -25,7 +25,7 @@ public class Family extends BaseTimeEntity {
 
     private String icon; // 아이콘 이미지 url
 
-    private String background; // 배경 이미지 url
+    private String backgroundImg; // 배경 이미지 url
 
     private String keyword; // 키워드
 

@@ -5,13 +5,20 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import server.acode.domain.family.dto.request.FragranceFilterCond;
-import server.acode.domain.family.dto.response.DisplayBrand;
-import server.acode.domain.family.dto.response.DisplayFragrance;
-import server.acode.domain.family.dto.response.DisplayResponse;
+import server.acode.domain.family.dto.response.*;
+import server.acode.domain.family.entity.Family;
 import server.acode.domain.family.repository.FamilyRepository;
 import server.acode.domain.fragrance.entity.Brand;
 import server.acode.domain.fragrance.repository.BrandRepository;
+import server.acode.domain.ingredient.entity.Ingredient;
+import server.acode.domain.ingredient.entity.IngredientType;
+import server.acode.domain.ingredient.repository.IngredientRepository;
+import server.acode.domain.ingredient.repository.IngredientTypeRepository;
+import server.acode.global.common.ErrorCode;
 import server.acode.global.common.PageRequest;
+import server.acode.global.exception.CustomException;
+
+import java.util.Optional;
 
 import static org.springframework.util.StringUtils.*;
 
@@ -21,6 +28,9 @@ public class DisplayService {
 
     private final FamilyRepository familyRepository;
     private final BrandRepository brandRepository;
+    private final IngredientRepository ingredientRepository;
+    private final IngredientTypeRepository ingredientTypeRepository;
+
 
     public DisplayResponse searchFragranceList(FragranceFilterCond cond, PageRequest pageRequest){
         Pageable pageable = pageRequest.of();
@@ -56,16 +66,30 @@ public class DisplayService {
     }
 
     public DisplayBrand getBrandContent(String brandName){
+        // 존재하는지 확인 후 조회
+        if(!brandRepository.existsByKorName(brandName)) throw new CustomException(ErrorCode.BRAND_NOT_FOUND);
         Brand find = brandRepository.findByKorName(brandName);
 
-
-        DisplayBrand response = DisplayBrand.from(find);
-        System.out.println("영어이름 = " + response.getEngName());
-        System.out.println("한글이름 = " + response.getKorName());
-        System.out.println("response.getSummary() = " + response.getSummary());
-        System.out.println("response.getKeyword() = " + response.getKeyword());
-
-        return response;
+        return DisplayBrand.from(find);
     }
 
+    public DisplayFamily getFamilyContent(String family) {
+        // 존재하는지 확인 후 조회
+        if(!familyRepository.existsByKorName(family)) throw new CustomException(ErrorCode.FAMILY_NOT_FOUND);
+        Family find = familyRepository.findByKorName(family);
+
+        return DisplayFamily.from(find);
+    }
+
+    public DisplayIngredient getIngredientContent(String ingredient) {
+        // 향료가 존재하는지 확인 후 조회
+        if(!ingredientRepository.existsByKorName(ingredient)) throw new CustomException(ErrorCode.INGREDIENT_NOT_FOUND);
+        Ingredient findIngredient = ingredientRepository.findByKorName(ingredient);
+
+        // 향료에 해당하는 향료 타입이 존재하는지 확인 후 조회
+        IngredientType findIngredientType = ingredientTypeRepository.findById(findIngredient.getIngredientType().getId())
+                .orElseThrow(()-> new CustomException(ErrorCode.INGREDIENT_TYPE_NOT_FOUND));
+
+        return DisplayIngredient.from(findIngredient, findIngredientType);
+    }
 }

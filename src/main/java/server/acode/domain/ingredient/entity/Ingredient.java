@@ -4,8 +4,6 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import server.acode.domain.family.entity.Family;
-import server.acode.domain.fragrance.entity.Fragrance;
 import server.acode.global.common.BaseTimeEntity;
 
 @Entity
@@ -25,7 +23,7 @@ public class Ingredient extends BaseTimeEntity {
 
     private String acode; // 어코드 설명
 
-    private String background; // 배경 url
+    private String backgroundImg; // 배경 url
 
     //나중에 줄글 길면 도메인 수정해야 할 수도 있음
     private String summary; // 향료 설명 줄글
