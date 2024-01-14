@@ -43,4 +43,8 @@ public class User extends BaseTimeEntity {
         this.reviewCnt = 0;
         this.isDel = false;
     }
+
+    public void updateNickname(String newOne) {
+        this.nickname = newOne;
+    }
 }
