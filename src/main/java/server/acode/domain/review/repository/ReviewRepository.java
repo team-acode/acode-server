@@ -11,4 +11,7 @@ import java.util.List;
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, Long>, ReviewRepositoryCustom {
     List<Review> findByFragrance(Fragrance fragrance);
+
+    int countByUserId(Long userId);
+
 }

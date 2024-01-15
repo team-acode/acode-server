@@ -1,9 +1,11 @@
 package server.acode.domain.review.repository;
 
+import com.querydsl.core.QueryResults;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
@@ -12,7 +14,8 @@ import server.acode.domain.fragrance.dto.response.QReviewPreview;
 import server.acode.domain.fragrance.dto.response.ReviewInfo;
 import server.acode.domain.fragrance.dto.response.ReviewPreview;
 import server.acode.domain.fragrance.entity.Fragrance;
-import server.acode.domain.review.entity.Review;
+import server.acode.domain.user.dto.response.DisplayReview;
+import server.acode.domain.user.dto.response.QDisplayReview;
 
 import java.util.List;
 
@@ -78,5 +81,31 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
                 .where(review.fragrance.id.eq(fragranceId));
 
         return PageableExecutionUtils.getPage(contents, pageable, countQuery::fetchOne);
+    }
+
+    @Override
+    public Page<DisplayReview> getDisplayReview(Long userId, Pageable pageable){
+        QueryResults<DisplayReview> results = queryFactory
+                .select(new QDisplayReview(
+                        review.id,
+                        review.fragrance.name,
+                        review.fragrance.brand.korName,
+                        review.comment,
+                        review.rate,
+                        review.thumbnail
+                ))
+                .from(review)
+                .join(review.user, user)
+                .where(user.id.eq(userId))
+                .orderBy(review.createdAt.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetchResults();
+
+        List<DisplayReview> content = results.getResults();
+        long total = results.getTotal();
+
+        return new PageImpl<>(content, pageable, total);
+
     }
 }

@@ -32,10 +32,11 @@ public enum ErrorCode {
 
 
     /* 409 CONFLICT */
+    UNLINK_FAIL(HttpStatus.CONFLICT, "UNLINK 도중 실패했습니다.");
 
 
     /* 500 INTERNAL SERVER ERROR */
-    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "관리자에게 문의 바랍니다.");
+//    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "관리자에게 문의 바랍니다.");
 
     private final HttpStatus httpStatus;
     private final String message;

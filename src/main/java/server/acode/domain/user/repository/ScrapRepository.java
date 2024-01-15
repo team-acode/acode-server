@@ -12,10 +12,11 @@ import server.acode.domain.user.entity.User;
 import java.util.Optional;
 
 @Repository
-public interface ScrapRepository extends JpaRepository<Scrap, Long> {
-//    @Query("SELECT s FROM Scrap s WHERE s.user = :user AND s.fragrance = :fragrance")
-    Optional<Scrap> findByUserAndFragrance(User user, Fragrance fragrance);
+public interface ScrapRepository extends JpaRepository<Scrap, Long>, ScrapRepositoryCustom {
+    @Query("SELECT s FROM Scrap s WHERE s.user = :user AND s.fragrance = :fragrance")
+    Optional<Scrap> findByUserAndFragrance(@Param("user") User user, @Param("fragrance") Fragrance fragrance);
 
     @Modifying
     void deleteByUserAndFragrance(User user, Fragrance fragrance);
+
 }

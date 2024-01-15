@@ -56,3 +56,4 @@ cloud:
       auto: false
 
 presignedUrlDuration: ${PRESIGNED_URL_DURATION}
+kakaoAdminKey: ${KAKAO_ADMIN_KEY}

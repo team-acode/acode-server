@@ -69,7 +69,7 @@ public class FamilyRepositoryImpl implements FamilyRepositoryCustom{
     @Override
     public Page<DisplayFragrance> searchByFilter(FragranceFilterCond cond, String additionalFamily, Pageable pageable) {
 
-        // TODO 필요에 따라 조인 할 수 있는지 체크
+        //TODO 필요에 따라 조인 할 수 있는지 체크
         QueryResults<DisplayFragrance> results = queryFactory
                 .select(new QDisplayFragrance(
                         fragrance.id.as("fragranceId"),

@@ -15,7 +15,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
+import java.time.Instant;
 import java.util.Date;
+import java.time.Duration;
 
 import server.acode.global.auth.security.CustomUserDetailService;
 
@@ -67,6 +69,14 @@ public class JwtTokenProvider implements InitializingBean {
         } catch (Exception e) {
             return false;
         }
+    }
+
+
+    // token의 만료일자 가져오기
+    public Duration getExpiration(String token) {
+        Date expiration = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().getExpiration();
+        System.out.println("expiration = " + expiration);
+        return Duration.between(Instant.now(), expiration.toInstant()); // 현재 시간과 토큰의 만료 시간 사이의 Duration 계산
     }
 
 }
