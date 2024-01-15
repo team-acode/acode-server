@@ -28,10 +28,11 @@ public enum ErrorCode {
     REVIEW_SEASON_NOT_FOUND(HttpStatus.NOT_FOUND, "관리자에게 문의 바랍니다."),
     REVIEW_LONGEVITY_NOT_FOUND(HttpStatus.NOT_FOUND, "관리자에게 문의 바랍니다."),
     REVIEW_INTENSITY_NOT_FOUND(HttpStatus.NOT_FOUND, "관리자에게 문의 바랍니다."),
-    REVIEW_STYLE_NOT_FOUND(HttpStatus.NOT_FOUND, "관리자에게 문의 바랍니다.");
+    REVIEW_STYLE_NOT_FOUND(HttpStatus.NOT_FOUND, "관리자에게 문의 바랍니다."),
 
 
     /* 409 CONFLICT */
+    UNLINK_FAIL(HttpStatus.CONFLICT, "UNLINK 도중 실패했습니다.");
 
 
     /* 500 INTERNAL SERVER ERROR */

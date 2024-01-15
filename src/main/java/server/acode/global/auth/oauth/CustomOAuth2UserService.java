@@ -47,6 +47,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         } else {
             System.out.println(oAuth2User.getName());
             user = userRepository.findByAuthKey(oAuth2User.getName()).orElseThrow();
+
+
         }
 
         return new DefaultOAuth2User(Collections.singleton(new SimpleGrantedAuthority(user.getRole().toString()))

@@ -47,4 +47,8 @@ public class User extends BaseTimeEntity {
     public void updateNickname(String newOne) {
         this.nickname = newOne;
     }
+
+    public void updateIsDel(boolean delColumn){
+        this.isDel = delColumn;
+    }
 }

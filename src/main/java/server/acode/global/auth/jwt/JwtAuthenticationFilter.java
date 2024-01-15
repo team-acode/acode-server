@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.ContentCachingRequestWrapper;
+import server.acode.global.inmemory.RedisDao;
 
 import java.io.IOException;
 
@@ -19,6 +20,7 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
+    private final RedisDao redisDao;
 
     /**
      * 요청이 들어올 때마다 실행되는 메서드로,
@@ -30,10 +32,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = parseBearerToken(request); //request 헤더에서 토큰을 가져옴
 
         if (token != null && jwtTokenProvider.validateToken(token)) {
-            //유효한 토큰이면 TokenProvider를 통해 Authentication 객체를 생성
-            Authentication authentication = jwtTokenProvider.getAuthentication(token);
-            // 현재 스레드의 Security Context에 인증 정보를 저장 -> 해당 요청을 처리하는 동안 인증된 사용자로서 권한이 부여
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            // 로그아웃 여부 확인
+            String isLogout = redisDao.getValues(token);
+            if(!StringUtils.hasText(isLogout)){
+                //유효한 토큰이면 TokenProvider를 통해 Authentication 객체를 생성
+                Authentication authentication = jwtTokenProvider.getAuthentication(token);
+                // 현재 스레드의 Security Context에 인증 정보를 저장 -> 해당 요청을 처리하는 동안 인증된 사용자로서 권한이 부여
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
+
         }
 
         filterChain.doFilter(request,response);
