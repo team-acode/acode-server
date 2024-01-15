@@ -25,4 +25,9 @@ public class Scrap extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fragrance_id")
     private Fragrance fragrance;
+
+    public Scrap(User user, Fragrance fragrance) {
+        this.user = user;
+        this.fragrance = fragrance;
+    }
 }
