@@ -4,12 +4,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
-import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
-import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
+import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest;
+import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
 
 import java.time.Duration;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -29,21 +30,21 @@ public class S3Service {
         }
 
         // 가져올 객체에 대한 요청 생성
-        GetObjectRequest getObjectRequest = GetObjectRequest.builder()
+        PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                 .bucket(bucket)
-                .key(filename)
+                .key(filename + UUID.randomUUID().toString())
                 .build();
 
         //presignedURL 설정
-        GetObjectPresignRequest getObjectPresignRequest = GetObjectPresignRequest.builder()
+        PutObjectPresignRequest presignRequest = PutObjectPresignRequest.builder()
                 .signatureDuration(Duration.ofMinutes(presignedUrlDuration))
-                .getObjectRequest(getObjectRequest)
+                .putObjectRequest(putObjectRequest)
                 .build();
 
         //presignedURL 생성
-        PresignedGetObjectRequest presignedGetObjectRequest = s3Presigner.presignGetObject(getObjectPresignRequest);
+        PresignedPutObjectRequest presignedPutObjectRequest = s3Presigner.presignPutObject(presignRequest);
 
-        String presignedURL = presignedGetObjectRequest.url().toString();
+        String presignedURL = presignedPutObjectRequest.url().toString();
 
         s3Presigner.close();
 
