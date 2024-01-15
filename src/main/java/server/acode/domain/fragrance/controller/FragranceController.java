@@ -1,21 +1,23 @@
 package server.acode.domain.fragrance.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import server.acode.domain.fragrance.dto.response.GetFragranceNote;
-import server.acode.domain.fragrance.dto.response.GetFragranceResponse;
+import org.springframework.web.bind.annotation.*;
+import server.acode.domain.fragrance.dto.response.*;
 import server.acode.domain.fragrance.service.FragranceService;
 import server.acode.domain.user.entity.User;
+import server.acode.domain.user.repository.UserRepository;
+import server.acode.global.common.ErrorCode;
+import server.acode.global.exception.CustomException;
 
 @RestController
 @RequestMapping("/api/v1/fragrance")
 @RequiredArgsConstructor
 public class FragranceController {
     private final FragranceService fragranceService;
+
+    private final UserRepository userRepository;
 
     @GetMapping("/{fragranceId}")
     public GetFragranceResponse getFragranceDetail(
@@ -27,5 +29,41 @@ public class FragranceController {
     @GetMapping("/{fragranceId}/note")
     public GetFragranceNote getFragranceNote(@PathVariable("fragranceId") Long fragranceId) {
         return fragranceService.getFragranceNote(fragranceId);
+    }
+
+    @GetMapping("/{fragranceId}/review/preview")
+    public GetFragranceReviewPreview getFragranceReviewPreview(@PathVariable("fragranceId") Long fragranceId) {
+        return fragranceService.getFragranceReviewPreview(fragranceId);
+    }
+
+    // TODO 리뷰 통계
+    @GetMapping("/{fragranceId}/review/statistics")
+    public GetFragranceReviewStatistics getFragranceReviewStatistics(@PathVariable("fragranceId") Long fragranceId) {
+        return fragranceService.getFragranceReviewStatistics(fragranceId);
+    }
+
+    @GetMapping("/{fragranceId}/similar")
+    public GetFragranceSimilar getFragranceSimilar(@PathVariable("fragranceId") Long fragranceId) {
+        return fragranceService.getFragranceSimilar(fragranceId);
+    }
+
+    @GetMapping("/{fragranceId}/purchase")
+    public GetFragrancePurchase getFragrancePurchase(@PathVariable("fragranceId") Long fragranceId) {
+        return fragranceService.getFragrancePurchase(fragranceId);
+    }
+
+
+    // TODO 리뷰 더보기
+    @GetMapping("/{fragranceId}/review")
+    public GetFragranceReview getFragranceReview(@PathVariable("fragranceId") Long fragranceId) {
+        return fragranceService.getFragranceReview(fragranceId);
+    }
+
+
+    @PostMapping("/{fragranceId}/scrap")
+    public ResponseEntity<?> scrap(@PathVariable("fragranceId") Long fragranceId, @RequestParam("userId") Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        return fragranceService.scrap(fragranceId, user);
     }
 }
