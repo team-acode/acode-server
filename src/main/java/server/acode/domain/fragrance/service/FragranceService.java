@@ -105,14 +105,14 @@ public class FragranceService {
     }
 
 
-    // TODO 향수 리뷰 통계 ㅠㅠ
-    public GetFragranceReviewStatistics getFragranceReviewStatistics(Long fragranceId) {
-        ReviewSeason reviewSeason = reviewSeasonRepository.findByFragranceId(fragranceId)
-                .orElseThrow(() -> new CustomException(ErrorCode.REVIEW_SEASON_NOT_FOUND));
-        int reviewSeasonTotal = reviewSeason.getSpring() +
-                reviewSeason.getSummer() + reviewSeason.getAutumn() + reviewSeason.getWinter();
-        return null;
-    }
+//    // TODO 향수 리뷰 통계 ㅠㅠ
+//    public GetFragranceReviewStatistics getFragranceReviewStatistics(Long fragranceId) {
+//        ReviewSeason reviewSeason = reviewSeasonRepository.findByFragranceId(fragranceId)
+//                .orElseThrow(() -> new CustomException(ErrorCode.REVIEW_SEASON_NOT_FOUND));
+//        int reviewSeasonTotal = reviewSeason.getSpring() +
+//                reviewSeason.getSummer() + reviewSeason.getAutumn() + reviewSeason.getWinter();
+//        return null;
+//    }
 
 
     public GetFragranceSimilar getFragranceSimilar(Long fragranceId) {

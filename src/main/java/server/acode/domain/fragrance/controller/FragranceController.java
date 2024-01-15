@@ -20,6 +20,7 @@ public class FragranceController {
 
     private final UserRepository userRepository;
 
+
     @GetMapping("/{fragranceId}")
     public GetFragranceResponse getFragranceDetail(
             @PathVariable("fragranceId") Long fragranceId,
@@ -27,26 +28,31 @@ public class FragranceController {
         return fragranceService.getFragranceDetail(fragranceId, user);
     }
 
+
     @GetMapping("/{fragranceId}/note")
     public GetFragranceNote getFragranceNote(@PathVariable("fragranceId") Long fragranceId) {
         return fragranceService.getFragranceNote(fragranceId);
     }
+
 
     @GetMapping("/{fragranceId}/review/preview")
     public GetFragranceReviewPreview getFragranceReviewPreview(@PathVariable("fragranceId") Long fragranceId) {
         return fragranceService.getFragranceReviewPreview(fragranceId);
     }
 
-    // TODO 리뷰 통계
-    @GetMapping("/{fragranceId}/review/statistics")
-    public GetFragranceReviewStatistics getFragranceReviewStatistics(@PathVariable("fragranceId") Long fragranceId) {
-        return fragranceService.getFragranceReviewStatistics(fragranceId);
-    }
+
+//    // TODO 리뷰 통계
+//    @GetMapping("/{fragranceId}/review/statistics")
+//    public GetFragranceReviewStatistics getFragranceReviewStatistics(@PathVariable("fragranceId") Long fragranceId) {
+//        return fragranceService.getFragranceReviewStatistics(fragranceId);
+//    }
+
 
     @GetMapping("/{fragranceId}/similar")
     public GetFragranceSimilar getFragranceSimilar(@PathVariable("fragranceId") Long fragranceId) {
         return fragranceService.getFragranceSimilar(fragranceId);
     }
+
 
     @GetMapping("/{fragranceId}/purchase")
     public GetFragrancePurchase getFragrancePurchase(@PathVariable("fragranceId") Long fragranceId) {
@@ -54,7 +60,6 @@ public class FragranceController {
     }
 
 
-    // TODO 리뷰 더보기
     @GetMapping("/{fragranceId}/review")
     public GetFragranceReview getFragranceReview(@PathVariable("fragranceId") Long fragranceId, PageRequest pageRequest) {
         return fragranceService.getFragranceReview(fragranceId, pageRequest);
