@@ -28,8 +28,7 @@ import server.acode.global.common.ErrorCode;
 import server.acode.global.common.PageRequest;
 import server.acode.global.exception.CustomException;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -105,12 +104,29 @@ public class FragranceService {
     }
 
 
-//    // TODO 향수 리뷰 통계 ㅠㅠ
+    // TODO 향수 리뷰 통계 ㅠㅠ
 //    public GetFragranceReviewStatistics getFragranceReviewStatistics(Long fragranceId) {
+//        Map<String, Integer> fieldList = new HashMap<>();
+//
 //        ReviewSeason reviewSeason = reviewSeasonRepository.findByFragranceId(fragranceId)
 //                .orElseThrow(() -> new CustomException(ErrorCode.REVIEW_SEASON_NOT_FOUND));
-//        int reviewSeasonTotal = reviewSeason.getSpring() +
-//                reviewSeason.getSummer() + reviewSeason.getAutumn() + reviewSeason.getWinter();
+//
+//        fieldList.put("spring", reviewSeason.getSpring());
+//        fieldList.put("summer", reviewSeason.getSummer());
+//        fieldList.put("autumn", reviewSeason.getAutumn());
+//        fieldList.put("winter", reviewSeason.getWinter());
+//
+//        Integer maxValue = Collections.max(fieldList.values());
+//        List<String> keyWithMaxValueList = fieldList.entrySet()
+//                .stream()
+//                .filter(entry -> entry.getValue().equals(maxValue))
+//                .map(Map.Entry::getKey)
+//                .toList();
+//        if (keyWithMaxValueList.size() == 1) {
+//            fieldList.get(keyWithMaxValueList.get(0));
+//        }
+//
+//
 //        return null;
 //    }
 
@@ -151,7 +167,6 @@ public class FragranceService {
     }
 
 
-    // TODO 리뷰 더보기
     public GetFragranceReview getFragranceReview(Long fragranceId, PageRequest pageRequest) {
         Pageable pageable = pageRequest.of();
 
