@@ -87,6 +87,7 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
     public Page<DisplayReview> getDisplayReview(Long userId, Pageable pageable){
         QueryResults<DisplayReview> results = queryFactory
                 .select(new QDisplayReview(
+                        review.id,
                         review.fragrance.name,
                         review.fragrance.brand.korName,
                         review.comment,
