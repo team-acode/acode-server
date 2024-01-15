@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import server.acode.domain.family.dto.response.PageableResponse;
 import server.acode.domain.review.repository.ReviewRepository;
+import server.acode.domain.user.dto.response.DisplayReview;
 import server.acode.domain.user.dto.response.DisplayScrap;
 import server.acode.domain.user.dto.response.PreviewScrap;
 import server.acode.domain.user.dto.response.PreviewUserInfo;
@@ -45,7 +46,6 @@ public class UserService {
         User byAuthKey = userRepository.findByAuthKey(authKey)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        // TODO 없는 경우 에러처리
         List<PreviewScrap> previewScrap = scrapRepository.getScrapPreview(byAuthKey.getId());
 
         PreviewUserInfo info = PreviewUserInfo.builder()
@@ -73,7 +73,7 @@ public class UserService {
         User byAuthKey = userRepository.findByAuthKey(authKey)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        return null;
-
+        Page<DisplayReview> result = reviewRepository.getDisplayReview(byAuthKey.getId(), pageable);
+        return new PageableResponse(result.getContent(), result.getTotalPages(), result.getTotalElements());
     }
 }

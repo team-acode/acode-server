@@ -3,6 +3,7 @@ package server.acode.domain.user.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -30,22 +31,21 @@ public class UserController {
 
     @Operation(summary = "마이페이지 기본 정보")
     @GetMapping("/mypage")
-    public PreviewUserInfo getUserInfo(){
-        UserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    public PreviewUserInfo getUserInfo(@AuthenticationPrincipal CustomUserDetails user){
         return userService.getUserInfo(user.getUsername());
     }
 
-    @Operation(summary = "마이페이지 스크랩 리스트업")
+    @Operation(summary = "마이페이지 스크랩 리스트업",
+            description = "페이지는 파라미터 없을 시 기본 page = 1, size = 10입니다.")
     @GetMapping("/mypage/scrap")
-    public PageableResponse getUserScrap(PageRequest request){
-        UserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    public PageableResponse getUserScrap(PageRequest request, @AuthenticationPrincipal CustomUserDetails user){
         return userService.getScrapList(user.getUsername(), request);
     }
 
-    @Operation(summary = "마이페이지 리뷰 리스트업")
+    @Operation(summary = "마이페이지 리뷰 리스트업",
+            description = "페이지는 파라미터 없을 시 기본 page = 1, size = 10입니다.")
     @GetMapping("/mypage/review")
-    public PageableResponse getUserReview(PageRequest request){
-        UserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    public PageableResponse getUserReview(PageRequest request, @AuthenticationPrincipal CustomUserDetails user){
         return userService.getReviewList(user.getUsername(), request);
     }
 
