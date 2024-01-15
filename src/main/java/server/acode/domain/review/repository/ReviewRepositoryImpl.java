@@ -67,6 +67,7 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
                 .where(
                         review.fragrance.id.eq(fragranceId)
                 )
+                .orderBy(review.createdAt.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
