@@ -24,6 +24,7 @@ import server.acode.domain.review.repository.*;
 import server.acode.domain.user.entity.Scrap;
 import server.acode.domain.user.entity.User;
 import server.acode.domain.user.repository.ScrapRepository;
+import server.acode.global.auth.security.CustomUserDetails;
 import server.acode.global.common.ErrorCode;
 import server.acode.global.common.PageRequest;
 import server.acode.global.exception.CustomException;
@@ -56,12 +57,13 @@ public class FragranceService {
 
 
     @Transactional
-    public GetFragranceResponse getFragranceDetail(Long fragranceId, User user) {
+    public GetFragranceResponse getFragranceDetail(Long fragranceId, CustomUserDetails userDetails) {
         boolean isScraped = false;
 
         Fragrance fragrance = fragranceRepository.findById(fragranceId)
                 .orElseThrow(() -> new CustomException(ErrorCode.FRAGRANCE_NOT_FOUND));
 
+        User user = userDetails.getUser();
         isScraped = scrapRepository.findByUserAndFragrance(user, fragrance).isPresent();
 
         List<Family> findFamilyList = fragranceFamilyRepository.findByFragrance(fragrance);
@@ -180,9 +182,11 @@ public class FragranceService {
 
 
     @Transactional
-    public ResponseEntity<?> scrap(Long fragranceId, User user) {
+    public ResponseEntity<?> scrap(Long fragranceId, CustomUserDetails userDetails) {
         Fragrance fragrance = fragranceRepository.findById(fragranceId)
                 .orElseThrow(() -> new CustomException(ErrorCode.FRAGRANCE_NOT_FOUND));
+        User user = userDetails.getUser();
+
         if (scrapRepository.findByUserAndFragrance(user, fragrance).isEmpty()) {
             scrapRepository.save(new Scrap(user, fragrance));
         } else {

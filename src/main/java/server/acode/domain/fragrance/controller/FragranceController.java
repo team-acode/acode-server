@@ -6,11 +6,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import server.acode.domain.fragrance.dto.response.*;
 import server.acode.domain.fragrance.service.FragranceService;
-import server.acode.domain.user.entity.User;
-import server.acode.domain.user.repository.UserRepository;
-import server.acode.global.common.ErrorCode;
+import server.acode.global.auth.security.CustomUserDetails;
 import server.acode.global.common.PageRequest;
-import server.acode.global.exception.CustomException;
 
 @RestController
 @RequestMapping("/api/v1/fragrance")
@@ -18,14 +15,12 @@ import server.acode.global.exception.CustomException;
 public class FragranceController {
     private final FragranceService fragranceService;
 
-    private final UserRepository userRepository;
-
 
     @GetMapping("/{fragranceId}")
     public GetFragranceResponse getFragranceDetail(
             @PathVariable("fragranceId") Long fragranceId,
-            @AuthenticationPrincipal User user) {
-        return fragranceService.getFragranceDetail(fragranceId, user);
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        return fragranceService.getFragranceDetail(fragranceId, userDetails);
     }
 
 
@@ -67,9 +62,9 @@ public class FragranceController {
 
 
     @PostMapping("/{fragranceId}/scrap")
-    public ResponseEntity<?> scrap(@PathVariable("fragranceId") Long fragranceId, @RequestParam("userId") Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-        return fragranceService.scrap(fragranceId, user);
+    public ResponseEntity<?> scrap(
+            @PathVariable("fragranceId") Long fragranceId,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        return fragranceService.scrap(fragranceId, userDetails);
     }
 }
