@@ -1,5 +1,6 @@
 package server.acode.domain.fragrance.service;
 
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,12 +25,13 @@ import server.acode.domain.review.repository.*;
 import server.acode.domain.user.entity.Scrap;
 import server.acode.domain.user.entity.User;
 import server.acode.domain.user.repository.ScrapRepository;
+import server.acode.domain.user.repository.UserRepository;
+import server.acode.global.auth.security.CustomUserDetails;
 import server.acode.global.common.ErrorCode;
 import server.acode.global.common.PageRequest;
 import server.acode.global.exception.CustomException;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -55,14 +57,18 @@ public class FragranceService {
 
     private final FamilyRepository familyRepository;
 
+    private final UserRepository userRepository;
+
 
     @Transactional
-    public GetFragranceResponse getFragranceDetail(Long fragranceId, User user) {
+    public GetFragranceResponse getFragranceDetail(Long fragranceId, CustomUserDetails userDetails) {
         boolean isScraped = false;
 
         Fragrance fragrance = fragranceRepository.findById(fragranceId)
                 .orElseThrow(() -> new CustomException(ErrorCode.FRAGRANCE_NOT_FOUND));
 
+        User user = userRepository.findByAuthKey(userDetails.getUsername())
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
         isScraped = scrapRepository.findByUserAndFragrance(user, fragrance).isPresent();
 
         List<Family> findFamilyList = fragranceFamilyRepository.findByFragrance(fragrance);
@@ -105,12 +111,29 @@ public class FragranceService {
     }
 
 
-//    // TODO 향수 리뷰 통계 ㅠㅠ
+    // TODO 향수 리뷰 통계 ㅠㅠ
 //    public GetFragranceReviewStatistics getFragranceReviewStatistics(Long fragranceId) {
+//        Map<String, Integer> fieldList = new HashMap<>();
+//
 //        ReviewSeason reviewSeason = reviewSeasonRepository.findByFragranceId(fragranceId)
 //                .orElseThrow(() -> new CustomException(ErrorCode.REVIEW_SEASON_NOT_FOUND));
-//        int reviewSeasonTotal = reviewSeason.getSpring() +
-//                reviewSeason.getSummer() + reviewSeason.getAutumn() + reviewSeason.getWinter();
+//
+//        fieldList.put("spring", reviewSeason.getSpring());
+//        fieldList.put("summer", reviewSeason.getSummer());
+//        fieldList.put("autumn", reviewSeason.getAutumn());
+//        fieldList.put("winter", reviewSeason.getWinter());
+//
+//        Integer maxValue = Collections.max(fieldList.values());
+//        List<String> keyWithMaxValueList = fieldList.entrySet()
+//                .stream()
+//                .filter(entry -> entry.getValue().equals(maxValue))
+//                .map(Map.Entry::getKey)
+//                .toList();
+//        if (keyWithMaxValueList.size() == 1) {
+//            fieldList.get(keyWithMaxValueList.get(0));
+//        }
+//
+//
 //        return null;
 //    }
 
@@ -151,7 +174,6 @@ public class FragranceService {
     }
 
 
-    // TODO 리뷰 더보기
     public GetFragranceReview getFragranceReview(Long fragranceId, PageRequest pageRequest) {
         Pageable pageable = pageRequest.of();
 
@@ -165,9 +187,12 @@ public class FragranceService {
 
 
     @Transactional
-    public ResponseEntity<?> scrap(Long fragranceId, User user) {
+    public ResponseEntity<?> scrap(Long fragranceId, CustomUserDetails userDetails) {
+        User user = userRepository.findByAuthKey(userDetails.getUsername())
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
         Fragrance fragrance = fragranceRepository.findById(fragranceId)
                 .orElseThrow(() -> new CustomException(ErrorCode.FRAGRANCE_NOT_FOUND));
+
         if (scrapRepository.findByUserAndFragrance(user, fragrance).isEmpty()) {
             scrapRepository.save(new Scrap(user, fragrance));
         } else {

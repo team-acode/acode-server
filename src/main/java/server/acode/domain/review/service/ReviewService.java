@@ -38,7 +38,8 @@ public class ReviewService {
     private final ReviewStyleRepository reviewStyleRepository;
 
     public ResponseEntity<?> registerReview(Long fragranceId, RegisterReviewRequest registerReviewRequest, CustomUserDetails userDetails) {
-        User user = userDetails.getUser();
+        User user = userRepository.findByAuthKey(userDetails.getUsername())
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         //리뷰 엔티티 생성
         Fragrance fragrance = fragranceRepository.findById(fragranceId)
