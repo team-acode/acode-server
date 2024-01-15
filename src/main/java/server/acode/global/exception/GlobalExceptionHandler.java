@@ -30,11 +30,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 .build();
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<Object> handleAllException(Exception exception) {
-        ErrorCode errorCode = ErrorCode.INTERNAL_SERVER_ERROR;
-        return handleExceptionInternal(errorCode);
-    }
+//    @ExceptionHandler(Exception.class)
+//    public ResponseEntity<Object> handleAllException(Exception exception) {
+//        ErrorCode errorCode = ErrorCode.INTERNAL_SERVER_ERROR;
+//        return handleExceptionInternal(errorCode);
+//    }
 
 
 }

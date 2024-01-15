@@ -6,4 +6,6 @@ import server.acode.domain.review.entity.Review;
 
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, Long> {
+
+    int countByUserId(Long userId);
 }

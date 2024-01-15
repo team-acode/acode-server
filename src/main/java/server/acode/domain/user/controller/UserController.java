@@ -5,12 +5,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import server.acode.domain.family.dto.response.PageableResponse;
+import server.acode.domain.user.dto.response.PreviewUserInfo;
 import server.acode.domain.user.service.UserService;
 import server.acode.global.auth.security.CustomUserDetails;
+import server.acode.global.common.PageRequest;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,4 +27,27 @@ public class UserController {
         UserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         userService.updateNickname(nickname, user.getUsername());
     }
+
+    @Operation(summary = "마이페이지 기본 정보")
+    @GetMapping("/mypage")
+    public PreviewUserInfo getUserInfo(){
+        UserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return userService.getUserInfo(user.getUsername());
+    }
+
+    @Operation(summary = "마이페이지 스크랩 리스트업")
+    @GetMapping("/mypage/scrap")
+    public PageableResponse getUserScrap(PageRequest request){
+        UserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return userService.getScrapList(user.getUsername(), request);
+    }
+
+    @Operation(summary = "마이페이지 리뷰 리스트업")
+    @GetMapping("/mypage/review")
+    public PageableResponse getUserReview(PageRequest request){
+        UserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return userService.getReviewList(user.getUsername(), request);
+    }
+
+
 }

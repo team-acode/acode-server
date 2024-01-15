@@ -18,7 +18,7 @@ import server.acode.global.common.ErrorCode;
 import server.acode.global.common.PageRequest;
 import server.acode.global.exception.CustomException;
 
-import java.util.Optional;
+import java.util.List;
 
 import static org.springframework.util.StringUtils.*;
 
@@ -32,7 +32,7 @@ public class DisplayService {
     private final IngredientTypeRepository ingredientTypeRepository;
 
 
-    public DisplayResponse searchFragranceList(FragranceFilterCond cond, PageRequest pageRequest){
+    public PageableResponse searchFragranceList(FragranceFilterCond cond, PageRequest pageRequest){
         Pageable pageable = pageRequest.of();
 
         String additionalFamily = null; // 추가 계열 변수 초기화
@@ -44,25 +44,16 @@ public class DisplayService {
         }
 
         Page<DisplayFragrance> result = familyRepository.searchByFilter(cond, additionalFamily, pageable); // 향수 조회
-        return getDisplayResponse(result);
+        return new PageableResponse(result.getContent(), result.getTotalPages(), result.getTotalElements());
+
     }
 
-    public DisplayResponse searchFragranceListByIngredient(String ingredient, PageRequest pageRequest){
+    public PageableResponse searchFragranceListByIngredient(String ingredient, PageRequest pageRequest){
         Pageable pageable = pageRequest.of(); // pageable 객체로 변환
 
         Page<DisplayFragrance> result = familyRepository.searchByIngredient(ingredient, pageable);
-        return getDisplayResponse(result);
+        return new PageableResponse(result.getContent(), result.getTotalPages(), result.getTotalElements());
 
-    }
-
-    // displayResponseDto로 변환
-    private DisplayResponse getDisplayResponse(Page<DisplayFragrance> data){
-        DisplayResponse response = new DisplayResponse();
-        response.setTotalPages(data.getTotalPages());
-        response.setTotalElements(data.getTotalElements());
-        response.setData(data.getContent());
-
-        return response;
     }
 
     public DisplayBrand getBrandContent(String brandName){
