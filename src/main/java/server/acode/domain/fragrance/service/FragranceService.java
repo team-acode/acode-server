@@ -1,6 +1,8 @@
 package server.acode.domain.fragrance.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +25,7 @@ import server.acode.domain.user.entity.Scrap;
 import server.acode.domain.user.entity.User;
 import server.acode.domain.user.repository.ScrapRepository;
 import server.acode.global.common.ErrorCode;
+import server.acode.global.common.PageRequest;
 import server.acode.global.exception.CustomException;
 
 import java.util.ArrayList;
@@ -148,8 +151,16 @@ public class FragranceService {
     }
 
 
-    public GetFragranceReview getFragranceReview(Long fragranceId) {
-        return null;
+    // TODO 리뷰 더보기
+    public GetFragranceReview getFragranceReview(Long fragranceId, PageRequest pageRequest) {
+        Pageable pageable = pageRequest.of();
+
+        Fragrance fragrance = fragranceRepository.findById(fragranceId)
+                .orElseThrow(() -> new CustomException(ErrorCode.FRAGRANCE_NOT_FOUND));
+
+        Page<ReviewInfo> reviewInfoPage = reviewRepository.getReviewInfoPage(fragranceId, pageable);
+
+        return GetFragranceReview.from(fragrance, reviewInfoPage);
     }
 
 

@@ -9,6 +9,7 @@ import server.acode.domain.fragrance.service.FragranceService;
 import server.acode.domain.user.entity.User;
 import server.acode.domain.user.repository.UserRepository;
 import server.acode.global.common.ErrorCode;
+import server.acode.global.common.PageRequest;
 import server.acode.global.exception.CustomException;
 
 @RestController
@@ -55,8 +56,8 @@ public class FragranceController {
 
     // TODO 리뷰 더보기
     @GetMapping("/{fragranceId}/review")
-    public GetFragranceReview getFragranceReview(@PathVariable("fragranceId") Long fragranceId) {
-        return fragranceService.getFragranceReview(fragranceId);
+    public GetFragranceReview getFragranceReview(@PathVariable("fragranceId") Long fragranceId, PageRequest pageRequest) {
+        return fragranceService.getFragranceReview(fragranceId, pageRequest);
     }
 
 
