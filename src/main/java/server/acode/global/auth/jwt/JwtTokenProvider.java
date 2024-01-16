@@ -29,7 +29,8 @@ public class JwtTokenProvider implements InitializingBean {
 
     @Value("${token.secret}")
     private String secret;
-    private static final long ACCESS_TOKEN_EXPIRATION_TIME = 1000L * 60 * 60; // 1시간
+    //TODO 토큰 시간 임의로 늘린 것 줄이기
+    private static final long ACCESS_TOKEN_EXPIRATION_TIME = 1000L * 60 * 60 * 24; // 24시간
     private static final long REFRESH_TOKEN_EXPIRATION_TIME = 1000L * 60 * 60 * 24 * 14; // 2주
 
     @Override
