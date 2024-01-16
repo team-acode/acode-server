@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import server.acode.domain.user.entity.User;
 import server.acode.domain.user.repository.UserRepository;
+import server.acode.global.auth.dto.response.JwtTokenResponse;
 import server.acode.global.auth.jwt.JwtTokenProvider;
 import server.acode.global.common.ErrorCode;
 import server.acode.global.exception.CustomException;
@@ -72,5 +73,23 @@ public class AuthService {
 
         return new ResponseEntity(HttpStatus.OK, responseEntity.getStatusCode());
 
+    }
+
+    public JwtTokenResponse reissueAccessToken(String refreshToken, String authKey) {
+        // 유효성 확인
+        if(!jwtTokenProvider.validateToken(refreshToken)){
+            throw new CustomException(ErrorCode.INVALID_TOKEN);
+        }
+
+        // authKey와 일치여부 확인
+        String findAuthKey = redisDao.getValues(refreshToken);
+        if(!findAuthKey.equals(authKey)){
+            throw new CustomException(ErrorCode.INVALID_TOKEN);
+        }
+
+        return JwtTokenResponse.builder()
+                .accessToken(jwtTokenProvider.createAccessToken(authKey, "USER_ROLE"))
+                .refreshToken(jwtTokenProvider.createRefreshToken(authKey, "USER_ROLE"))
+                .build();
     }
 }

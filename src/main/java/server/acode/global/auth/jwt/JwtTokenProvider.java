@@ -52,6 +52,20 @@ public class JwtTokenProvider implements InitializingBean {
                 .compact();
     }
 
+    public String createRefreshToken(String authKey, String role) {
+        //TODO redis에 저장
+        Claims claims = Jwts.claims().setSubject(authKey); // JWT payload 에 저장되는 정보단위
+        claims.put("role", role); // 정보는 key/value 쌍으로 저장
+        Date now = new Date();
+        return Jwts.builder()
+                .setClaims(claims) // 정보 저장
+                .setIssuer("Acode")
+                .setIssuedAt(now) // 토큰 발행 시간 정보
+                .setExpiration(new Date(now.getTime() + REFRESH_TOKEN_EXPIRATION_TIME)) // set Expire Time
+                .signWith(SignatureAlgorithm.HS256, this.key) // 비밀키로 서명
+                .compact();
+    }
+
     public Authentication getAuthentication(String token) {
         UserDetails userDetails = customUserDetailsService.loadUserByUsername(getUserAuthKey(token));
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());

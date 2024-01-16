@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import server.acode.domain.user.entity.User;
 import server.acode.domain.user.repository.UserRepository;
+import server.acode.global.auth.dto.response.JwtTokenResponse;
 import server.acode.global.auth.security.CustomUserDetails;
 import server.acode.global.common.ErrorCode;
 import server.acode.global.exception.CustomException;
@@ -37,6 +38,7 @@ public class AuthController {
     @Operation(summary = "로그아웃")
     @PostMapping("/logout")
     public void logout(HttpServletRequest request, @AuthenticationPrincipal CustomUserDetails user){
+
         authService.logout(request.getHeader("Authorization"), user.getUsername());
     }
 
@@ -44,6 +46,13 @@ public class AuthController {
     @DeleteMapping("/withdrawal")
     public ResponseEntity withdrawal(HttpServletRequest request, @AuthenticationPrincipal CustomUserDetails user){
         return authService.withdrawal(request.getHeader("Authorization"), user.getUsername());
+    }
+
+    @Operation(summary = "access token 재발급")
+    @PostMapping("/reissue")
+    public JwtTokenResponse reissue(@AuthenticationPrincipal CustomUserDetails user, String refreshToken){
+        // TODO 쿼리 파라미터말고 request body로 받기
+        return authService.reissueAccessToken(refreshToken, user.getUsername());
     }
 
 
