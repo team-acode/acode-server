@@ -19,7 +19,8 @@ public class HomeFragrance {
         this.fragranceId = fragranceId;
         this.fragranceName = fragranceName;
         this.brandName = brandName;
-        this.style = Arrays.asList(style.split(", "));
+        this.style = Arrays.asList(style.split(", "))
+                .subList(0, Math.min(style.split(", ").length, 3));
         this.poster = poster;
     }
 }
