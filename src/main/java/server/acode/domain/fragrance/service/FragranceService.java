@@ -1,6 +1,5 @@
 package server.acode.domain.fragrance.service;
 
-import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,7 +19,6 @@ import server.acode.domain.ingredient.entity.Ingredient;
 import server.acode.domain.ingredient.repository.BaseNoteRepository;
 import server.acode.domain.ingredient.repository.MiddleNoteRepository;
 import server.acode.domain.ingredient.repository.TopNoteRepository;
-import server.acode.domain.review.entity.ReviewSeason;
 import server.acode.domain.review.repository.*;
 import server.acode.domain.user.entity.Scrap;
 import server.acode.domain.user.entity.User;
@@ -67,9 +65,11 @@ public class FragranceService {
         Fragrance fragrance = fragranceRepository.findById(fragranceId)
                 .orElseThrow(() -> new CustomException(ErrorCode.FRAGRANCE_NOT_FOUND));
 
-        User user = userRepository.findByAuthKey(userDetails.getUsername())
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-        isScraped = scrapRepository.findByUserAndFragrance(user, fragrance).isPresent();
+        if (userDetails != null) {
+            User user = userRepository.findByAuthKey(userDetails.getUsername())
+                    .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+            isScraped = scrapRepository.findByUserAndFragrance(user, fragrance).isPresent();
+        }
 
         List<Family> findFamilyList = fragranceFamilyRepository.findByFragrance(fragrance);
         List<FamilyInfo> familyList = findFamilyList.stream().map(FamilyInfo::new).toList();
