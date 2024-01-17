@@ -28,7 +28,8 @@ public class FragranceController {
     }
 
 
-    @Operation(summary = "노트 정보")
+    @Operation(summary = "노트 정보",
+            description = "\"single\" 필드 `true`이면 싱글노트입니다. \"topNote\"만 확인하면 됩니다. ")
     @GetMapping("/note")
     public GetFragranceNote getFragranceNote(@PathVariable("fragranceId") Long fragranceId) {
         return fragranceService.getFragranceNote(fragranceId);
