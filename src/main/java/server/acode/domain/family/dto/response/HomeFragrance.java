@@ -3,12 +3,15 @@ package server.acode.domain.family.dto.response;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Data;
 
+import java.util.Arrays;
+import java.util.List;
+
 @Data
 public class HomeFragrance {
     private Long fragranceId;
     private String fragranceName;
     private String brandName;
-    private String style;
+    private List<String> style;
     private String poster;
 
     @QueryProjection
@@ -16,7 +19,7 @@ public class HomeFragrance {
         this.fragranceId = fragranceId;
         this.fragranceName = fragranceName;
         this.brandName = brandName;
-        this.style = style;
+        this.style = Arrays.asList(style.split(", "));
         this.poster = poster;
     }
 }
