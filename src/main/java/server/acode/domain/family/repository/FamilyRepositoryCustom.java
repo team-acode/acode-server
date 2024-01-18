@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import server.acode.domain.family.dto.request.FragranceFilterCond;
 import server.acode.domain.family.dto.response.DisplayFragrance;
 import server.acode.domain.family.dto.response.HomeFragrance;
+import server.acode.domain.fragrance.dto.response.ExtractFamily;
 
 import java.util.List;
 
@@ -14,4 +15,6 @@ public interface FamilyRepositoryCustom {
     List<HomeFragrance> search(String familyCond);
     Page<DisplayFragrance> searchByFilter(FragranceFilterCond cond, String additionalFamily, Pageable pageable);
     Page<DisplayFragrance> searchByIngredient(String ingredientName, Pageable pageable);
+
+    List<ExtractFamily> extractFamilies(List<Long> fragranceIdList);
 }

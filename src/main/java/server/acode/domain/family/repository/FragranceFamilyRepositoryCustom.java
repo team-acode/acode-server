@@ -2,6 +2,7 @@ package server.acode.domain.family.repository;
 
 import org.springframework.stereotype.Repository;
 import server.acode.domain.family.dto.SimilarFragranceOrCond;
+import server.acode.domain.fragrance.dto.response.ExtractFragrance;
 import server.acode.domain.fragrance.dto.response.FamilyCountDto;
 import server.acode.domain.fragrance.dto.response.FragranceInfo;
 
@@ -20,4 +21,6 @@ public interface FragranceFamilyRepositoryCustom {
     List<Long> extractByMainFamily(String mainFamilyCond, List<Long> fragranceIdList);
 
     List<FamilyCountDto> countFamily(List<Long> fragranceIdList);
+
+    List<ExtractFragrance> extractFragrance(List<Long> familyIdList);
 }

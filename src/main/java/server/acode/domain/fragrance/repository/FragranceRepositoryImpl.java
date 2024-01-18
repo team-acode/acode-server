@@ -4,6 +4,8 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Repository;
+import server.acode.domain.fragrance.dto.response.ExtractFamily;
+import server.acode.domain.fragrance.dto.response.QExtractFamily;
 import server.acode.domain.fragrance.entity.Concentration;
 
 import java.util.List;
@@ -45,6 +47,8 @@ public class FragranceRepositoryImpl implements FragranceRepositoryCustom {
                 )
                 .fetch();
     }
+
+
 
 
     private BooleanExpression scentContainsIgnoreCase(String scent) {
