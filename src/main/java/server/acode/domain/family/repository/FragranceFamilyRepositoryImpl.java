@@ -1,16 +1,14 @@
 package server.acode.domain.family.repository;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Repository;
 import server.acode.domain.family.dto.SimilarFragranceOrCond;
 import server.acode.domain.family.entity.QFragranceFamily;
-import server.acode.domain.fragrance.dto.response.FamilyCountDto;
-import server.acode.domain.fragrance.dto.response.FragranceInfo;
-import server.acode.domain.fragrance.dto.response.QFamilyCountDto;
-import server.acode.domain.fragrance.dto.response.QFragranceInfo;
+import server.acode.domain.fragrance.dto.response.*;
 import server.acode.domain.fragrance.entity.QFragrance;
 
 import java.util.List;
@@ -141,4 +139,22 @@ public class FragranceFamilyRepositoryImpl implements FragranceFamilyRepositoryC
                 .orderBy(fragranceFamily.family.count().desc())
                 .fetch();
     }
+
+    @Override
+    public List<ExtractFragrance> extractFragrance(List<Long> familyIdList) {
+        return queryFactory
+                .selectDistinct(new QExtractFragrance(
+                        fragrance.id,
+                        fragrance.name,
+                        fragrance.brand.korName,
+                        fragranceFamily.family.korName,
+                        fragrance.thumbnail
+                        )
+                )
+                .from(fragranceFamily)
+                .where(fragranceFamily.family.id.in(familyIdList))
+                .fetch();
+    }
+
+
 }
