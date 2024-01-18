@@ -16,6 +16,8 @@ import server.acode.domain.family.dto.response.QDisplayFragrance;
 import server.acode.domain.family.dto.response.QHomeFragrance;
 import server.acode.domain.family.entity.QFamily;
 import server.acode.domain.family.entity.QFragranceFamily;
+import server.acode.domain.fragrance.dto.response.ExtractFamily;
+import server.acode.domain.fragrance.dto.response.QExtractFamily;
 import server.acode.domain.fragrance.entity.QFragrance;
 
 
@@ -124,6 +126,20 @@ public class FamilyRepositoryImpl implements FamilyRepositoryCustom{
         long total = results.getTotal();
 
         return new PageImpl<>(content, pageable, total);
+    }
+
+    @Override
+    public List<ExtractFamily> extractFamilies(List<Long> fragranceIdList){
+        return queryFactory.select(new QExtractFamily(
+                family.korName,
+                family.engName,
+                family.summary,
+                family.icon,
+                family.keyword
+        ))
+                .from(family)
+                .where(family.id.in(fragranceIdList))
+                .fetch();
     }
 
     private BooleanExpression brandNameEq(String brandName) {
