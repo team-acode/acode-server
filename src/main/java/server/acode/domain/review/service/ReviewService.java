@@ -166,7 +166,7 @@ public class ReviewService {
     }
 
     public ResponseEntity<?> insertStatistics() {
-        for (int i = 1; i < 52; i++) {
+        for (int i = 1; i < 51; i++) {
             Long fragranceId = (long) i;
             reviewSeasonRepository.insertStatistics(fragranceId);
             reviewLongevityRepository.insertStatistics(fragranceId);

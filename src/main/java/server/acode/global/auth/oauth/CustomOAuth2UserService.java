@@ -42,7 +42,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         User user;
         if(!userRepository.existsByAuthKey(authKey)) {
             // 회원가입
-            user = createUser(authKey, nickname); // 카카오 닉네임으로 닉네임 초기 설정
+            user = createUser(authKey, "init"); // 닉네임으로 회원 가입 구분
 
         } else {
             System.out.println(oAuth2User.getName());

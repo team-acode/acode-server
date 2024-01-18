@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import server.acode.domain.fragrance.entity.Fragrance;
 
 @Repository
-public interface FragranceRepository extends JpaRepository<Fragrance, Long> {
+public interface FragranceRepository extends JpaRepository<Fragrance, Long>, FragranceRepositoryCustom {
     @Modifying
     @Query("UPDATE Fragrance f SET f.view = f.view + 1 WHERE f.id = :fragranceId")
     void updateFragranceView(@Param("fragranceId") Long fragranceId);

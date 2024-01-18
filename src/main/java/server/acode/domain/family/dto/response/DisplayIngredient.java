@@ -5,12 +5,15 @@ import server.acode.domain.family.entity.Family;
 import server.acode.domain.ingredient.entity.Ingredient;
 import server.acode.domain.ingredient.entity.IngredientType;
 
+import java.util.Arrays;
+import java.util.List;
+
 @Getter
 public class DisplayIngredient {
     private String korName;
     private String engName;
     private String acode;
-    private String keyword;
+    private List<String> keyword;
     private String summary;
     private String background;
     private String ingredientType;
@@ -21,7 +24,7 @@ public class DisplayIngredient {
         this.korName = korName;
         this.engName = engName;
         this.acode = acode;
-        this.keyword = keyword;
+        this.keyword = Arrays.asList(keyword.split(", "));
         this.summary = summary;
         this.background = background;
         this.ingredientType = ingredientType;

@@ -7,7 +7,9 @@ import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Repository;
 import server.acode.domain.family.dto.SimilarFragranceOrCond;
 import server.acode.domain.family.entity.QFragranceFamily;
+import server.acode.domain.fragrance.dto.response.FamilyCountDto;
 import server.acode.domain.fragrance.dto.response.FragranceInfo;
+import server.acode.domain.fragrance.dto.response.QFamilyCountDto;
 import server.acode.domain.fragrance.dto.response.QFragranceInfo;
 import server.acode.domain.fragrance.entity.QFragrance;
 
@@ -110,6 +112,33 @@ public class FragranceFamilyRepositoryImpl implements FragranceFamilyRepositoryC
                 )
                 .limit(5)
                 .orderBy(fragrance.view.desc())
+                .fetch();
+    }
+
+
+    @Override
+    public List<Long> extractByMainFamily(String mainFamilyCond, List<Long> fragranceIdList) {
+        return queryFactory
+                .select(fragranceFamily.fragrance.id) //.distinct()
+                .from(fragranceFamily)
+                .where(
+                        fragranceFamily.family.mainFamily.name.eq(mainFamilyCond),
+                        fragrance.id.in(fragranceIdList))
+                .fetch();
+    }
+
+
+    @Override
+    public List<FamilyCountDto> countFamily(List<Long> fragranceIdList) {
+        return queryFactory
+                .select(new QFamilyCountDto(
+                        fragranceFamily.family.id,
+                        fragranceFamily.family.count().intValue()
+                ))
+                .from(fragranceFamily)
+                .where(fragranceFamily.fragrance.id.in(fragranceIdList))
+                .groupBy(fragranceFamily.family)
+                .orderBy(fragranceFamily.family.count().desc())
                 .fetch();
     }
 }
