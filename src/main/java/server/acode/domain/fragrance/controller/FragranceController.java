@@ -1,5 +1,7 @@
 package server.acode.domain.fragrance.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -10,13 +12,15 @@ import server.acode.global.auth.security.CustomUserDetails;
 import server.acode.global.common.PageRequest;
 
 @RestController
-@RequestMapping("/api/v1/fragrance")
+@RequestMapping("/api/v1/fragrance/{fragranceId}")
 @RequiredArgsConstructor
+@Tag(name = "Fragrance", description = "향수 상세 API")
 public class FragranceController {
     private final FragranceService fragranceService;
 
 
-    @GetMapping("/{fragranceId}")
+    @Operation(summary = "기본 정보")
+    @GetMapping
     public GetFragranceResponse getFragranceDetail(
             @PathVariable("fragranceId") Long fragranceId,
             @AuthenticationPrincipal CustomUserDetails userDetails) {
@@ -24,13 +28,16 @@ public class FragranceController {
     }
 
 
-    @GetMapping("/{fragranceId}/note")
+    @Operation(summary = "노트 정보",
+            description = "\"single\" 필드 `true`이면 싱글노트입니다. \"topNote\"만 확인하면 됩니다. ")
+    @GetMapping("/note")
     public GetFragranceNote getFragranceNote(@PathVariable("fragranceId") Long fragranceId) {
         return fragranceService.getFragranceNote(fragranceId);
     }
 
 
-    @GetMapping("/{fragranceId}/review/preview")
+    @Operation(summary = "리뷰 미리보기")
+    @GetMapping("/review/preview")
     public GetFragranceReviewPreview getFragranceReviewPreview(@PathVariable("fragranceId") Long fragranceId) {
         return fragranceService.getFragranceReviewPreview(fragranceId);
     }
@@ -43,25 +50,30 @@ public class FragranceController {
 //    }
 
 
-    @GetMapping("/{fragranceId}/similar")
+    @Operation(summary = "유사 향수")
+    @GetMapping("/similar")
     public GetFragranceSimilar getFragranceSimilar(@PathVariable("fragranceId") Long fragranceId) {
         return fragranceService.getFragranceSimilar(fragranceId);
     }
 
 
-    @GetMapping("/{fragranceId}/purchase")
+    @Operation(summary = "구매 링크")
+    @GetMapping("/purchase")
     public GetFragrancePurchase getFragrancePurchase(@PathVariable("fragranceId") Long fragranceId) {
         return fragranceService.getFragrancePurchase(fragranceId);
     }
 
 
-    @GetMapping("/{fragranceId}/review")
+    @Operation(summary = "리뷰 더보기",
+            description = "페이지 적용 해두었습니다")
+    @GetMapping("/review")
     public GetFragranceReview getFragranceReview(@PathVariable("fragranceId") Long fragranceId, PageRequest pageRequest) {
         return fragranceService.getFragranceReview(fragranceId, pageRequest);
     }
 
 
-    @PostMapping("/{fragranceId}/scrap")
+    @Operation(summary = "스크랩 또는 스크랩 취소")
+    @PostMapping("/scrap")
     public ResponseEntity<?> scrap(
             @PathVariable("fragranceId") Long fragranceId,
             @AuthenticationPrincipal CustomUserDetails userDetails) {
