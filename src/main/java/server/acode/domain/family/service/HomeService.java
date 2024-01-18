@@ -26,18 +26,6 @@ public class HomeService {
         if(!familyRepository.existsByKorName(familyName)) throw new CustomException(ErrorCode.FAMILY_NOT_FOUND);
 
         List<HomeFragrance> result = familyRepository.search(familyName); // 계열과 일치하는 향수 가져오기
-
-        result.forEach(fragrance -> {
-            String[] styles = fragrance.getStyle().split(", ");
-            List<String> limitedStyles = Arrays.stream(styles)
-                    .map(s -> "#" + s)
-                    .limit(3) // 최대 세 개의 스타일만 유지
-                    .collect(Collectors.toList());
-
-            String modifiedStyle = String.join(", ", limitedStyles);
-            fragrance.setStyle(modifiedStyle);
-        });
-
         return result;
     }
 
