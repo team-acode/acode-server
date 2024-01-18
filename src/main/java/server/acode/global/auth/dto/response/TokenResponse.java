@@ -6,12 +6,12 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class JwtTokenResponse {
+public class TokenResponse {
     private String accessToken;
     private String refreshToken;
 
     @Builder
-    public JwtTokenResponse(String accessToken, String refreshToken){
+    public TokenResponse(String accessToken, String refreshToken){
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
     }

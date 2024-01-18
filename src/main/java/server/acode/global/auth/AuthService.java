@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import server.acode.domain.user.entity.User;
 import server.acode.domain.user.repository.UserRepository;
-import server.acode.global.auth.dto.response.JwtTokenResponse;
+import server.acode.global.auth.dto.response.TokenResponse;
 import server.acode.global.auth.jwt.JwtTokenProvider;
 import server.acode.global.common.ErrorCode;
 import server.acode.global.exception.CustomException;
@@ -67,15 +67,11 @@ public class AuthService {
                 String.class
         );
 
-        // 응답 출력
-        System.out.println("Response Code: " + responseEntity.getStatusCode());
-        System.out.println("Response Body: " + responseEntity.getBody());
-
         return new ResponseEntity(HttpStatus.OK, responseEntity.getStatusCode());
 
     }
 
-    public JwtTokenResponse reissueAccessToken(String refreshToken, String authKey) {
+    public TokenResponse reissueAccessToken(String refreshToken, String authKey) {
         // 유효성 확인
         if(!jwtTokenProvider.validateToken(refreshToken)){
             throw new CustomException(ErrorCode.INVALID_TOKEN);
@@ -87,7 +83,7 @@ public class AuthService {
             throw new CustomException(ErrorCode.INVALID_TOKEN);
         }
 
-        return JwtTokenResponse.builder()
+        return TokenResponse.builder()
                 .accessToken(jwtTokenProvider.createAccessToken(authKey, "USER_ROLE"))
                 .refreshToken(jwtTokenProvider.createRefreshToken(authKey, "USER_ROLE"))
                 .build();

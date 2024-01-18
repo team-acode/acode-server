@@ -3,7 +3,9 @@ package server.acode.global.auth;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -11,7 +13,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import server.acode.domain.user.entity.User;
 import server.acode.domain.user.repository.UserRepository;
-import server.acode.global.auth.dto.response.JwtTokenResponse;
+import server.acode.global.auth.dto.request.AccessTokenRequest;
+import server.acode.global.auth.dto.response.TokenResponse;
 import server.acode.global.auth.security.CustomUserDetails;
 import server.acode.global.common.ErrorCode;
 import server.acode.global.exception.CustomException;
@@ -50,11 +53,9 @@ public class AuthController {
 
     @Operation(summary = "access token 재발급")
     @PostMapping("/reissue")
-    public JwtTokenResponse reissue(@AuthenticationPrincipal CustomUserDetails user, String refreshToken){
-        // TODO 쿼리 파라미터말고 request body로 받기
-        return authService.reissueAccessToken(refreshToken, user.getUsername());
+    public TokenResponse reissue(@AuthenticationPrincipal CustomUserDetails user, @RequestBody @Valid AccessTokenRequest request){
+        return authService.reissueAccessToken(request.getRefreshToken(), user.getUsername());
     }
-
 
 
 }
