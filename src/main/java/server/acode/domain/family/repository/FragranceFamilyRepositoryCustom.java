@@ -1,7 +1,10 @@
 package server.acode.domain.family.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import server.acode.domain.family.dto.SimilarFragranceOrCond;
+import server.acode.domain.fragrance.dto.request.SearchCond;
 import server.acode.domain.fragrance.dto.response.ExtractFragrance;
 import server.acode.domain.fragrance.dto.response.FamilyCountDto;
 import server.acode.domain.fragrance.dto.response.FragranceInfo;
@@ -23,4 +26,6 @@ public interface FragranceFamilyRepositoryCustom {
     List<FamilyCountDto> countFamily(List<Long> fragranceIdList);
 
     List<ExtractFragrance> extractFragrance(List<Long> familyIdList);
+
+    Page<FragranceInfo> searchFragrance(SearchCond cond, String additionalFamily, Pageable pageable);
 }

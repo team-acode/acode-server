@@ -1,14 +1,22 @@
 package server.acode.domain.fragrance.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import server.acode.domain.family.dto.response.PageableResponse;
+import server.acode.domain.family.repository.FragranceFamilyRepository;
 import server.acode.domain.fragrance.dto.request.SearchCond;
+import server.acode.domain.fragrance.dto.response.BrandInfo;
 import server.acode.domain.fragrance.dto.response.FragranceInfo;
 import server.acode.domain.fragrance.dto.response.SearchBrandResponse;
+import server.acode.domain.fragrance.repository.BrandRepository;
+import server.acode.global.common.ErrorCode;
 import server.acode.global.common.PageRequest;
+import server.acode.global.exception.CustomException;
+
+import java.util.List;
 
 import static org.springframework.util.StringUtils.hasText;
 
@@ -16,16 +24,25 @@ import static org.springframework.util.StringUtils.hasText;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class SearchService {
+    private final BrandRepository brandRepository;
+    private final FragranceFamilyRepository fragranceFamilyRepository;
 
     public SearchBrandResponse searchBrand(String search) {
+        if (search.isBlank()) { // null 또는 "" 또는 공백문자열
+            throw new CustomException(ErrorCode.SEARCH_NOT_FOUND);
+        }
 
+        List<BrandInfo> brandList = brandRepository.searchBrand(search);
 
-
-        return null;
+        return new SearchBrandResponse(brandList);
     }
 
 
     public PageableResponse<FragranceInfo> searchFragrance(SearchCond cond, PageRequest pageRequest) {
+        if (cond.getSearch().isBlank()) { // null 또는 "" 또는 공백문자열
+            throw new CustomException(ErrorCode.SEARCH_NOT_FOUND);
+        }
+
         Pageable pageable = pageRequest.of();
         String additionalFamily = null;
 
@@ -36,8 +53,8 @@ public class SearchService {
             additionalFamily = parts.length > 1 ? parts[1] : null;
         }
 
+        Page<FragranceInfo> fragranceList = fragranceFamilyRepository.searchFragrance(cond, additionalFamily, pageable);
 
-
-        return null;
+        return new PageableResponse<>(fragranceList);
     }
 }
