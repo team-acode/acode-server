@@ -28,7 +28,7 @@ public class ReviewController {
     }
 
     @Operation(summary = "리뷰 등록",
-            description = "rate 별점: 0 이상 5 이하 정수로 할까욥 \n\n" +
+            description = "rate 별점: 1 이상 5 이하 정수로 할까욥 \n\n" +
                     "comment 한 줄 리뷰\n\n" +
                     "season 계절감: `SPRING`, `SUMMER`, `AUTUMN`, `WINTER`, `ALL` \n\n" +
                     "longevity 지속성: `ONEHOUR`, `FOURHOURS`, `HALFDAY`, `FULLDAY` \n\n" +
