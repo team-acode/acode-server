@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import server.acode.domain.family.dto.response.PageableResponse;
 import server.acode.domain.fragrance.dto.request.SearchCond;
+import server.acode.domain.fragrance.dto.response.BrandInfo;
 import server.acode.domain.fragrance.dto.response.FragranceInfo;
 import server.acode.domain.fragrance.dto.response.SearchBrandResponse;
 import server.acode.domain.fragrance.service.SearchService;
@@ -23,10 +24,11 @@ public class SearchController {
 
     @Operation(summary = "브랜드 검색",
             description = "search 검색어: 필수\n\n" +
-                    "검색어 없는 경우 `400 SEARCH_NOT_FOUND`")
+                    "검색어 없는 경우 `400 SEARCH_NOT_FOUND`\n\n" +
+                    "페이지는 파라미터 없을 시 기본 page = 1, size = 10입니다")
     @GetMapping("/brand")
-    public SearchBrandResponse searchBrand(@RequestParam("search") String search) {
-        return searchService.searchBrand(search);
+    public PageableResponse<BrandInfo> searchBrand(@RequestParam("search") String search, PageRequest pageRequest) {
+        return searchService.searchBrand(search, pageRequest);
     }
 
     @Operation(summary = "향수 검색",
@@ -34,7 +36,7 @@ public class SearchController {
                     "search 검색어: 필수\n\n" +
                     "  검색어 없는 경우 `400 SEARCH_NOT_FOUND`\n\n" +
                     "family 계열: 한글로 넣어주세요 ex. `플로럴`\n\n" +
-                    "  계열 두 개 검색 시에는 두 계열 사이 공백 한 칸 (url 상으로는 %20) 넣어주세요 ex. `플로럴 프루티` \n\n" +
+                    " * 계열 두 개 검색 시에는 두 계열 사이 공백 한 칸 (url 상으로는 %20) 넣어주세요 ex. `플로럴 프루티` \n\n" +
                     "페이지는 파라미터 없을 시 기본 page = 1, size = 10입니다")
     @GetMapping("/fragrance")
     public PageableResponse<FragranceInfo> searchFragrance(SearchCond cond, PageRequest pageRequest) {

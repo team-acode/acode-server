@@ -27,14 +27,16 @@ public class SearchService {
     private final BrandRepository brandRepository;
     private final FragranceFamilyRepository fragranceFamilyRepository;
 
-    public SearchBrandResponse searchBrand(String search) {
+    public PageableResponse<BrandInfo> searchBrand(String search, PageRequest pageRequest) {
         if (search.isBlank()) { // null 또는 "" 또는 공백문자열
             throw new CustomException(ErrorCode.SEARCH_NOT_FOUND);
         }
 
-        List<BrandInfo> brandList = brandRepository.searchBrand(search);
+        Pageable pageable = pageRequest.of();
 
-        return new SearchBrandResponse(brandList);
+        Page<BrandInfo> brandList = brandRepository.searchBrand(search, pageable);
+
+        return new PageableResponse<>(brandList);
     }
 
 
