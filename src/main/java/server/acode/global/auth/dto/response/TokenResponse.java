@@ -9,12 +9,10 @@ import lombok.NoArgsConstructor;
 public class TokenResponse {
     private String accessToken;
     private String refreshToken;
-    private Boolean init;
 
     @Builder
-    public TokenResponse(String accessToken, String refreshToken, Boolean init){
+    public TokenResponse(String accessToken, String refreshToken){
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
-        this.init = init;
     }
 }

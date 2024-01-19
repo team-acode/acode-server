@@ -52,8 +52,9 @@ public class AuthController {
 
     @Operation(summary = "회원 탈퇴")
     @DeleteMapping("/withdrawal")
-    public ResponseEntity withdrawal(HttpServletRequest request, @AuthenticationPrincipal CustomUserDetails user){
-        return authService.withdrawal(request.getHeader("Authorization"), user.getUsername());
+    public ResponseEntity withdrawal(HttpServletRequest request){
+        String userId = SecurityUtils.getCurrentUserAuthKey();
+        return authService.withdrawal(request.getHeader("Authorization"), userId);
     }
 
     @Operation(summary = "access token 재발급")

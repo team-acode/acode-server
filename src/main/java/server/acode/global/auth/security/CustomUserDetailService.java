@@ -25,6 +25,7 @@ public class CustomUserDetailService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String authKey) throws UsernameNotFoundException {
+        // 여기서 찾은 user의 id로 authentication 생성
         User user = userRepository.findByAuthKeyAndIsDel(authKey, false)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 

@@ -12,18 +12,18 @@ import java.util.Map;
 @Getter
 public class CustomUserDetails implements UserDetails, OAuth2User {
 
-    private final User user;
+    private final Long userId;
     private final Collection<GrantedAuthority> authorities;
     private Map<String, Object> attributes;
 
     public CustomUserDetails(User user, Collection<GrantedAuthority> authorities) {
-        this.user = user;
+        this.userId = user.getId();
         this.authorities = authorities;
     }
 
     @Override
     public String getName() {
-        return String.valueOf(attributes.get("id"));
+        return userId.toString();
     }
 
     @Override
@@ -33,12 +33,12 @@ public class CustomUserDetails implements UserDetails, OAuth2User {
 
     @Override
     public String getUsername() {
-        return user.getAuthKey();
+        return userId.toString();
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        return !user.isDel();
+        return true;
     }
 
     @Override

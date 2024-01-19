@@ -36,8 +36,18 @@ public class AuthService {
     @Value("${KAKAO_CLIENT_SECRET}")
     private String kakaoClientSecret;
 
-    public void checkUser(String authKey){
-        userRepository.findByAuthKeyAndIsDel(authKey, false);
+    public void checkUser(String userId){
+        /**
+         * 사용자 정보 이용하는 부분 모두
+         * String userId = SecurityUtils.getCurrentUserAuthKey();
+         * User user = useruserRepository.findById(Long.parseLong(userId))
+         *       .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+         * 로 수정해야함
+         */
+        User user = userRepository.findById(Long.parseLong(userId))
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        System.out.println("user = " + user.getNickname());
     }
 
     public ResponseEntity signin(String code) throws JsonProcessingException {
@@ -51,21 +61,18 @@ public class AuthService {
         String authKey = jsonNode.get("id").toString();
         String nickname = jsonNode.get("properties").get("nickname").asText();
 
-        boolean init = false;
+        HttpStatus init = HttpStatus.OK;
         if(!userRepository.existsByAuthKeyAndIsDel(authKey, false)) {
-            // 회원가입
-            createUser(authKey, nickname);
-            init = true;
+            createUser(authKey, nickname);  // 회원가입
+            init = HttpStatus.CREATED;
         }
 
         TokenResponse token = TokenResponse.builder()
                 .accessToken(jwtTokenProvider.createAccessToken(authKey, "USER_ROLE"))
                 .refreshToken(jwtTokenProvider.createRefreshToken(authKey, "USER_ROLE"))
-                .init(init)
                 .build();
 
-        if(init){ return new ResponseEntity<>(token, HttpStatus.CREATED); }
-        return new ResponseEntity<>(token, HttpStatus.OK);
+        return new ResponseEntity<>(token, init);
     }
 
     // TODO Redirect url 숨기기
@@ -137,11 +144,11 @@ public class AuthService {
         redisDao.setValues(token.substring(7), "logout", jwtTokenProvider.getExpiration(token.substring(7)));
     }
 
-    public ResponseEntity withdrawal(String token, String authKey) {
+    public ResponseEntity withdrawal(String token, String userId) {
         logout(token); // 토큰 만료 처리
 
         // 내부 회원 탈퇴 처리
-        User currentUser = userRepository.findByAuthKeyAndIsDel(authKey, false)
+        User currentUser = userRepository.findById(Long.parseLong(userId))
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
 
@@ -156,7 +163,7 @@ public class AuthService {
         headers.set("Authorization", "KakaoAK " + adminKey);
 
         // 바디 설정
-        String requestBody = "target_id_type=user_id&target_id=" + authKey;
+        String requestBody = "target_id_type=user_id&target_id=" + currentUser.getAuthKey();
 
         // HTTP 요청 엔터티 생성
         HttpEntity<String> requestEntity = new HttpEntity<>(requestBody, headers);
