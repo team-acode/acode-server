@@ -29,8 +29,6 @@ public class AuthService {
     private final RedisDao redisDao;
     private final JwtTokenProvider jwtTokenProvider;
     private final UserRepository userRepository;
-    private final SecurityUtils securityUtils;
-    private final EntityManager em;
 
     @Value("${kakaoAdminKey}")
     private String adminKey;
@@ -38,13 +36,8 @@ public class AuthService {
     @Value("${KAKAO_CLIENT_SECRET}")
     private String kakaoClientSecret;
 
-    public void checkUser(){
-        User currentUser = securityUtils.getCurrentUser();
-        if (em.contains(currentUser)) {
-            System.out.println("유저는 영속성 컨텍스트에 있음");
-        } else {
-            System.out.println("유저는 영속성 컨텍스트에 없음 ");
-        }
+    public void checkUser(String authKey){
+        userRepository.findByAuthKeyAndIsDel(authKey, false);
     }
 
     public ResponseEntity signin(String code) throws JsonProcessingException {
@@ -148,7 +141,9 @@ public class AuthService {
         logout(token); // 토큰 만료 처리
 
         // 내부 회원 탈퇴 처리
-        User currentUser = securityUtils.getCurrentUser();
+        User currentUser = userRepository.findByAuthKeyAndIsDel(authKey, false)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
 
         // soft-delete
         currentUser.updateIsDel(true);

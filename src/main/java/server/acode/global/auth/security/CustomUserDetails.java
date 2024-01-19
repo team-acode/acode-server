@@ -21,12 +21,6 @@ public class CustomUserDetails implements UserDetails, OAuth2User {
         this.authorities = authorities;
     }
 
-    public CustomUserDetails(User user, Map<String, Object> attributes, Collection<GrantedAuthority> authorities) {
-        this.user = user;
-        this.attributes = attributes;
-        this.authorities = authorities;
-    }
-
     @Override
     public String getName() {
         return String.valueOf(attributes.get("id"));

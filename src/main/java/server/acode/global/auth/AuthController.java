@@ -38,10 +38,10 @@ public class AuthController {
     }
 
 
-    @GetMapping("/test/user")
+    @GetMapping("/test/user/securityUtil")
     @Operation(summary = "유저 확인 테스트용", description = "개발자용입니다 토큰 넣고 호출 시 사용자 이름이 리턴됩니다")
     public void test(){
-        authService.checkUser();
+        authService.checkUser(SecurityUtils.getCurrentUserAuthKey());
     }
 
     @Operation(summary = "로그아웃")
