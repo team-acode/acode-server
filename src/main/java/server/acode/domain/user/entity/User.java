@@ -22,7 +22,7 @@ public class User extends BaseTimeEntity {
     @Column(columnDefinition = "varchar(50) default 'ROLE_USER'")
     private Role role;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String authKey;
 
     @Column(length = 30, nullable = false)

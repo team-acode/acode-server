@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import server.acode.domain.user.entity.User;
 import server.acode.domain.user.repository.UserRepository;
+import server.acode.global.common.ErrorCode;
+import server.acode.global.exception.CustomException;
 
 import java.util.Collections;
 
@@ -21,9 +23,9 @@ public class CustomUserDetailService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String authKey) throws UsernameNotFoundException {
-        User user = userRepository.findByAuthKey(authKey)
-                .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+        User user = userRepository.findByAuthKeyAndIsDel(authKey, false)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        return new CustomUserDetails(user, Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")));
+        return new CustomUserDetails(user, Collections.singleton(new SimpleGrantedAuthority("USER")));
     }
 }

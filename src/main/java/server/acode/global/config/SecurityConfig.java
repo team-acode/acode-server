@@ -22,27 +22,25 @@ import org.springframework.security.config.annotation.web.configurers.HttpBasicC
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final CustomOAuth2UserService oAuth2UserService;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final OAuthSuccessHandler oauthSuccessHandler;
+
+    /**
+     * 스크랩, 닉네임 등 유저가 필요한 부분 앞에 user 붙여주면 일괄적으로 처리 가능함
+     */
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/**").permitAll()
+                        .requestMatchers("/api/v1/mypage/**").authenticated()
+                        .requestMatchers("/api/v1/nickname").authenticated()
+                        .requestMatchers("/api/v1/review/**").authenticated()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .anyRequest().permitAll())
-                .oauth2Login(oauth2Configurer -> oauth2Configurer
-                        .successHandler(oauthSuccessHandler)
-                        .userInfoEndpoint()
-                        .userService(oAuth2UserService))
-
-                .cors(cors -> cors.disable()) // cors 설정 추가 예정
+                .cors(cors -> cors.disable())
                 .csrf(AbstractHttpConfigurer::disable)
                 .addFilterBefore(jwtAuthenticationFilter,
                         UsernamePasswordAuthenticationFilter.class)
-
 
                 .sessionManagement(sessionManagement ->
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

@@ -16,6 +16,7 @@ import server.acode.domain.user.repository.UserRepository;
 import server.acode.global.auth.dto.request.AccessTokenRequest;
 import server.acode.global.auth.dto.response.TokenResponse;
 import server.acode.global.auth.security.CustomUserDetails;
+import server.acode.global.auth.security.SecurityUtils;
 import server.acode.global.common.ErrorCode;
 import server.acode.global.exception.CustomException;
 
@@ -29,28 +30,24 @@ public class AuthController {
     private final UserRepository userRepository;
 
 
+
     @GetMapping("/oauth2/kakao")
     @Operation(summary = "카카오 로그인", description = "카카오 로그인 후 발급받은 인증 코드를 넣어주세요")
-    public TokenResponse signin(@RequestParam("code") String code) throws JsonProcessingException {
+    public ResponseEntity signin(@RequestParam("code") String code) throws JsonProcessingException {
         return authService.signin(code);
     }
 
 
     @GetMapping("/test/user")
     @Operation(summary = "유저 확인 테스트용", description = "개발자용입니다 토큰 넣고 호출 시 사용자 이름이 리턴됩니다")
-    public String test(){
-        UserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User byAuthKey = userRepository.findByAuthKey(user.getUsername())
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-
-        return byAuthKey.getNickname();
+    public void test(){
+        authService.checkUser();
     }
 
     @Operation(summary = "로그아웃")
     @PostMapping("/logout")
-    public void logout(HttpServletRequest request, @AuthenticationPrincipal CustomUserDetails user){
-
-        authService.logout(request.getHeader("Authorization"), user.getUsername());
+    public void logout(HttpServletRequest request){
+        authService.logout(request.getHeader("Authorization"));
     }
 
     @Operation(summary = "회원 탈퇴")

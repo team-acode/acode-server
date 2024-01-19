@@ -44,7 +44,7 @@ public class CustomUserDetails implements UserDetails, OAuth2User {
 
     @Override
     public boolean isAccountNonExpired() {
-        return true;
+        return !user.isDel();
     }
 
     @Override

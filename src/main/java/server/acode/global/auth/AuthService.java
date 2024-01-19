@@ -3,6 +3,7 @@ package server.acode.global.auth;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -15,6 +16,7 @@ import server.acode.domain.user.entity.User;
 import server.acode.domain.user.repository.UserRepository;
 import server.acode.global.auth.dto.response.TokenResponse;
 import server.acode.global.auth.jwt.JwtTokenProvider;
+import server.acode.global.auth.security.SecurityUtils;
 import server.acode.global.common.ErrorCode;
 import server.acode.global.exception.CustomException;
 import server.acode.global.inmemory.RedisDao;
@@ -27,6 +29,8 @@ public class AuthService {
     private final RedisDao redisDao;
     private final JwtTokenProvider jwtTokenProvider;
     private final UserRepository userRepository;
+    private final SecurityUtils securityUtils;
+    private final EntityManager em;
 
     @Value("${kakaoAdminKey}")
     private String adminKey;
@@ -34,7 +38,16 @@ public class AuthService {
     @Value("${KAKAO_CLIENT_SECRET}")
     private String kakaoClientSecret;
 
-    public TokenResponse signin(String code) throws JsonProcessingException {
+    public void checkUser(){
+        User currentUser = securityUtils.getCurrentUser();
+        if (em.contains(currentUser)) {
+            System.out.println("유저는 영속성 컨텍스트에 있음");
+        } else {
+            System.out.println("유저는 영속성 컨텍스트에 없음 ");
+        }
+    }
+
+    public ResponseEntity signin(String code) throws JsonProcessingException {
         String kakaoAccessToken = getKakaoAccessToken(code);
         String userInfo = getUserInfo(kakaoAccessToken);
 
@@ -46,17 +59,20 @@ public class AuthService {
         String nickname = jsonNode.get("properties").get("nickname").asText();
 
         boolean init = false;
-        if(!userRepository.existsByAuthKey(authKey)) {
+        if(!userRepository.existsByAuthKeyAndIsDel(authKey, false)) {
             // 회원가입
             createUser(authKey, nickname);
             init = true;
         }
 
-        return TokenResponse.builder()
+        TokenResponse token = TokenResponse.builder()
                 .accessToken(jwtTokenProvider.createAccessToken(authKey, "USER_ROLE"))
                 .refreshToken(jwtTokenProvider.createRefreshToken(authKey, "USER_ROLE"))
                 .init(init)
                 .build();
+
+        if(init){ return new ResponseEntity<>(token, HttpStatus.CREATED); }
+        return new ResponseEntity<>(token, HttpStatus.OK);
     }
 
     // TODO Redirect url 숨기기
@@ -124,31 +140,27 @@ public class AuthService {
         return userRepository.save(user);
     }
 
-    public void logout(String token, String authKey) {
+    public void logout(String token) {
         redisDao.setValues(token.substring(7), "logout", jwtTokenProvider.getExpiration(token.substring(7)));
     }
 
     public ResponseEntity withdrawal(String token, String authKey) {
-        logout(token, authKey); // 토큰 만료 처리
+        logout(token); // 토큰 만료 처리
 
         // 내부 회원 탈퇴 처리
-        // TODO 탈퇴한 회원 재가입 고민
-        User byAuthKey = userRepository.findByAuthKey(authKey)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        User currentUser = securityUtils.getCurrentUser();
 
-        byAuthKey.updateIsDel(true);
-        userRepository.save(byAuthKey);
+        // soft-delete
+        currentUser.updateIsDel(true);
+        userRepository.save(currentUser);
 
-        // 카카오 unlink 처리
-        // 요청 URL
-        String url = "https://kapi.kakao.com/v1/user/unlink";
-
-        // 요청 헤더 설정
+        /** 카카오 unlink 처리 **/
+        // 헤더 설정
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         headers.set("Authorization", "KakaoAK " + adminKey);
 
-        // 요청 바디 설정
+        // 바디 설정
         String requestBody = "target_id_type=user_id&target_id=" + authKey;
 
         // HTTP 요청 엔터티 생성
@@ -156,10 +168,8 @@ public class AuthService {
 
         // RestTemplate 생성
         RestTemplate restTemplate = new RestTemplate();
-
-        // HTTP POST 요청
         ResponseEntity<String> responseEntity = restTemplate.exchange(
-                url,
+                "https://kapi.kakao.com/v1/user/unlink",
                 HttpMethod.POST,
                 requestEntity,
                 String.class
