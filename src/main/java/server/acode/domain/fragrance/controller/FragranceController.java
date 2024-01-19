@@ -65,7 +65,9 @@ public class FragranceController {
 
 
     @Operation(summary = "리뷰 더보기",
-            description = "페이지 적용 해두었습니다")
+            description = "페이지 적용 해두었습니다\n\n" +
+                    "필요한 값만 파라미터에 넣으면 됩니다\n\n" +
+                    "페이지 관련 파라미터 없을 시 기본 page = 1, size = 10입니다")
     @GetMapping("/review")
     public GetFragranceReview getFragranceReview(@PathVariable("fragranceId") Long fragranceId, PageRequest pageRequest) {
         return fragranceService.getFragranceReview(fragranceId, pageRequest);
