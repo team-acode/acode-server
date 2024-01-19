@@ -1,11 +1,11 @@
 package server.acode.global.auth;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,6 +27,14 @@ public class AuthController {
 
     private final AuthService authService;
     private final UserRepository userRepository;
+
+
+    @GetMapping("/oauth2/kakao")
+    @Operation(summary = "카카오 로그인", description = "카카오 로그인 후 발급받은 인증 코드를 넣어주세요")
+    public TokenResponse signin(@RequestParam("code") String code) throws JsonProcessingException {
+        return authService.signin(code);
+    }
+
 
     @GetMapping("/test/user")
     @Operation(summary = "유저 확인 테스트용", description = "개발자용입니다 토큰 넣고 호출 시 사용자 이름이 리턴됩니다")
