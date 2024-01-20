@@ -34,7 +34,7 @@ public class AuthService {
     @Value("${KAKAO_CLIENT_SECRET}")
     private String kakaoClientSecret;
 
-    public void checkUser(String userId){
+    public void checkUser(Long userId){
         /**
          * 사용자 정보 이용하는 부분 모두
          * String userId = SecurityUtils.getCurrentUserId();
@@ -43,7 +43,7 @@ public class AuthService {
          *       .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
          * 으로 수정해야함
          */
-        User user = userRepository.findById(Long.parseLong(userId))
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         System.out.println("user = " + user.getNickname());
@@ -141,11 +141,11 @@ public class AuthService {
         redisDao.setValues(token.substring(7), "logout", jwtTokenProvider.getExpiration(token.substring(7)));
     }
 
-    public ResponseEntity withdrawal(String token, String userId) {
+    public ResponseEntity withdrawal(String token, Long userId) {
         logout(token); // 토큰 만료 처리
 
         // 내부 회원 탈퇴 처리
-        User currentUser = userRepository.findById(Long.parseLong(userId))
+        User currentUser = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
 
