@@ -41,6 +41,12 @@ public class UserService {
         userRepository.save(byAuthKey);
     }
 
+    public void checkNickname(String nickname) {
+        userRepository.findByNicknameAndIsDel(nickname, false).ifPresent(user -> {
+            throw new CustomException(ErrorCode.NICKNAME_ALREADY_USED);
+        });
+    }
+
     public PreviewUserInfo getUserInfo(String authKey){
 
         User byAuthKey = userRepository.findByAuthKey(authKey)
@@ -76,4 +82,6 @@ public class UserService {
         Page<DisplayReview> result = reviewRepository.getDisplayReview(byAuthKey.getId(), pageable);
         return new PageableResponse(result.getContent(), result.getTotalPages(), result.getTotalElements());
     }
+
+
 }

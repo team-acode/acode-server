@@ -35,7 +35,8 @@ public enum ErrorCode {
 
 
     /* 409 CONFLICT */
-    UNLINK_FAIL(HttpStatus.CONFLICT, "UNLINK 도중 실패했습니다.");
+    UNLINK_FAIL(HttpStatus.CONFLICT, "UNLINK 도중 실패했습니다."),
+    NICKNAME_ALREADY_USED(HttpStatus.CONFLICT, "이미 존재하는 닉네임입니다.");
 
 
     /* 500 INTERNAL SERVER ERROR */

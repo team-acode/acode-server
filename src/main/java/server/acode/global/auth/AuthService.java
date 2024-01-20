@@ -39,10 +39,11 @@ public class AuthService {
     public void checkUser(String userId){
         /**
          * 사용자 정보 이용하는 부분 모두
-         * String userId = SecurityUtils.getCurrentUserAuthKey();
+         * String userId = SecurityUtils.getCurrentUserId();
+         *
          * User user = useruserRepository.findById(Long.parseLong(userId))
          *       .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-         * 로 수정해야함
+         * 으로 수정해야함
          */
         User user = userRepository.findById(Long.parseLong(userId))
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
@@ -57,13 +58,12 @@ public class AuthService {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(userInfo);
 
-        // id와 nickname 값을 추출
+        // id 값을 추출
         String authKey = jsonNode.get("id").toString();
-        String nickname = jsonNode.get("properties").get("nickname").asText();
 
         HttpStatus init = HttpStatus.OK;
         if(!userRepository.existsByAuthKeyAndIsDel(authKey, false)) {
-            createUser(authKey, nickname);  // 회원가입
+            createUser(authKey);  // 회원가입
             init = HttpStatus.CREATED;
         }
 
@@ -131,10 +131,9 @@ public class AuthService {
        return response.getBody();
     }
 
-    private User createUser(String authKey, String nickname){
+    private User createUser(String authKey){
         User user = User.builder()
                 .authKey(authKey)
-                .nickname(nickname)
                 .build();
 
         return userRepository.save(user);

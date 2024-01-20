@@ -7,7 +7,7 @@ import server.acode.global.common.ErrorCode;
 import server.acode.global.exception.CustomException;
 public class SecurityUtils {
 
-    public static String getCurrentUserAuthKey() {
+    public static String getCurrentUserId() {
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication == null || authentication.getName() == null || authentication.getName() == "anonymousUser") {

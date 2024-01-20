@@ -27,6 +27,7 @@ public class CustomUserDetailService implements UserDetailsService {
     public UserDetails loadUserByUsername(String authKey) throws UsernameNotFoundException {
         // 여기서 찾은 user의 id로 authentication 생성
         User user = userRepository.findByAuthKeyAndIsDel(authKey, false)
+//        User user = userRepository.findByAuthKey(authKey)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         return new CustomUserDetails(user, Collections.singleton(new SimpleGrantedAuthority("USER")));
