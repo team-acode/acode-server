@@ -11,15 +11,15 @@ public enum ErrorCode {
 
     /* 400 BAD REQUEST */
     REQUEST_VALIDATION_EXCEPTION(HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
-    TOKEN_VALIDATION_EXCEPTION(HttpStatus.NOT_FOUND, "올바르지 않은 토큰입니다."),
     USER_NOT_FOUND(HttpStatus.BAD_REQUEST, "해당 사용자를 찾을 수 없습니다."),
     FAMILY_NOT_FOUND(HttpStatus.BAD_REQUEST, "해당 계열을 찾을 수 없습니다."),
     INGREDIENT_NOT_FOUND(HttpStatus.BAD_REQUEST, "해당 향료를 찾을 수 없습니다."),
     INGREDIENT_TYPE_NOT_FOUND(HttpStatus.BAD_REQUEST, "해당 계열에 일치하는 계열타입을 찾을 수 없습니다."),
     BRAND_NOT_FOUND(HttpStatus.BAD_REQUEST,"해당 브랜드를 찾을 수 없습니다." ),
-    INVALID_TOKEN(HttpStatus.BAD_REQUEST, "유효하지 않은 토큰입니다."),
+
 
     /* 401 UNAUTHORIZED */
+    TOKEN_VALIDATION_EXCEPTION(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰입니다."),
 
 
     /* 403 FORBIDDEN */

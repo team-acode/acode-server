@@ -25,7 +25,7 @@ public class UserController {
 
     @Operation(summary = "닉네임 설정",
             description = "온보딩 시 닉네임 설정/ 마이페이지에서 닉네임 수정")
-    @PutMapping("/nickname/{nickname}")
+    @PutMapping("/users/nickname")
     public void updateNickname(@RequestBody @Valid NicknameRequest request){
         UserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         userService.updateNickname(request.getNickname(), user.getUsername());
@@ -33,8 +33,8 @@ public class UserController {
 
 
     @Operation(summary = "닉네임 중복 확인",
-            description = "온보딩 시 닉네임 중복 확인/ 마이페이지에서 닉네임 중복 확인")
-    @PostMapping("/nickname")
+            description = "중복되는 닉네임이 있다면 409 에러 반환됩니다.")
+    @PostMapping("/users/nickname")
     public void checkNickname(@RequestBody @Valid NicknameRequest request){
         userService.checkNickname(request.getNickname());
     }

@@ -3,7 +3,6 @@ package server.acode.global.auth;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -16,7 +15,6 @@ import server.acode.domain.user.entity.User;
 import server.acode.domain.user.repository.UserRepository;
 import server.acode.global.auth.dto.response.TokenResponse;
 import server.acode.global.auth.jwt.JwtTokenProvider;
-import server.acode.global.auth.security.SecurityUtils;
 import server.acode.global.common.ErrorCode;
 import server.acode.global.exception.CustomException;
 import server.acode.global.inmemory.RedisDao;
@@ -183,13 +181,13 @@ public class AuthService {
     public TokenResponse reissueAccessToken(String refreshToken, String authKey) {
         // 유효성 확인
         if(!jwtTokenProvider.validateToken(refreshToken)){
-            throw new CustomException(ErrorCode.INVALID_TOKEN);
+            throw new CustomException(ErrorCode.TOKEN_VALIDATION_EXCEPTION);
         }
 
         // authKey와 일치여부 확인
         String findAuthKey = redisDao.getValues(refreshToken);
         if(!findAuthKey.equals(authKey)){
-            throw new CustomException(ErrorCode.INVALID_TOKEN);
+            throw new CustomException(ErrorCode.TOKEN_VALIDATION_EXCEPTION);
         }
 
         return TokenResponse.builder()

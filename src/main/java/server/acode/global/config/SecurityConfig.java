@@ -10,6 +10,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import server.acode.global.auth.jwt.JwtAuthenticationEntryPoint;
 import server.acode.global.auth.jwt.JwtAuthenticationFilter;
 import server.acode.global.auth.oauth.CustomOAuth2UserService;
 import server.acode.global.auth.oauth.OAuthSuccessHandler;
@@ -25,7 +26,7 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     /**
-     * 스크랩, 닉네임 등 유저가 필요한 부분 앞에 user 붙여주면 일괄적으로 처리 가능함
+     * .authenticated 붙이면 403 Forbidden 뜨는 게 과연 좋은걸까
      */
 
     @Bean
@@ -39,6 +40,7 @@ public class SecurityConfig {
                         .anyRequest().permitAll())
                 .cors(cors -> cors.disable())
                 .csrf(AbstractHttpConfigurer::disable)
+
                 .addFilterBefore(jwtAuthenticationFilter,
                         UsernamePasswordAuthenticationFilter.class)
 
@@ -46,7 +48,10 @@ public class SecurityConfig {
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
                 .formLogin(formLogin -> formLogin.disable()) // 사용자 지정 로그인 로직 구현
-                .httpBasic(HttpBasicConfigurer::disable); // http 기본 인증 비활성화
+
+                .httpBasic(HttpBasicConfigurer::disable) // http 기본 인증 비활성화
+                .exceptionHandling()
+                .authenticationEntryPoint(new JwtAuthenticationEntryPoint());
 
         return http.build();
     }
