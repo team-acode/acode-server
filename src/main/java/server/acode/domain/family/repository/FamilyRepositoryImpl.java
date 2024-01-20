@@ -130,7 +130,7 @@ public class FamilyRepositoryImpl implements FamilyRepositoryCustom{
 
     @Override
     public List<ExtractFamily> extractFamilies(List<Long> fragranceIdList){
-        return queryFactory.select(new QExtractFamily(
+                return queryFactory.select(new QExtractFamily(
                 family.korName,
                 family.engName,
                 family.summary,
