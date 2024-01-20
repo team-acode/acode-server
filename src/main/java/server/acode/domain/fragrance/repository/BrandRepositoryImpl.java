@@ -1,5 +1,6 @@
 package server.acode.domain.fragrance.repository;
 
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
@@ -33,8 +34,7 @@ public class BrandRepositoryImpl implements BrandRepositoryCustom {
                 ))
                 .from(brand)
                 .where(
-                        brand.korName.containsIgnoreCase(search)
-                                .or(brand.engName.containsIgnoreCase(search))
+                        brandNameContains(search)
                 )
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -44,10 +44,14 @@ public class BrandRepositoryImpl implements BrandRepositoryCustom {
                 .select(brand.count())
                 .from(brand)
                 .where(
-                        brand.korName.containsIgnoreCase(search)
-                                .or(brand.engName.containsIgnoreCase(search))
+                        brandNameContains(search)
                 );
 
         return PageableExecutionUtils.getPage(contents, pageable, countQuery::fetchOne);
+    }
+
+    private BooleanExpression brandNameContains(String search) {
+        return brand.korName.containsIgnoreCase(search)
+                .or(brand.engName.containsIgnoreCase(search));
     }
 }
