@@ -3,6 +3,7 @@ package server.acode.domain.fragrance.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import server.acode.domain.family.entity.Family;
 import server.acode.domain.family.repository.FamilyRepository;
 import server.acode.domain.family.repository.FragranceFamilyRepository;
 import server.acode.domain.fragrance.dto.request.KeywordCond;
@@ -64,7 +65,11 @@ public class ExtractService {
 
 
     private ExtractResponse getExtractResult (List<Long> familyIdList){
-        List<ExtractFamily> families = familyRepository.extractFamilies(familyIdList);
+        List<Family> families = familyRepository.findByIdIn(familyIdList);
+        List<ExtractFamily> extractFamilies = families.stream()
+                .map(ExtractFamily::from)
+                .collect(Collectors.toList());
+
         List<ExtractFragrance> fragrances = fragranceFamilyRepository.extractFragrance(familyIdList);
 
         // 향수가 세 개 이상인 경우
@@ -76,10 +81,10 @@ public class ExtractService {
                     .mapToObj(fragrances::get)
                     .collect(Collectors.toList());
 
-            return new ExtractResponse(families, collect);
+            return new ExtractResponse(extractFamilies, collect);
         }
 
-        return new ExtractResponse(families, fragrances);
+        return new ExtractResponse(extractFamilies, fragrances);
     }
 
 

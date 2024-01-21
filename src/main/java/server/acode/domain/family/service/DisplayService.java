@@ -8,8 +8,10 @@ import server.acode.domain.family.dto.request.FragranceFilterCond;
 import server.acode.domain.family.dto.response.*;
 import server.acode.domain.family.entity.Family;
 import server.acode.domain.family.repository.FamilyRepository;
+import server.acode.domain.family.repository.FragranceFamilyRepository;
 import server.acode.domain.fragrance.entity.Brand;
 import server.acode.domain.fragrance.repository.BrandRepository;
+import server.acode.domain.fragrance.repository.FragranceRepository;
 import server.acode.domain.ingredient.entity.Ingredient;
 import server.acode.domain.ingredient.entity.IngredientType;
 import server.acode.domain.ingredient.repository.IngredientRepository;
@@ -18,7 +20,6 @@ import server.acode.global.common.ErrorCode;
 import server.acode.global.common.PageRequest;
 import server.acode.global.exception.CustomException;
 
-import java.util.List;
 
 import static org.springframework.util.StringUtils.*;
 
@@ -30,6 +31,8 @@ public class DisplayService {
     private final BrandRepository brandRepository;
     private final IngredientRepository ingredientRepository;
     private final IngredientTypeRepository ingredientTypeRepository;
+    private final FragranceFamilyRepository fragranceFamilyRepository;
+    private final FragranceRepository fragranceRepository;
 
 
     public PageableResponse searchFragranceList(FragranceFilterCond cond, PageRequest pageRequest){
@@ -43,7 +46,7 @@ public class DisplayService {
             additionalFamily = parts.length > 1 ? parts[1] : null;
         }
 
-        Page<DisplayFragrance> result = familyRepository.searchByFilter(cond, additionalFamily, pageable); // 향수 조회
+        Page<DisplayFragrance> result = fragranceFamilyRepository.searchByFilter(cond, additionalFamily, pageable); // 향수 조회
         return new PageableResponse(result.getContent(), result.getTotalPages(), result.getTotalElements());
 
     }
@@ -51,7 +54,7 @@ public class DisplayService {
     public PageableResponse searchFragranceListByIngredient(String ingredient, PageRequest pageRequest){
         Pageable pageable = pageRequest.of(); // pageable 객체로 변환
 
-        Page<DisplayFragrance> result = familyRepository.searchByIngredient(ingredient, pageable);
+        Page<DisplayFragrance> result = fragranceRepository.searchByIngredient(ingredient, pageable);
         return new PageableResponse(result.getContent(), result.getTotalPages(), result.getTotalElements());
 
     }
