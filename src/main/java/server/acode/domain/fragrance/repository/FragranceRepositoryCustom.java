@@ -1,7 +1,6 @@
 package server.acode.domain.fragrance.repository;
 
 import org.springframework.stereotype.Repository;
-import server.acode.domain.fragrance.dto.request.KeywordCond;
 
 import java.util.List;
 

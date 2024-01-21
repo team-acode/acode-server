@@ -2,19 +2,23 @@ package server.acode.domain.family.repository;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 import server.acode.domain.family.dto.SimilarFragranceOrCond;
 import server.acode.domain.family.entity.QFragranceFamily;
-import server.acode.domain.fragrance.dto.response.FamilyCountDto;
-import server.acode.domain.fragrance.dto.response.FragranceInfo;
-import server.acode.domain.fragrance.dto.response.QFamilyCountDto;
-import server.acode.domain.fragrance.dto.response.QFragranceInfo;
+import server.acode.domain.fragrance.dto.request.SearchCond;
+import server.acode.domain.fragrance.dto.response.*;
 import server.acode.domain.fragrance.entity.QFragrance;
 
 import java.util.List;
 
+import static org.springframework.util.StringUtils.*;
+import static server.acode.domain.family.entity.QFamily.*;
 import static server.acode.domain.family.entity.QFragranceFamily.*;
 import static server.acode.domain.fragrance.entity.QFragrance.fragrance;
 
@@ -86,8 +90,8 @@ public class FragranceFamilyRepositoryImpl implements FragranceFamilyRepositoryC
                 .join(fragranceFamily.fragrance, fragrance)
                 .where(
                         fragrance.id.notIn(cond.getSelectedFragranceIdList())
-                                        .and(fragranceFamily.family.id.eq(cond.getFamilyId1())
-                                                .or(fragranceFamily.family.id.eq(cond.getFamilyId2())))
+                                .and(fragranceFamily.family.id.eq(cond.getFamilyId1())
+                                        .or(fragranceFamily.family.id.eq(cond.getFamilyId2())))
                 )
                 .limit(cond.getCount())
                 .orderBy(fragrance.view.desc())
@@ -141,4 +145,92 @@ public class FragranceFamilyRepositoryImpl implements FragranceFamilyRepositoryC
                 .orderBy(fragranceFamily.family.count().desc())
                 .fetch();
     }
+
+    @Override
+    public List<ExtractFragrance> extractFragrance(List<Long> familyIdList) {
+        return queryFactory
+                .selectDistinct(new QExtractFragrance(
+                                fragrance.id,
+                                fragrance.name,
+                                fragrance.brand.korName,
+                                fragranceFamily.family.korName,
+                                fragrance.thumbnail
+                        )
+                )
+                .from(fragranceFamily)
+                .where(fragranceFamily.family.id.in(familyIdList))
+                .fetch();
+    }
+
+
+    @Override
+    public Page<FragranceInfo> searchFragrance(SearchCond cond, String additionalFamily, Pageable pageable) {
+        List<FragranceInfo> contents = queryFactory
+                .select(new QFragranceInfo(
+                        fragrance.id.as("fragranceId"),
+                        fragrance.thumbnail,
+                        fragrance.name.as("fragranceName"),
+                        fragrance.brand.korName
+                )).distinct()
+                .from(fragranceFamily)
+                .where(
+                        fragranceNameContains(cond.getSearch())
+                                .or(korBrandNameContains(cond.getSearch()))
+                                .or(engBrandNameContains(cond.getSearch())),
+                        familyNameEq(cond.getFamily()),
+                        additionalFamilyNameEq(additionalFamily)
+                )
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        JPAQuery<Long> countQuery = queryFactory
+                .select(fragrance.count())
+                .from(fragranceFamily)
+                .where(
+                        fragranceNameContains(cond.getSearch())
+                                .or(korBrandNameContains(cond.getSearch()))
+                                .or(engBrandNameContains(cond.getSearch())),
+                        familyNameEq(cond.getFamily()),
+                        additionalFamilyNameEq(additionalFamily)
+                );
+
+        return PageableExecutionUtils.getPage(contents, pageable, countQuery::fetchOne);
+    }
+
+    private BooleanExpression fragranceNameContains(String search) {
+        return hasText(search)
+                ? fragrance.name.containsIgnoreCase(search)
+                : null;
+    }
+
+    private BooleanExpression korBrandNameContains(String search) {
+        return hasText(search)
+                ? fragrance.brand.korName.containsIgnoreCase(search)
+                : null;
+    }
+
+    private BooleanExpression engBrandNameContains(String search) {
+        return hasText(search)
+                ? fragrance.brand.engName.containsIgnoreCase(search)
+                : null;
+    }
+
+    private BooleanExpression familyNameEq(String familyName) {
+        return hasText(familyName)
+                ? family.korName.eq(familyName)
+                : null;
+    }
+
+    private BooleanExpression additionalFamilyNameEq(String additionalFamily) {
+        QFragranceFamily fragranceFamilySub = new QFragranceFamily("fragranceFamilySub");
+
+        return hasText(additionalFamily)
+                ? fragrance.id.in(
+                JPAExpressions.select(fragranceFamilySub.fragrance.id)
+                        .from(fragranceFamilySub)
+                        .where(fragranceFamilySub.family.korName.eq(additionalFamily)))
+                : null;
+    }
+
 }

@@ -16,6 +16,7 @@ public enum ErrorCode {
     INGREDIENT_NOT_FOUND(HttpStatus.BAD_REQUEST, "해당 향료를 찾을 수 없습니다."),
     INGREDIENT_TYPE_NOT_FOUND(HttpStatus.BAD_REQUEST, "해당 계열에 일치하는 계열타입을 찾을 수 없습니다."),
     BRAND_NOT_FOUND(HttpStatus.BAD_REQUEST,"해당 브랜드를 찾을 수 없습니다." ),
+    SEARCH_NOT_FOUND(HttpStatus.BAD_REQUEST, "검색어가 필요합니다"),
 
 
     /* 401 UNAUTHORIZED */

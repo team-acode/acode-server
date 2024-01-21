@@ -47,6 +47,8 @@ public class FragranceRepositoryImpl implements FragranceRepositoryCustom {
     }
 
 
+
+
     private BooleanExpression scentContainsIgnoreCase(String scent) {
         return hasText(scent)
                 ? fragrance.scent.containsIgnoreCase(scent)
