@@ -43,6 +43,7 @@ public class FragranceController {
     }
 
 
+    @Operation(summary = "리뷰 통계")
     @GetMapping("/review/statistics")
     public GetFragranceReviewStatistics getFragranceReviewStatistics(@PathVariable("fragranceId") Long fragranceId) {
         return fragranceService.getFragranceReviewStatistics(fragranceId);
