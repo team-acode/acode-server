@@ -37,9 +37,9 @@ public class AuthService {
     public void checkUser(Long userId){
         /**
          * 사용자 정보 이용하는 부분 모두
-         * String userId = SecurityUtils.getCurrentUserId();
+         * Long userId = SecurityUtil.getCurrentUserId();
          *
-         * User user = useruserRepository.findById(Long.parseLong(userId))
+         * User user = userRepository.findById(userId)
          *       .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
          * 으로 수정해야함
          */
@@ -61,7 +61,7 @@ public class AuthService {
 
         HttpStatus init = HttpStatus.OK;
         if(!userRepository.existsByAuthKeyAndIsDel(authKey, false)) {
-            createUser(authKey);  // 회원가입
+            createUser(authKey);// 회원가입
             init = HttpStatus.CREATED;
         }
 
@@ -141,9 +141,7 @@ public class AuthService {
         redisDao.setValues(token.substring(7), "logout", jwtTokenProvider.getExpiration(token.substring(7)));
     }
 
-    public ResponseEntity withdrawal(String token, Long userId) {
-        logout(token); // 토큰 만료 처리
-
+    public ResponseEntity withdrawal(Long userId) {
         // 내부 회원 탈퇴 처리
         User currentUser = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
@@ -178,21 +176,24 @@ public class AuthService {
 
     }
 
-    public TokenResponse reissueAccessToken(String refreshToken, String authKey) {
+    public TokenResponse reissueAccessToken(String refreshToken, Long userId) {
+
         // 유효성 확인
         if(!jwtTokenProvider.validateToken(refreshToken)){
             throw new CustomException(ErrorCode.TOKEN_VALIDATION_EXCEPTION);
         }
 
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
         // authKey와 일치여부 확인
         String findAuthKey = redisDao.getValues(refreshToken);
-        if(!findAuthKey.equals(authKey)){
+        if(!findAuthKey.equals(user.getAuthKey())){
             throw new CustomException(ErrorCode.TOKEN_VALIDATION_EXCEPTION);
         }
 
         return TokenResponse.builder()
-                .accessToken(jwtTokenProvider.createAccessToken(authKey, "USER_ROLE"))
-                .refreshToken(jwtTokenProvider.createRefreshToken(authKey, "USER_ROLE"))
+                .accessToken(jwtTokenProvider.createAccessToken(user.getAuthKey(), "USER_ROLE"))
                 .build();
     }
 

@@ -32,13 +32,14 @@ public class UserService {
 
 
     @Transactional
-    public void updateNickname(String nickname, String authKey) {
+    public void updateNickname(String nickname, Long userId) {
+        checkNickname(nickname);
 
-        User byAuthKey = userRepository.findByAuthKey(authKey)
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        byAuthKey.updateNickname(nickname);
-        userRepository.save(byAuthKey);
+        user.updateNickname(nickname);
+        userRepository.save(user);
     }
 
     public void checkNickname(String nickname) {
@@ -47,39 +48,33 @@ public class UserService {
         });
     }
 
-    public PreviewUserInfo getUserInfo(String authKey){
+    public PreviewUserInfo getUserInfo(Long userId){
 
-        User byAuthKey = userRepository.findByAuthKey(authKey)
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        List<PreviewScrap> previewScrap = scrapRepository.getScrapPreview(byAuthKey.getId());
+        List<PreviewScrap> previewScrap = scrapRepository.getScrapPreview(userId);
 
         PreviewUserInfo info = PreviewUserInfo.builder()
-                .nickname(byAuthKey.getNickname())
-                .reviewCnt(reviewRepository.countByUserId(byAuthKey.getId()))
+                .nickname(user.getNickname())
+                .reviewCnt(reviewRepository.countByUserId(userId))
                 .scraps(previewScrap)
                 .build();
 
         return info;
     }
 
-    public PageableResponse getScrapList(String authKey, PageRequest pageRequest){
+    public PageableResponse getScrapList(Long userId, PageRequest pageRequest){
         Pageable pageable = pageRequest.of(); // pageable 객체로 변환
 
-        User byAuthKey = userRepository.findByAuthKey(authKey)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-
-        Page<DisplayScrap> result = scrapRepository.getScrap(byAuthKey.getId(), pageable);
+        Page<DisplayScrap> result = scrapRepository.getScrap(userId, pageable);
         return new PageableResponse(result.getContent(), result.getTotalPages(), result.getTotalElements());
     }
 
-    public PageableResponse getReviewList(String authKey, PageRequest pageRequest) {
+    public PageableResponse getReviewList(Long userId, PageRequest pageRequest) {
         Pageable pageable = pageRequest.of(); // pageable 객체로 변환
 
-        User byAuthKey = userRepository.findByAuthKey(authKey)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-
-        Page<DisplayReview> result = reviewRepository.getDisplayReview(byAuthKey.getId(), pageable);
+        Page<DisplayReview> result = reviewRepository.getDisplayReview(userId, pageable);
         return new PageableResponse(result.getContent(), result.getTotalPages(), result.getTotalElements());
     }
 

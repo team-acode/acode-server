@@ -22,21 +22,12 @@ import server.acode.global.util.SecurityUtil;
 public class AuthController {
 
     private final AuthService authService;
-    private final UserRepository userRepository;
-
 
 
     @GetMapping("/oauth2/kakao")
     @Operation(summary = "카카오 로그인", description = "카카오 로그인 후 발급받은 인증 코드를 넣어주세요")
     public ResponseEntity signin(@RequestParam("code") String code) throws JsonProcessingException {
         return authService.signin(code);
-    }
-
-
-    @GetMapping("/test/user/securityUtil")
-    @Operation(summary = "유저 확인 테스트용", description = "개발자용입니다 토큰 넣고 호출 시 사용자 이름이 리턴됩니다")
-    public void test(){
-        authService.checkUser(SecurityUtil.getCurrentUserId());
     }
 
     @Operation(summary = "로그아웃")
@@ -48,13 +39,16 @@ public class AuthController {
     @Operation(summary = "회원 탈퇴")
     @DeleteMapping("/withdrawal")
     public ResponseEntity withdrawal(HttpServletRequest request){
-        return authService.withdrawal(request.getHeader("Authorization"), SecurityUtil.getCurrentUserId());
+        authService.logout(request.getHeader("Authorization"));  // 토큰 만료 처리
+        return authService.withdrawal(SecurityUtil.getCurrentUserId());
     }
 
     @Operation(summary = "access token 재발급")
     @PostMapping("/reissue")
-    public TokenResponse reissue(@AuthenticationPrincipal CustomUserDetails user, @RequestBody @Valid AccessTokenRequest request){
-        return authService.reissueAccessToken(request.getRefreshToken(), user.getUsername());
+    public TokenResponse reissue(HttpServletRequest request, @RequestBody @Valid AccessTokenRequest dto){
+        Long userId = SecurityUtil.getCurrentUserId();
+        authService.logout(request.getHeader("Authorization"));  // 토큰 만료 처리
+        return authService.reissueAccessToken(dto.getRefreshToken(), userId);
     }
 
 

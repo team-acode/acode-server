@@ -14,6 +14,7 @@ import server.acode.domain.user.service.UserService;
 import server.acode.domain.user.dto.request.NicknameRequest;
 import server.acode.global.auth.security.CustomUserDetails;
 import server.acode.global.common.PageRequest;
+import server.acode.global.util.SecurityUtil;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,8 +28,8 @@ public class UserController {
             description = "온보딩 시 닉네임 설정/ 마이페이지에서 닉네임 수정")
     @PutMapping("/users/nickname")
     public void updateNickname(@RequestBody @Valid NicknameRequest request){
-        UserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        userService.updateNickname(request.getNickname(), user.getUsername());
+        Long userId = SecurityUtil.getCurrentUserId();
+        userService.updateNickname(request.getNickname(), userId);
     }
 
 
@@ -42,22 +43,25 @@ public class UserController {
 
     @Operation(summary = "마이페이지 기본 정보")
     @GetMapping("/mypage")
-    public PreviewUserInfo getUserInfo(@AuthenticationPrincipal CustomUserDetails user){
-        return userService.getUserInfo(user.getUsername());
+    public PreviewUserInfo getUserInfo(){
+        Long userId = SecurityUtil.getCurrentUserId();
+        return userService.getUserInfo(userId);
     }
 
     @Operation(summary = "마이페이지 스크랩 리스트업",
             description = "페이지는 파라미터 없을 시 기본 page = 1, size = 10입니다.")
     @GetMapping("/mypage/scrap")
-    public PageableResponse getUserScrap(PageRequest request, @AuthenticationPrincipal CustomUserDetails user){
-        return userService.getScrapList(user.getUsername(), request);
+    public PageableResponse getUserScrap(PageRequest request){
+        Long userId = SecurityUtil.getCurrentUserId();
+        return userService.getScrapList(userId, request);
     }
 
     @Operation(summary = "마이페이지 리뷰 리스트업",
             description = "페이지는 파라미터 없을 시 기본 page = 1, size = 10입니다.")
     @GetMapping("/mypage/review")
-    public PageableResponse getUserReview(PageRequest request, @AuthenticationPrincipal CustomUserDetails user){
-        return userService.getReviewList(user.getUsername(), request);
+    public PageableResponse getUserReview(PageRequest request){
+        Long userId = SecurityUtil.getCurrentUserId();
+        return userService.getReviewList(userId, request);
     }
 
 
