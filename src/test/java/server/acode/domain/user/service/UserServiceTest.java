@@ -8,5 +8,6 @@ class UserServiceTest {
 
     @Test
     void updateNickname() {
+
     }
 }
