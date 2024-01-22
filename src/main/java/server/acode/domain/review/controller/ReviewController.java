@@ -3,13 +3,12 @@ package server.acode.domain.review.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import server.acode.domain.review.dto.request.RegisterReviewRequest;
 import server.acode.domain.review.service.ReviewService;
 import server.acode.domain.review.service.S3Service;
-import server.acode.global.auth.security.CustomUserDetails;
+import server.acode.global.util.SecurityUtil;
 
 @RestController
 @RequestMapping("/api/v1/review")
@@ -42,9 +41,9 @@ public class ReviewController {
     @PostMapping("/{fragranceId}")
     public ResponseEntity<?> registerReview(
             @PathVariable("fragranceId") Long fragranceId,
-            @RequestBody RegisterReviewRequest registerReviewRequest,
-            @AuthenticationPrincipal CustomUserDetails userDetails) {
-        return reviewService.registerReview(fragranceId, registerReviewRequest, userDetails);
+            @RequestBody RegisterReviewRequest registerReviewRequest) {
+        Long userId = SecurityUtil.getCurrentUserId();
+        return reviewService.registerReview(fragranceId, registerReviewRequest, userId);
     }
 
     @Operation(summary = "관리자용입니다")

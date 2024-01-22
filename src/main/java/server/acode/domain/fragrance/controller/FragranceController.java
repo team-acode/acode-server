@@ -10,6 +10,7 @@ import server.acode.domain.fragrance.dto.response.*;
 import server.acode.domain.fragrance.service.FragranceService;
 import server.acode.global.auth.security.CustomUserDetails;
 import server.acode.global.common.PageRequest;
+import server.acode.global.util.SecurityUtil;
 
 @RestController
 @RequestMapping("/api/v1/fragrance/{fragranceId}")
@@ -76,9 +77,8 @@ public class FragranceController {
 
     @Operation(summary = "스크랩 또는 스크랩 취소")
     @PostMapping("/scrap")
-    public ResponseEntity<?> scrap(
-            @PathVariable("fragranceId") Long fragranceId,
-            @AuthenticationPrincipal CustomUserDetails userDetails) {
-        return fragranceService.scrap(fragranceId, userDetails);
+    public ResponseEntity<?> scrap(@PathVariable("fragranceId") Long fragranceId) {
+        Long userId = SecurityUtil.getCurrentUserId();
+        return fragranceService.scrap(fragranceId, userId);
     }
 }

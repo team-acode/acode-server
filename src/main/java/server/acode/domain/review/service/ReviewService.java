@@ -16,7 +16,6 @@ import server.acode.domain.review.entity.ReviewStyle;
 import server.acode.domain.review.repository.*;
 import server.acode.domain.user.entity.User;
 import server.acode.domain.user.repository.UserRepository;
-import server.acode.global.auth.security.CustomUserDetails;
 import server.acode.global.common.ErrorCode;
 import server.acode.global.exception.CustomException;
 
@@ -37,8 +36,8 @@ public class ReviewService {
     private final ReviewIntensityRepository reviewIntensityRepository;
     private final ReviewStyleRepository reviewStyleRepository;
 
-    public ResponseEntity<?> registerReview(Long fragranceId, RegisterReviewRequest registerReviewRequest, CustomUserDetails userDetails) {
-        User user = userRepository.findByAuthKey(userDetails.getUsername())
+    public ResponseEntity<?> registerReview(Long fragranceId, RegisterReviewRequest registerReviewRequest, Long userId) {
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         //리뷰 엔티티 생성
