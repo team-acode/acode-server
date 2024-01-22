@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import server.acode.domain.family.dto.SimilarFragranceOrCond;
 import server.acode.domain.family.entity.Family;
-import server.acode.domain.family.repository.FamilyRepository;
 import server.acode.domain.family.repository.FragranceFamilyRepository;
 import server.acode.domain.fragrance.dto.response.*;
 import server.acode.domain.fragrance.entity.Capacity;
@@ -19,6 +18,10 @@ import server.acode.domain.ingredient.entity.Ingredient;
 import server.acode.domain.ingredient.repository.BaseNoteRepository;
 import server.acode.domain.ingredient.repository.MiddleNoteRepository;
 import server.acode.domain.ingredient.repository.TopNoteRepository;
+import server.acode.domain.review.entity.ReviewIntensity;
+import server.acode.domain.review.entity.ReviewLongevity;
+import server.acode.domain.review.entity.ReviewSeason;
+import server.acode.domain.review.entity.ReviewStyle;
 import server.acode.domain.review.repository.*;
 import server.acode.domain.user.entity.Scrap;
 import server.acode.domain.user.entity.User;
@@ -29,6 +32,7 @@ import server.acode.global.common.ErrorCode;
 import server.acode.global.common.PageRequest;
 import server.acode.global.exception.CustomException;
 
+import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -52,8 +56,6 @@ public class FragranceService {
     private final ReviewLongevityRepository reviewLongevityRepository;
     private final ReviewIntensityRepository reviewIntensityRepository;
     private final ReviewStyleRepository reviewStyleRepository;
-
-    private final FamilyRepository familyRepository;
 
     private final UserRepository userRepository;
 
@@ -111,18 +113,43 @@ public class FragranceService {
     }
 
 
-    // TODO 향수 리뷰 통계 ㅠㅠ
-//    public GetFragranceReviewStatistics getFragranceReviewStatistics(Long fragranceId) {
-//        Map<String, Integer> fieldList = new HashMap<>();
-//
-//        ReviewSeason reviewSeason = reviewSeasonRepository.findByFragranceId(fragranceId)
-//                .orElseThrow(() -> new CustomException(ErrorCode.REVIEW_SEASON_NOT_FOUND));
-//
-//        fieldList.put("spring", reviewSeason.getSpring());
-//        fieldList.put("summer", reviewSeason.getSummer());
-//        fieldList.put("autumn", reviewSeason.getAutumn());
-//        fieldList.put("winter", reviewSeason.getWinter());
-//
+    public GetFragranceReviewStatistics getFragranceReviewStatistics(Long fragranceId) {
+        Fragrance fragrance = fragranceRepository.findById(fragranceId)
+                .orElseThrow(() -> new CustomException(ErrorCode.FRAGRANCE_NOT_FOUND));
+
+        ReviewSeason reviewSeason = reviewSeasonRepository.findByFragrance(fragrance)
+                .orElseThrow(() -> new CustomException(ErrorCode.REVIEW_SEASON_NOT_FOUND));
+        Map<String, Integer> reviewSeasonMap = reviewSeasonStatistics(reviewSeason);
+
+        ReviewLongevity reviewLongevity = reviewLongevityRepository.findByFragrance(fragrance)
+                .orElseThrow(() -> new CustomException(ErrorCode.REVIEW_LONGEVITY_NOT_FOUND));
+        Map<String, Integer> reviewLongevityMap = reviewLongevityStatistics(reviewLongevity);
+
+        ReviewIntensity reviewIntensity = reviewIntensityRepository.findByFragrance(fragrance)
+                .orElseThrow(() -> new CustomException(ErrorCode.REVIEW_INTENSITY_NOT_FOUND));
+        Map<String, Integer> reviewIntensityMap = reviewIntensityStatistics(reviewIntensity);
+
+        ReviewStyle reviewStyle = reviewStyleRepository.findByFragrance(fragrance)
+                .orElseThrow(() -> new CustomException(ErrorCode.REVIEW_STYLE_NOT_FOUND));
+        Map<String, Integer> reviewStyleMap = reviewStyleStatistics(reviewStyle);
+
+        return GetFragranceReviewStatistics.builder()
+                .reviewCnt(fragrance.getReviewCnt())
+                .season(reviewSeasonMap.entrySet().stream().findFirst().get().getKey())
+                .seasonMax(reviewSeasonMap.entrySet().stream().findFirst().get().getValue())
+                .longevity(reviewLongevityMap.entrySet().stream().findFirst().get().getKey())
+                .longevityMax(reviewLongevityMap.entrySet().stream().findFirst().get().getValue())
+                .intensity(reviewIntensityMap.entrySet().stream().findFirst().get().getKey())
+                .intensityMax(reviewIntensityMap.entrySet().stream().findFirst().get().getValue())
+                .style1(reviewStyleMap.entrySet().stream().findFirst().get().getKey())
+                .styleMax1(reviewStyleMap.entrySet().stream().findFirst().get().getValue())
+                .style2(reviewStyleMap.entrySet().stream().skip(1).map(Map.Entry::getKey).findFirst().get())
+                .styleMax2(reviewStyleMap.entrySet().stream().skip(1).map(Map.Entry::getValue).findFirst().get())
+                .style3(reviewStyleMap.entrySet().stream().skip(2).map(Map.Entry::getKey).findFirst().get())
+                .styleMax3(reviewStyleMap.entrySet().stream().skip(2).map(Map.Entry::getValue).findFirst().get())
+                .build();
+
+//        String.valueOf(reviewSeasonMap.entrySet().stream().findFirst().map(Map.Entry::getValue))
 //        Integer maxValue = Collections.max(fieldList.values());
 //        List<String> keyWithMaxValueList = fieldList.entrySet()
 //                .stream()
@@ -132,10 +159,162 @@ public class FragranceService {
 //        if (keyWithMaxValueList.size() == 1) {
 //            fieldList.get(keyWithMaxValueList.get(0));
 //        }
-//
-//
-//        return null;
-//    }
+    }
+
+    private Map<String, Integer> reviewSeasonStatistics(ReviewSeason reviewSeason) {
+        Map<String, Integer> fieldMap = new HashMap<>();
+
+//        fieldMap.put("spring", reviewSeason.getSpring());
+//        fieldMap.put("summer", reviewSeason.getSummer());
+//        fieldMap.put("autumn", reviewSeason.getAutumn());
+//        fieldMap.put("winter", reviewSeason.getWinter());
+
+        Field[] fields = reviewSeason.getClass().getDeclaredFields();
+        for (Field field : fields) {
+            field.setAccessible(true);
+            if (field.getType() == int.class) {
+                try {
+                    fieldMap.put(field.getName(), field.getInt(reviewSeason));
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+            field.setAccessible(false);
+        }
+
+        return fieldMap.entrySet().stream()
+                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (e1, e2) -> e1,
+                        LinkedHashMap::new
+                ));
+    }
+
+    private Map<String, Integer> reviewLongevityStatistics(ReviewLongevity reviewLongevity) {
+        Map<String, Integer> fieldMap = new HashMap<>();
+//        fieldMap.put("onehour", reviewLongevity.getOnehour());
+//        fieldMap.put("fourhours", reviewLongevity.getFourhours());
+//        fieldMap.put("halfday", reviewLongevity.getHalfday());
+//        fieldMap.put("fullday", reviewLongevity.getFullday());
+
+        Field[] fields = reviewLongevity.getClass().getDeclaredFields();
+        for (Field field : fields) {
+            field.setAccessible(true);
+            if (field.getType() == int.class) {
+                try {
+                    fieldMap.put(field.getName(), field.getInt(reviewLongevity));
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+            field.setAccessible(false);
+        }
+
+        return fieldMap.entrySet().stream()
+                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (e1, e2) -> e1,
+                        LinkedHashMap::new
+                ));
+    }
+
+    private Map<String, Integer> reviewIntensityStatistics(ReviewIntensity reviewIntensity) {
+        Map<String, Integer> fieldMap = new HashMap<>();
+//        fieldMap.put("weak", reviewIntensity.getWeak());
+//        fieldMap.put("medium", reviewIntensity.getMedium());
+//        fieldMap.put("strong", reviewIntensity.getStrong());
+//        fieldMap.put("intense", reviewIntensity.getIntense());
+
+        Field[] fields = reviewIntensity.getClass().getDeclaredFields();
+        for (Field field : fields) {
+            field.setAccessible(true);
+            if (field.getType() == int.class) {
+                try {
+                    fieldMap.put(field.getName(), field.getInt(reviewIntensity));
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+            field.setAccessible(false);
+        }
+
+        return fieldMap.entrySet().stream()
+                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (e1, e2) -> e1,
+                        LinkedHashMap::new
+                ));
+    }
+
+    private Map<String, Integer> reviewStyleStatistics(ReviewStyle reviewStyle) {
+        Map<String, Integer> fieldMap = new HashMap<>();
+//        fieldMap.put("chic", reviewStyle.getChic());
+//        fieldMap.put("mature", reviewStyle.getMature());
+//        fieldMap.put("luxurious", reviewStyle.getLuxurious());
+//        fieldMap.put("elegant", reviewStyle.getElegant());
+//        fieldMap.put("masculine", reviewStyle.getMasculine());
+//        fieldMap.put("comfortable", reviewStyle.getComfortable());
+//        fieldMap.put("serene", reviewStyle.getSerene());
+//        fieldMap.put("light", reviewStyle.getLight());
+//        fieldMap.put("neutral", reviewStyle.getNeutral());
+//        fieldMap.put("friendly", reviewStyle.getFriendly());
+//        fieldMap.put("clean", reviewStyle.getClean());
+//        fieldMap.put("sensual", reviewStyle.getSensual());
+//        fieldMap.put("delicate", reviewStyle.getDelicate());
+//        fieldMap.put("lively", reviewStyle.getLively());
+//        fieldMap.put("lovely", reviewStyle.getLovely());
+//        fieldMap.put("bright", reviewStyle.getBright());
+//        fieldMap.put("radiant", reviewStyle.getRadiant());
+//        fieldMap.put("feminine", reviewStyle.getFeminine());
+//        fieldMap.put("innocent", reviewStyle.getInnocent());
+//        fieldMap.put("weighty", reviewStyle.getWeighty());
+//        fieldMap.put("soft", reviewStyle.getSoft());
+//        fieldMap.put("cozy", reviewStyle.getCozy());
+
+        Field[] fields = reviewStyle.getClass().getDeclaredFields();
+        for (Field field : fields) {
+            field.setAccessible(true);
+            if (field.getType() == int.class) {
+                try {
+                    fieldMap.put(field.getName(), field.getInt(reviewStyle));
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+            field.setAccessible(false);
+        }
+
+        return fieldMap.entrySet().stream()
+                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (e1, e2) -> e1,
+                        LinkedHashMap::new
+                ));
+    }
+
+    private Map<String, Integer> sortByValue(Map<String, Integer> unsortedMap) {
+        // Map.Entry 리스트 작성
+        List<Map.Entry<String, Integer>> entryList = new LinkedList<>(unsortedMap.entrySet());
+
+        // 값으로 정렬
+        entryList.sort(Comparator.comparing(Map.Entry::getValue, Comparator.reverseOrder()));
+
+        // 정렬된 값을 가진 LinkedHashMap 반환
+        Map<String, Integer> sortedMap = new LinkedHashMap<>();
+        for (Map.Entry<String, Integer> entry : entryList) {
+            sortedMap.put(entry.getKey(), entry.getValue());
+        }
+
+        return sortedMap;
+    }
 
 
     public GetFragranceSimilar getFragranceSimilar(Long fragranceId) {

@@ -43,11 +43,10 @@ public class FragranceController {
     }
 
 
-//    // TODO 리뷰 통계
-//    @GetMapping("/{fragranceId}/review/statistics")
-//    public GetFragranceReviewStatistics getFragranceReviewStatistics(@PathVariable("fragranceId") Long fragranceId) {
-//        return fragranceService.getFragranceReviewStatistics(fragranceId);
-//    }
+    @GetMapping("/review/statistics")
+    public GetFragranceReviewStatistics getFragranceReviewStatistics(@PathVariable("fragranceId") Long fragranceId) {
+        return fragranceService.getFragranceReviewStatistics(fragranceId);
+    }
 
 
     @Operation(summary = "유사 향수")
