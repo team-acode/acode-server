@@ -59,8 +59,8 @@ public class ReviewService {
         //리뷰 관련 엔티티 설정 - 계절감 지속성 세기 스타일
         ReviewSeason reviewSeason = reviewSeasonRepository.findByFragrance(fragrance)
                 .orElseThrow(() -> new CustomException(ErrorCode.REVIEW_SEASON_NOT_FOUND));
-        String season = "";
-        if (registerReviewRequest.getSeason().equals("ALLSEASONS")) {
+        String season = registerReviewRequest.getSeason();
+        if (season.equals("ALLSEASONS")) {
             season = "allSeasons";
         } else {
             season = registerReviewRequest.getSeason().toLowerCase();
@@ -102,6 +102,8 @@ public class ReviewService {
             // 필드 값 1 증가
             field.set(reviewSeason, fieldValue + 1);
 
+            field.setAccessible(false);
+
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }
@@ -122,6 +124,8 @@ public class ReviewService {
 
             // 필드 값 1 증가
             field.set(reviewLongevity, fieldValue + 1);
+
+            field.setAccessible(false);
 
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
@@ -144,6 +148,8 @@ public class ReviewService {
             // 필드 값 1 증가
             field.set(reviewIntensity, fieldValue + 1);
 
+            field.setAccessible(false);
+
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }
@@ -164,6 +170,8 @@ public class ReviewService {
 
             // 필드 값 1 증가
             field.set(reviewStyle, fieldValue + 1);
+
+            field.setAccessible(false);
 
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
