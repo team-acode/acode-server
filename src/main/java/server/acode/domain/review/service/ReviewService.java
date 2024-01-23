@@ -59,22 +59,22 @@ public class ReviewService {
         //리뷰 관련 엔티티 설정 - 계절감 지속성 세기 스타일
         ReviewSeason reviewSeason = reviewSeasonRepository.findByFragrance(fragrance)
                 .orElseThrow(() -> new CustomException(ErrorCode.REVIEW_SEASON_NOT_FOUND));
-        String season = registerReviewRequest.getSeason();
+        String season = registerReviewRequest.getSeason().toString();
         if (season.equals("ALLSEASONS")) {
             season = "allSeasons";
         } else {
-            season = registerReviewRequest.getSeason().toLowerCase();
+            season = season.toLowerCase();
         }
         increaseReviewSeason(reviewSeason, season);
 
         ReviewLongevity reviewLongevity = reviewLongevityRepository.findByFragrance(fragrance)
                 .orElseThrow(() -> new CustomException(ErrorCode.REVIEW_LONGEVITY_NOT_FOUND));
-        String longevity = registerReviewRequest.getLongevity().toLowerCase();
+        String longevity = registerReviewRequest.getLongevity().toString().toLowerCase();
         increaseReviewLongevity(reviewLongevity, longevity);
 
         ReviewIntensity reviewIntensity = reviewIntensityRepository.findByFragrance(fragrance)
                 .orElseThrow(() -> new CustomException(ErrorCode.REVIEW_INTENSITY_NOT_FOUND));
-        String intensity = registerReviewRequest.getIntensity().toLowerCase();
+        String intensity = registerReviewRequest.getIntensity().toString().toLowerCase();
         increaseReviewIntensity(reviewIntensity, intensity);
 
         ReviewStyle reviewStyle = reviewStyleRepository.findByFragrance(fragrance)
