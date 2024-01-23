@@ -9,10 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import server.acode.domain.fragrance.entity.Fragrance;
 import server.acode.domain.fragrance.repository.FragranceRepository;
 import server.acode.domain.review.dto.request.RegisterReviewRequest;
-import server.acode.domain.review.entity.ReviewIntensity;
-import server.acode.domain.review.entity.ReviewLongevity;
-import server.acode.domain.review.entity.ReviewSeason;
-import server.acode.domain.review.entity.ReviewStyle;
+import server.acode.domain.review.entity.*;
 import server.acode.domain.review.repository.*;
 import server.acode.domain.user.entity.User;
 import server.acode.domain.user.repository.UserRepository;
@@ -35,6 +32,7 @@ public class ReviewService {
     private final ReviewLongevityRepository reviewLongevityRepository;
     private final ReviewIntensityRepository reviewIntensityRepository;
     private final ReviewStyleRepository reviewStyleRepository;
+    private final ReviewUpdateRepository reviewUpdateRepository;
 
     public ResponseEntity<?> registerReview(Long fragranceId, RegisterReviewRequest registerReviewRequest, Long userId) {
         User user = userRepository.findById(userId)
@@ -173,5 +171,41 @@ public class ReviewService {
             reviewStyleRepository.insertStatistics(fragranceId);
         }
         return ResponseEntity.ok().build();
+    }
+
+    public void deleteReview(Long reviewId, Long userId) {
+
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new CustomException(ErrorCode.REVIEW_NOT_FOUND));
+
+        if (review.getUser().getId() == userId) {
+            /**
+             *  ReviewSeason, ReviewLongevity, ReviewIntensity, ReviewStyle에 해당하는 컬럼 값 -= 1
+             */
+            String season = review.getSeason().toString().toLowerCase();
+            reviewUpdateRepository.updateSeason(season, review.getFragrance().getId(), -1);
+
+            String longevity = review.getLongevity().toString().toLowerCase(); // 지속성
+            reviewUpdateRepository.updateLongevity(longevity, review.getFragrance().getId(), -1);
+
+            String intensity = review.getIntensity().toString().toLowerCase(); // 향의 세기
+            reviewUpdateRepository.updateIntensity(intensity, review.getFragrance().getId(), -1);
+
+            String styleList = review.getStyle().toLowerCase();
+            List<String> styles = Arrays.asList(styleList.split(", "));
+            styles.forEach(style -> reviewUpdateRepository.updateStyle(style, review.getFragrance().getId(), -1));
+
+
+            /**
+             * Fragrance 테이블의 reviewCnt -= 1
+             */
+            fragranceRepository.decreaseReview(review.getRate(), review.getFragrance().getId());
+
+            /**
+             * Review 테이블 삭제
+             */
+            reviewRepository.delete(review);
+
+        } else { throw new CustomException(ErrorCode.REVIEW_AUTHOR_MISMATCH); }
     }
 }

@@ -46,6 +46,13 @@ public class ReviewController {
         return reviewService.registerReview(fragranceId, registerReviewRequest, userId);
     }
 
+    @Operation(summary = "리뷰 삭제")
+    @DeleteMapping("/review/{reviewId}")
+    public void deleteReview(@PathVariable Long reviewId){
+        Long userId= SecurityUtil.getCurrentUserId();
+        reviewService.deleteReview(reviewId, userId);
+    }
+
     @Operation(summary = "관리자용입니다")
     @GetMapping("/admin")
     public ResponseEntity<?> insertStatistics() {
