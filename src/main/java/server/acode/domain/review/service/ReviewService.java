@@ -59,7 +59,12 @@ public class ReviewService {
         //리뷰 관련 엔티티 설정 - 계절감 지속성 세기 스타일
         ReviewSeason reviewSeason = reviewSeasonRepository.findByFragrance(fragrance)
                 .orElseThrow(() -> new CustomException(ErrorCode.REVIEW_SEASON_NOT_FOUND));
-        String season = registerReviewRequest.getSeason().toLowerCase();
+        String season = "";
+        if (registerReviewRequest.getSeason().equals("ALLSEASONS")) {
+            season = "allSeasons";
+        } else {
+            season = registerReviewRequest.getSeason().toLowerCase();
+        }
         increaseReviewSeason(reviewSeason, season);
 
         ReviewLongevity reviewLongevity = reviewLongevityRepository.findByFragrance(fragrance)
