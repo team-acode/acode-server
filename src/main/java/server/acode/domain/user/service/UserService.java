@@ -22,14 +22,15 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class UserService {
 
     private final UserRepository userRepository;
     private final ReviewRepository reviewRepository;
     private final ScrapRepository scrapRepository;
 
-
+    public synchronized void synchronizedUpdateNickname(String nickname, Long userId){
+        updateNickname(nickname, userId);
+    }
 
     @Transactional
     public void updateNickname(String nickname, Long userId) {
@@ -42,12 +43,14 @@ public class UserService {
         userRepository.save(user);
     }
 
+    @Transactional(readOnly = true)
     public void checkNickname(String nickname) {
         userRepository.findByNicknameAndIsDel(nickname, false).ifPresent(user -> {
             throw new CustomException(ErrorCode.NICKNAME_ALREADY_USED);
         });
     }
 
+    @Transactional(readOnly = true)
     public PreviewUserInfo getUserInfo(Long userId){
 
         User user = userRepository.findById(userId)
@@ -64,6 +67,7 @@ public class UserService {
         return info;
     }
 
+    @Transactional(readOnly = true)
     public PageableResponse getScrapList(Long userId, PageRequest pageRequest){
         Pageable pageable = pageRequest.of(); // pageable 객체로 변환
 
@@ -71,6 +75,7 @@ public class UserService {
         return new PageableResponse(result.getContent(), result.getTotalPages(), result.getTotalElements());
     }
 
+    @Transactional(readOnly = true)
     public PageableResponse getReviewList(Long userId, PageRequest pageRequest) {
         Pageable pageable = pageRequest.of(); // pageable 객체로 변환
 

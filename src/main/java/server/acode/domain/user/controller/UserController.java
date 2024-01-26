@@ -29,7 +29,7 @@ public class UserController {
     @PutMapping("/users/nickname")
     public void updateNickname(@RequestBody @Valid NicknameRequest request){
         Long userId = SecurityUtil.getCurrentUserId();
-        userService.updateNickname(request.getNickname(), userId);
+        userService.synchronizedUpdateNickname(request.getNickname(), userId);
     }
 
 
