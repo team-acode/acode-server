@@ -62,15 +62,15 @@ public class Review extends BaseTimeEntity {
 
     @Builder
     public Review(int rate, String comment,
-                  String season, String longevity, String intensity, String style,
+                  Season season, Longevity longevity, Intensity intensity, String style,
                   String textReview, String thumbnail, String image1, String image2,
                   User user, Fragrance fragrance) {
         this.rate = rate;
         this.comment = comment;
 
-        this.season = Season.valueOf(season);
-        this.longevity = Longevity.valueOf(longevity);
-        this.intensity = Intensity.valueOf(intensity);
+        this.season = season;
+        this.longevity = longevity;
+        this.intensity = intensity;
         this.style = style;
 
         this.textReview = textReview;

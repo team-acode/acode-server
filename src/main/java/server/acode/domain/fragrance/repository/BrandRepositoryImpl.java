@@ -29,7 +29,7 @@ public class BrandRepositoryImpl implements BrandRepositoryCustom {
         List<BrandInfo> contents = queryFactory
                 .select(new QBrandInfo(
                         brand.id.as("brandId"),
-                        brand.korName,
+                        brand.korName.as("brandName"),
                         brand.roundImg
                 ))
                 .from(brand)
