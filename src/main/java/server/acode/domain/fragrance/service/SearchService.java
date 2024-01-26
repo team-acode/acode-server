@@ -10,13 +10,10 @@ import server.acode.domain.family.repository.FragranceFamilyRepository;
 import server.acode.domain.fragrance.dto.request.SearchCond;
 import server.acode.domain.fragrance.dto.response.BrandInfo;
 import server.acode.domain.fragrance.dto.response.FragranceInfo;
-import server.acode.domain.fragrance.dto.response.SearchBrandResponse;
 import server.acode.domain.fragrance.repository.BrandRepository;
 import server.acode.global.common.ErrorCode;
 import server.acode.global.common.PageRequest;
 import server.acode.global.exception.CustomException;
-
-import java.util.List;
 
 import static org.springframework.util.StringUtils.hasText;
 
