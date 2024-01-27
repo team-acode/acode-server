@@ -6,13 +6,13 @@ import lombok.Data;
 @Data
 public class BrandInfo {
     private Long brandId;
-    private String korName;
+    private String brandName;
     private String roundImg;
 
     @QueryProjection
-    public BrandInfo(Long brandId, String korName, String roundImg) {
+    public BrandInfo(Long brandId, String brandName, String roundImg) {
         this.brandId = brandId;
-        this.korName = korName;
+        this.brandName = brandName;
         this.roundImg = roundImg;
     }
 }

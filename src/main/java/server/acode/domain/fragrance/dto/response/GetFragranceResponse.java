@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import server.acode.domain.fragrance.entity.Fragrance;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Getter
@@ -23,7 +24,7 @@ public class GetFragranceResponse {
 
     private List<FamilyInfo> familyList;
     private List<CapacityInfo> capacityList;
-    private String style;
+    private List<String> style;
 
 //    @Builder
     public GetFragranceResponse(Fragrance fragrance, boolean isScraped, List<FamilyInfo> familyList, List<CapacityInfo> capacityList) {
@@ -34,7 +35,7 @@ public class GetFragranceResponse {
         this.korBrand = fragrance.getBrand().getKorName();
         this.fragranceName = fragrance.getName();
         this.concentration = fragrance.getConcentration().name();
-        this.style = fragrance.getStyle();
+        this.style = Arrays.asList(fragrance.getStyle().split(", "));
 
         this.isScraped = isScraped;
         this.familyList = familyList;

@@ -28,6 +28,9 @@ public class ReviewSeason extends BaseTimeEntity {
     @Column(columnDefinition = "integer default 0")
     private int winter;
 
+    @Column(columnDefinition = "integer default 0")
+    private int allSeasons;
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fragrance_id")
     private Fragrance fragrance;

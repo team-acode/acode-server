@@ -121,16 +121,36 @@ public class FragranceFamilyRepositoryImpl implements FragranceFamilyRepositoryC
 
 
     @Override
-    public List<Long> extractByMainFamily(String mainFamilyCond, List<Long> fragranceIdList) {
+    public List<Long> extractByMainFamily(String mainFamily1, String mainFamily2, List<Long> fragranceIdList) {
         return queryFactory
                 .select(fragranceFamily.fragrance.id) //.distinct()
                 .from(fragranceFamily)
                 .where(
-                        fragranceFamily.family.mainFamily.name.eq(mainFamilyCond),
-                        fragrance.id.in(fragranceIdList))
+                        fragrance.id.in(fragranceIdList),
+                        mainFamilyNameEq(mainFamily1),
+                        mainFamilyNameEq(mainFamily2)
+                )
                 .fetch();
     }
 
+    @Override
+    public List<Long> extractByMainFamilyOr(String mainFamily1, String mainFamily2, List<Long> fragranceIdList) {
+        return queryFactory
+                .select(fragranceFamily.fragrance.id)
+                .from(fragranceFamily)
+                .where(
+                        fragrance.id.in(fragranceIdList),
+                        mainFamilyNameEq(mainFamily1)
+                                .or(mainFamilyNameEq(mainFamily2))
+                )
+                .fetch();
+    }
+
+    private BooleanExpression mainFamilyNameEq(String mainFamily) {
+        return hasText(mainFamily)
+                ? fragranceFamily.family.mainFamily.name.eq(mainFamily)
+                : null;
+    }
 
     @Override
     public List<FamilyCountDto> countFamily(List<Long> fragranceIdList) {
