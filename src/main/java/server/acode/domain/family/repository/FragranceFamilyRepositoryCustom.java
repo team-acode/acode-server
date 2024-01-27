@@ -28,7 +28,9 @@ public interface FragranceFamilyRepositoryCustom {
 
     List<FragranceInfo> searchSimilarFragrance(Long fragranceId, Long familyId);
 
-    List<Long> extractByMainFamily(String mainFamilyCond, List<Long> fragranceIdList);
+    List<Long> extractByMainFamily(String mainFamily1, String mainFamily2, List<Long> fragranceIdList);
+
+    List<Long> extractByMainFamilyOr(String mainFamily1, String mainFamily2, List<Long> fragranceIdList);
 
     List<FamilyCountDto> countFamily(List<Long> fragranceIdList);
 

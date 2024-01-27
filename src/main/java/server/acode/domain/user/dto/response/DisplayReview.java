@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class DisplayReview {
     private Long reviewId;
+    private Long fragranceId;
     private String fragranceName;
     private String brandName;
     private String comment;
@@ -15,8 +16,9 @@ public class DisplayReview {
     private String thumbnail;
 
     @QueryProjection
-    public DisplayReview(Long reviewId, String fragranceName, String brandName, String comment, int rate, String thumbnail){
+    public DisplayReview(Long reviewId, Long fragranceId, String fragranceName, String brandName, String comment, int rate, String thumbnail){
         this.reviewId = reviewId;
+        this.fragranceId = fragranceId;
         this.fragranceName = fragranceName;
         this.brandName = brandName;
         this.comment = comment;

@@ -7,6 +7,9 @@ import server.acode.domain.review.entity.enums.Intensity;
 import server.acode.domain.review.entity.enums.Longevity;
 import server.acode.domain.review.entity.enums.Season;
 
+import java.util.Arrays;
+import java.util.List;
+
 @Data
 public class ReviewInfo {
     private Long reviewId;
@@ -23,7 +26,7 @@ public class ReviewInfo {
     private String season;
     private String longevity;
     private String intensity;
-    private String Style;
+    private List<String> Style;
 
     @QueryProjection
     public ReviewInfo(Long reviewId, String thumbnail, String image1, String image2,
@@ -40,7 +43,7 @@ public class ReviewInfo {
         this.season = season.name();
         this.longevity = longevity.name();
         this.intensity = intensity.name();
-        Style = style;
+        this.Style = Arrays.asList(style.split(", "));
     }
 
     public static ReviewInfo from(Review review) {

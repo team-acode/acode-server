@@ -11,7 +11,6 @@ import server.acode.domain.family.dto.response.PageableResponse;
 import server.acode.domain.fragrance.dto.request.SearchCond;
 import server.acode.domain.fragrance.dto.response.BrandInfo;
 import server.acode.domain.fragrance.dto.response.FragranceInfo;
-import server.acode.domain.fragrance.dto.response.SearchBrandResponse;
 import server.acode.domain.fragrance.service.SearchService;
 import server.acode.global.common.PageRequest;
 

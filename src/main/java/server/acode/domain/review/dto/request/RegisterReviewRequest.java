@@ -5,6 +5,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import server.acode.domain.fragrance.entity.Fragrance;
 import server.acode.domain.review.entity.Review;
+import server.acode.domain.review.entity.enums.Intensity;
+import server.acode.domain.review.entity.enums.Longevity;
+import server.acode.domain.review.entity.enums.Season;
 import server.acode.domain.user.entity.User;
 
 @Getter
@@ -16,11 +19,11 @@ public class RegisterReviewRequest {
     private String comment;
 
     @NotNull
-    private String season;
+    private Season season;
     @NotNull
-    private String longevity;
+    private Longevity longevity;
     @NotNull
-    private String intensity;
+    private Intensity intensity;
     @NotNull
     private String style;
 

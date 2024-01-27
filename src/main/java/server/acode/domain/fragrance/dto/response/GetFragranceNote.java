@@ -13,14 +13,14 @@ public class GetFragranceNote {
     private Long fragranceId;
     private boolean isSingle;
     private List<NoteInfo> topNote;
-    private List<NoteInfo> middelNote;
+    private List<NoteInfo> middleNote;
     private List<NoteInfo> baseNote;
 
-    public GetFragranceNote(Fragrance fragrance, List<NoteInfo> topNote, List<NoteInfo> middelNote, List<NoteInfo> baseNote) {
+    public GetFragranceNote(Fragrance fragrance, List<NoteInfo> topNote, List<NoteInfo> middleNote, List<NoteInfo> baseNote) {
         this.fragranceId = fragrance.getId();
         this.isSingle = fragrance.isSingle();
         this.topNote = topNote;
-        this.middelNote = middelNote;
+        this.middleNote = middleNote;
         this.baseNote = baseNote;
     }
 }
