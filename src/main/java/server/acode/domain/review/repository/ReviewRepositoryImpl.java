@@ -88,6 +88,7 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
         QueryResults<DisplayReview> results = queryFactory
                 .select(new QDisplayReview(
                         review.id,
+                        review.fragrance.id,
                         review.fragrance.name,
                         review.fragrance.brand.korName,
                         review.comment,
