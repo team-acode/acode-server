@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import server.acode.domain.family.dto.request.FragranceFilterCond;
 import server.acode.domain.family.dto.response.*;
 import server.acode.domain.family.entity.Family;
@@ -25,6 +26,7 @@ import static org.springframework.util.StringUtils.*;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class DisplayService {
 
     private final FamilyRepository familyRepository;

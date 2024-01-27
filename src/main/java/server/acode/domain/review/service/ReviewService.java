@@ -1,5 +1,6 @@
 package server.acode.domain.review.service;
 
+import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,6 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class ReviewService {
     private final FragranceRepository fragranceRepository;
     private final ReviewRepository reviewRepository;
@@ -34,6 +34,31 @@ public class ReviewService {
     private final ReviewStyleRepository reviewStyleRepository;
     private final ReviewUpdateRepository reviewUpdateRepository;
 
+    public ResponseEntity<?> registerReviewTest() throws InterruptedException {
+        while (true){
+            try {
+                RegisterReviewRequest request = new RegisterReviewRequest(3, "very good", "SPRING", "ONEHOUR", "WEAK", "CHIC");
+                 return registerReview(1L, request,1L);
+
+            } catch (OptimisticLockException e){
+                Thread.sleep(50);
+            }
+
+        }
+    }
+
+    public void deleteReviewTest() throws InterruptedException {
+        while (true){
+            try {
+                deleteReview(5L, 1L);
+                break;
+            } catch (OptimisticLockException e){
+                Thread.sleep(50);
+            }
+        }
+    }
+
+    @Transactional
     public ResponseEntity<?> registerReview(Long fragranceId, RegisterReviewRequest registerReviewRequest, Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
@@ -42,7 +67,7 @@ public class ReviewService {
         Fragrance fragrance = fragranceRepository.findById(fragranceId)
                 .orElseThrow(() -> new CustomException(ErrorCode.FRAGRANCE_NOT_FOUND));
 
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         reviewRepository.save(registerReviewRequest.toEntity(user, fragrance));
 
@@ -78,6 +103,7 @@ public class ReviewService {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    @Transactional
     private void increaseReviewSeason(ReviewSeason reviewSeason, String season) {
         try {
             // ReviewSeason 클래스에서 지정된 계절에 해당하는 필드를 가져오기 위해 리플렉션 사용
@@ -98,7 +124,7 @@ public class ReviewService {
             e.printStackTrace();
         }
     }
-
+    @Transactional
     private void increaseReviewLongevity(ReviewLongevity reviewLongevity, String longevity) {
         try {
             // 클래스에서 지정된 필드를 가져오기 위해 리플렉션 사용
@@ -119,7 +145,7 @@ public class ReviewService {
             e.printStackTrace();
         }
     }
-
+    @Transactional
     private void increaseReviewIntensity(ReviewIntensity reviewIntensity, String intensity) {
         try {
             // 클래스에서 지정된 필드를 가져오기 위해 리플렉션 사용
@@ -140,7 +166,7 @@ public class ReviewService {
             e.printStackTrace();
         }
     }
-
+    @Transactional
     private void increaseReviewStyle(ReviewStyle reviewStyle, String style) {
         try {
             // 클래스에서 지정된 필드를 가져오기 위해 리플렉션 사용
@@ -161,7 +187,7 @@ public class ReviewService {
             e.printStackTrace();
         }
     }
-
+    @Transactional
     public ResponseEntity<?> insertStatistics() {
         for (int i = 1; i < 51; i++) {
             Long fragranceId = (long) i;
@@ -172,7 +198,7 @@ public class ReviewService {
         }
         return ResponseEntity.ok().build();
     }
-
+    @Transactional
     public void deleteReview(Long reviewId, Long userId) {
 
         Review review = reviewRepository.findById(reviewId)

@@ -2,6 +2,7 @@ package server.acode.domain.family.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import server.acode.domain.family.dto.response.HomeFragrance;
 import server.acode.domain.family.repository.FamilyRepository;
 import server.acode.domain.family.repository.FragranceFamilyRepository;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class HomeService {
 
     private final FamilyRepository familyRepository;

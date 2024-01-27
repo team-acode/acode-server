@@ -39,6 +39,10 @@ public class Fragrance extends BaseTimeEntity {
     @Column(columnDefinition = "integer default 0")
     private int view; // 조회수
 
+    @Column(columnDefinition = "bigint default 0")
+    @Version
+    private long version;
+
     private String poster; //포스터 이미지 url
 
     private String link1; // 구매 링크 url

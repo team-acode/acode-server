@@ -29,6 +29,15 @@ public class RegisterReviewRequest {
     private String image1;
     private String image2;
 
+    public RegisterReviewRequest(int rate, String comment, String season, String longevity, String intensity, String style){
+        this.rate = rate;
+        this.comment = comment;
+        this.season = season;
+        this.longevity = longevity;
+        this.intensity = intensity;
+        this.style = style;
+    }
+
     public Review toEntity(User user, Fragrance fragrance) {
         return Review.builder()
                 .rate(rate).comment(comment)
