@@ -46,7 +46,8 @@ public class ScrapRepositoryImpl implements ScrapRepositoryCustom{
                         scrap.fragrance.id.as("fragranceId"),
                         scrap.fragrance.name.as("fragranceName"),
                         scrap.fragrance.brand.korName.as("brandName"),
-                        scrap.fragrance.concentration
+                        scrap.fragrance.concentration,
+                        scrap.fragrance.thumbnail
                 ))
                 .from(scrap)
                 .join(scrap.user, user)

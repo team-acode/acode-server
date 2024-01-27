@@ -12,15 +12,17 @@ public class DisplayScrap {
     private String fragranceName;
     private String brandName;
     private String concentration;
+    private String thumbnail;
 //    private String capacity;
 //    private int price;
 
     @QueryProjection
-    public DisplayScrap(Long fragranceId, String fragranceName, String brandName, Concentration concentration){
+    public DisplayScrap(Long fragranceId, String fragranceName, String brandName, Concentration concentration, String thumbnail){
         this.fragranceId = fragranceId;
         this.fragranceName = fragranceName;
         this.brandName = brandName;
         this.concentration = concentration.toString();
+        this.thumbnail = thumbnail;
 //        this.capacity = capacity;
 //        this.price = price;
     }
