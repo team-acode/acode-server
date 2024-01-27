@@ -83,7 +83,7 @@ public class AuthService {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code"); //고정값
         params.add("client_id", "3aaae9b053b685f95900145c213f769f");
-        params.add("redirect_uri", "http://localhost:3000/login/oauth2/code/kakao"); //등록한 redirect uri
+        params.add("redirect_uri", "http://localhost:3000/login/kakao"); //등록한 redirect uri
         params.add("code", code);
         params.add("client_secret", kakaoClientSecret);
         System.out.println(code);

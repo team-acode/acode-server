@@ -35,9 +35,9 @@ public class RegisterReviewRequest {
     public RegisterReviewRequest(int rate, String comment, String season, String longevity, String intensity, String style){
         this.rate = rate;
         this.comment = comment;
-        this.season = season;
-        this.longevity = longevity;
-        this.intensity = intensity;
+        this.season = Season.valueOf(season);
+        this.longevity = Longevity.valueOf(longevity);
+        this.intensity = Intensity.valueOf(intensity);
         this.style = style;
     }
 
