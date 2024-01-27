@@ -32,7 +32,4 @@ public class ReviewIntensity extends BaseTimeEntity {
     @JoinColumn(name = "fragrance_id")
     private Fragrance fragrance;
 
-    @Column(columnDefinition = "bigint default 0")
-    @Version
-    private long version;
 }

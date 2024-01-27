@@ -36,18 +36,14 @@ class ReviewServiceTest {
 
         //when
         service.execute(() -> {
-            reviewService.registerReviewTest();
-
+            RegisterReviewRequest request = new RegisterReviewRequest(3, "very good", "SPRING", "ONEHOUR", "WEAK", "CHIC");
+            reviewService.registerReview(1L, request,1L);
+            latch.countDown();
 
         });
         service.execute(() -> {
-            try {
-                reviewService.deleteReviewTest();
-            } catch (InterruptedException e) {
-
-            } finally {
-                latch.countDown();
-            }
+            reviewService.deleteReview(3L, 1L);
+            latch.countDown();
         });
 
 
