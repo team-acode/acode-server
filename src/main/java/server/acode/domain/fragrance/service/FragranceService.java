@@ -68,7 +68,7 @@ public class FragranceService {
                 .orElseThrow(() -> new CustomException(ErrorCode.FRAGRANCE_NOT_FOUND));
 
         if (userDetails != null) {
-            User user = userRepository.findByAuthKey(userDetails.getUsername())
+            User user = userRepository.findById(Long.valueOf(userDetails.getUsername()))
                     .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
             isScraped = scrapRepository.findByUserAndFragrance(user, fragrance).isPresent();
         }
