@@ -86,15 +86,15 @@ public class ExtractService {
 
     private List<Long> extractFragranceIdList(KeywordCond cond) {
         // 1번, 2번 질문 - 반드시 결과 있음
-        List<Long> fragranceIdList1 = fragranceRepository.extractByConcentrationAndSeason(cond.getConcentration(), cond.getSeason());
+        List<Long> fragranceIdList1 = fragranceRepository.extractByConcentrationAndSeason(cond.getConcentration().get(0), cond.getSeason().get(0));
         System.out.println("\n1번 concentration, 2번 season");
         System.out.println("fragranceIdList1 : " + fragranceIdList1);
 
         // 3번 질문
-        List<Long> fragranceIdList2 = fragranceFamilyRepository.extractByMainFamily(cond.getMainFamily(), fragranceIdList1);
+        List<Long> fragranceIdList2 = fragranceFamilyRepository.extractByMainFamily(cond.getMainFamily().get(0), fragranceIdList1);
         System.out.println("\n3번 mainFamily");
 
-        if (fragranceIdList2 == null) {
+        if (fragranceIdList2 == null || fragranceIdList2.isEmpty()) {
             System.out.println("\n3번 질문 결과 없어서 1번2번 질문까지만");
             System.out.println("fragranceIdList1 = " + fragranceIdList1);
             return fragranceIdList1;
@@ -102,17 +102,17 @@ public class ExtractService {
         System.out.println("fragranceIdList2 = " + fragranceIdList2);
 
         // 4번 질문
-        if (hasText(cond.getScent2())) { // 향 2개 AND
-            fragranceIdList1 = fragranceRepository.extractByScent(cond.getScent1(), cond.getScent2(), fragranceIdList2);
+        if (cond.getScent().size() == 2) { // 향 2개 AND
+            fragranceIdList1 = fragranceRepository.extractByScent(cond.getScent().get(0), cond.getScent().get(1), fragranceIdList2);
             System.out.println("\n4번 scent AND");
 
             if (fragranceIdList1.isEmpty()) { // 향 2개 OR
-                fragranceIdList1 = fragranceRepository.extractByScentOr(cond.getScent1(), cond.getScent2(), fragranceIdList2);
+                fragranceIdList1 = fragranceRepository.extractByScentOr(cond.getScent().get(0), cond.getScent().get(1), fragranceIdList2);
                 System.out.println("4번 scent OR");
             }
 
         } else { // 향 1개
-            fragranceIdList1 = fragranceRepository.extractByScent(cond.getScent1(), cond.getScent2(), fragranceIdList2);
+            fragranceIdList1 = fragranceRepository.extractByScent(cond.getScent().get(0), "", fragranceIdList2);
             System.out.println("\n4번 scent 1개");
         }
 
@@ -124,16 +124,16 @@ public class ExtractService {
         System.out.println("fragranceIdList1 = " + fragranceIdList1);
 
         // 5번 질문
-        if (hasText(cond.getStyle2())) { // 스타일 2개 AND
-            fragranceIdList2 = fragranceRepository.extractByStyle(cond.getStyle1(), cond.getStyle2(), fragranceIdList1);
+        if (cond.getScent().size() == 2) { // 스타일 2개 AND
+            fragranceIdList2 = fragranceRepository.extractByStyle(cond.getStyle().get(0), cond.getStyle().get(1), fragranceIdList1);
             System.out.println("\n5번 style AND");
 
             if (fragranceIdList2.isEmpty()) { // 스타일 2개 OR
-                fragranceIdList2 = fragranceRepository.extractByStyleOr(cond.getStyle1(), cond.getStyle2(), fragranceIdList1);
+                fragranceIdList2 = fragranceRepository.extractByStyleOr(cond.getStyle().get(0), cond.getStyle().get(1), fragranceIdList1);
                 System.out.println("5번 style OR");
             }
         } else { // 스타일 1개
-            fragranceIdList2 = fragranceRepository.extractByStyle(cond.getStyle1(), cond.getStyle2(), fragranceIdList1);
+            fragranceIdList2 = fragranceRepository.extractByStyle(cond.getStyle().get(0), "", fragranceIdList1);
             System.out.println("\n5번 style 1개");
         }
 
