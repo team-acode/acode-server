@@ -19,7 +19,6 @@ public class FragranceRepositoryImpl implements FragranceRepositoryCustom {
         this.queryFactory = new JPAQueryFactory(em);
     }
 
-
     @Override
     public List<Long> extractByConcentrationAndSeason(String concentrationCond, String seasonCond) {
         return queryFactory
@@ -33,28 +32,84 @@ public class FragranceRepositoryImpl implements FragranceRepositoryCustom {
     }
 
 
+
+    @Override
+    public List<Long> extractByConcentration(String concentration1, String concentration2) {
+        return queryFactory
+                .select(fragrance.id)
+                .from(fragrance)
+                .where(
+                        concentrationEq(concentration1),
+                        concentrationEq(concentration2)
+                )
+                .fetch();
+    }
+
+    @Override
+    public List<Long> extractByConcentrationOr(String concentration1, String concentration2) {
+        return queryFactory
+                .select(fragrance.id)
+                .from(fragrance)
+                .where(
+                        concentrationEq(concentration1)
+                                .or(concentrationEq(concentration2))
+                )
+                .fetch();
+    }
+
+    private BooleanExpression concentrationEq(String concentration) {
+        return hasText(concentration)
+                ? fragrance.concentration.eq(Concentration.valueOf(concentration))
+                : null;
+    }
+
+
+
+    @Override
+    public List<Long> extractBySeason(String season1, String season2, List<Long> fragranceIdList) {
+        return queryFactory
+                .select(fragrance.id)
+                .from(fragrance)
+                .where(
+                        fragrance.id.in(fragranceIdList),
+                        seasonContains(season1),
+                        seasonContains(season2)
+                )
+                .fetch();
+    }
+
+    @Override
+    public List<Long> extractBySeasonOr(String season1, String season2, List<Long> fragranceIdList) {
+        return queryFactory.select(fragrance.id)
+                .from(fragrance)
+                .where(
+                        fragrance.id.in(fragranceIdList),
+                        seasonContains(season1)
+                                .or(seasonContains(season2))
+                )
+                .fetch();
+    }
+
+    private BooleanExpression seasonContains(String season) {
+        return hasText(season)
+                ? fragrance.season.contains(season)
+                : null;
+    }
+
+
+
     @Override
     public List<Long> extractByScent(String scent1, String scent2, List<Long> fragranceIdList) {
         return queryFactory
                 .select(fragrance.id)
                 .from(fragrance)
                 .where(
-                        scentContainsIgnoreCase(scent1),
-                        scentContainsIgnoreCase(scent2),
-                        fragrance.id.in(fragranceIdList)
+                        fragrance.id.in(fragranceIdList),
+                        scentContains(scent1),
+                        scentContains(scent2)
                 )
                 .fetch();
     }
-
-
-
-
-    private BooleanExpression scentContainsIgnoreCase(String scent) {
-        return hasText(scent)
-                ? fragrance.scent.containsIgnoreCase(scent)
-                : null;
-    }
-
 
     @Override
     public List<Long> extractByScentOr(String scent1, String scent2, List<Long> fragranceIdList) {
@@ -63,24 +118,18 @@ public class FragranceRepositoryImpl implements FragranceRepositoryCustom {
                 .from(fragrance)
                 .where(
                         fragrance.id.in(fragranceIdList),
-                        scentContainsIgnoreCase(scent1)
-                                .or(scentContainsIgnoreCase(scent2))
+                        scentContains(scent1)
+                                .or(scentContains(scent2))
                 )
                 .fetch();
     }
 
+    private BooleanExpression scentContains(String scent) {
+        return hasText(scent)
+                ? fragrance.scent.contains(scent)
+                : null;
+    }
 
-//    @Override
-//    public List<Long> extractByScent(String scent, List<Long> fragranceIdList) {
-//        return queryFactory
-//                .select(fragrance.id)
-//                .from(fragrance)
-//                .where(
-//                        fragrance.id.in(fragranceIdList),
-//                        fragrance.scent.containsIgnoreCase(scent)
-//                )
-//                .fetch();
-//    }
 
 
     @Override
@@ -90,19 +139,11 @@ public class FragranceRepositoryImpl implements FragranceRepositoryCustom {
                 .from(fragrance)
                 .where(
                         fragrance.id.in(fragranceIdList),
-                        styleContainsIgnoreCase(style1),
-                        styleContainsIgnoreCase(style2)
+                        styleContains(style1),
+                        styleContains(style2)
                 )
                 .fetch();
     }
-
-
-    private BooleanExpression styleContainsIgnoreCase(String style) {
-        return hasText(style)
-                ? fragrance.style.containsIgnoreCase(style)
-                : null;
-    }
-
 
     @Override
     public List<Long> extractByStyleOr(String style1, String style2, List<Long> fragranceIdList) {
@@ -111,10 +152,16 @@ public class FragranceRepositoryImpl implements FragranceRepositoryCustom {
                 .from(fragrance)
                 .where(
                         fragrance.id.in(fragranceIdList),
-                        styleContainsIgnoreCase(style1)
-                                .or(styleContainsIgnoreCase(style2))
+                        styleContains(style1)
+                                .or(styleContains(style2))
                 )
                 .fetch();
+    }
+
+    private BooleanExpression styleContains(String style) {
+        return hasText(style)
+                ? fragrance.style.contains(style)
+                : null;
     }
 
 

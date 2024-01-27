@@ -6,6 +6,14 @@ import java.util.List;
 
 @Repository
 public interface FragranceRepositoryCustom {
+    List<Long> extractByConcentration(String concentration1, String concentration2);
+
+    List<Long> extractByConcentrationOr(String concentration1, String concentration2);
+
+    List<Long> extractBySeason(String season1, String season2, List<Long> fragranceIdList);
+
+    List<Long> extractBySeasonOr(String season1, String season2, List<Long> fragranceIdList);
+
     List<Long> extractByConcentrationAndSeason(String concentraionCond, String seasonCond);
 
     List<Long> extractByScent(String scent1, String scent2, List<Long> fragranceIdList);
