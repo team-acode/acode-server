@@ -34,6 +34,9 @@ public class AuthService {
     @Value("${KAKAO_CLIENT_SECRET}")
     private String kakaoClientSecret;
 
+    @Value("${KAKAO_REDIRECT_URL}")
+    private String redirectedUrl;
+
     public void checkUser(Long userId){
         /**
          * 사용자 정보 이용하는 부분 모두
@@ -49,8 +52,8 @@ public class AuthService {
         System.out.println("user = " + user.getNickname());
     }
 
-    public ResponseEntity signin(String code) throws JsonProcessingException {
-        String kakaoAccessToken = getKakaoAccessToken(code);
+    public ResponseEntity signin(String code, boolean developer) throws JsonProcessingException {
+        String kakaoAccessToken = getKakaoAccessToken(code, developer);
         String userInfo = getUserInfo(kakaoAccessToken);
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -74,7 +77,7 @@ public class AuthService {
     }
 
     // TODO Redirect url 숨기기
-    private String getKakaoAccessToken(String code) throws JsonProcessingException {
+    private String getKakaoAccessToken(String code, boolean developer) throws JsonProcessingException {
         // header 생성
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
@@ -83,9 +86,13 @@ public class AuthService {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code"); //고정값
         params.add("client_id", "3aaae9b053b685f95900145c213f769f");
-        params.add("redirect_uri", "https://www.acode-fragrance.com/login/kakao"); //등록한 redirect uri
         params.add("code", code);
         params.add("client_secret", kakaoClientSecret);
+        if(developer){
+            params.add("redirect_uri", "http://localhost:3000/login/kakao"); // 개발용 redirect uri
+        } else {
+            params.add("redirect_uri", redirectedUrl); // 배포용 redirect uri
+        }
         System.out.println(code);
 
         // header + body

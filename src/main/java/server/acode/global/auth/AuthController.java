@@ -25,9 +25,15 @@ public class AuthController {
 
 
     @GetMapping("/oauth2/kakao")
-    @Operation(summary = "카카오 로그인", description = "카카오 로그인 후 발급받은 인증 코드를 넣어주세요")
+    @Operation(summary = "배포용 카카오 로그인", description = "배포용 카카오 로그인 후 발급받은 인증 코드를 넣어주세요")
     public ResponseEntity signin(@RequestParam("code") String code) throws JsonProcessingException {
-        return authService.signin(code);
+        return authService.signin(code, false);
+    }
+
+    @GetMapping("/oauth2/kakao/developer")
+    @Operation(summary = "로컬용 카카오 로그인", description = "로컬용 카카오 로그인 후 발급받은 인증 코드를 넣어주세요")
+    public ResponseEntity signinDeveloper(@RequestParam("code") String code) throws JsonProcessingException {
+        return authService.signin(code, true);
     }
 
     @Operation(summary = "로그아웃")
