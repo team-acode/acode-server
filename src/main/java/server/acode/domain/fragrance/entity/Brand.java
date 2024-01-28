@@ -22,7 +22,6 @@ public class Brand extends BaseTimeEntity {
     @Column(length = 50)
     private String engName; // 브랜드 영어 이름
 
-    @Column(length = 50)
     private String summary; // 브랜드 설명
     private String keyword; // 브랜드 키워드
     private String backgroundImg; // 브랜드 백그라운드 이미지
