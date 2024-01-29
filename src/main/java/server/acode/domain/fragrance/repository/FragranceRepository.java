@@ -19,4 +19,11 @@ public interface FragranceRepository extends JpaRepository<Fragrance, Long>, Fra
             "f.rateSum = f.rateSum + :rate " +
             "WHERE f.id = :fragranceId")
     void increaseReview(@Param("rate") int rate, @Param("fragranceId") Long fragranceId);
+
+    @Modifying
+    @Query("UPDATE Fragrance f " +
+            "SET f.reviewCnt = f.reviewCnt - 1, " +
+            "f.rateSum = f.rateSum - :rate " +
+            "WHERE f.id = :fragranceId")
+    void decreaseReview(@Param("rate") int rate, @Param("fragranceId") Long fragranceId);
 }

@@ -1,14 +1,18 @@
 package server.acode.global.auth.security;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import server.acode.domain.user.entity.Role;
 import server.acode.domain.user.entity.User;
 import server.acode.domain.user.repository.UserRepository;
+import server.acode.global.common.ErrorCode;
+import server.acode.global.exception.CustomException;
 
 import java.util.Collections;
 
@@ -21,9 +25,12 @@ public class CustomUserDetailService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String authKey) throws UsernameNotFoundException {
-        User user = userRepository.findByAuthKey(authKey)
-                .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+        // 여기서 찾은 user의 id로 authentication 생성
+        User user = userRepository.findByAuthKeyAndIsDel(authKey, false)
+//        User user = userRepository.findByAuthKey(authKey)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        return new CustomUserDetails(user, Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")));
+        return new CustomUserDetails(user, Collections.singleton(new SimpleGrantedAuthority("USER")));
     }
+
 }

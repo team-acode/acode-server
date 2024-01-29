@@ -19,4 +19,6 @@ public interface ScrapRepository extends JpaRepository<Scrap, Long>, ScrapReposi
     @Modifying
     void deleteByUserAndFragrance(User user, Fragrance fragrance);
 
+    Optional<Scrap> findByUserId(Long userId);
+
 }

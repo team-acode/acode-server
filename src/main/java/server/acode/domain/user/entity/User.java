@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Where;
 import server.acode.global.common.BaseTimeEntity;
 
 import java.util.Objects;
@@ -12,6 +13,8 @@ import java.util.Objects;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+//@Where(clause = "is_del = false")
+@Table(indexes = @Index(name = "idx_user_authkey", columnList = "auth_key"))
 public class User extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,10 +25,10 @@ public class User extends BaseTimeEntity {
     @Column(columnDefinition = "varchar(50) default 'ROLE_USER'")
     private Role role;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String authKey;
 
-    @Column(length = 30, nullable = false)
+    @Column(length = 30)
     private String nickname;
 
     @Column(columnDefinition = "integer default 0")
