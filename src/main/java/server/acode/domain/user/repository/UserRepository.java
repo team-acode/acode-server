@@ -12,10 +12,15 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByAuthKey(String authKey);
+    Optional<User> findByAuthKeyAndIsDel(String authKey, boolean isDel);
 
     boolean existsByAuthKey(String authKey);
+    boolean existsByAuthKeyAndIsDel(String authKey, boolean isDel);
 
     @Modifying
     @Query("UPDATE User u SET u.reviewCnt = u.reviewCnt + 1 WHERE u.id = :userId")
     void increaseReviewCnt(@Param("userId") Long userId);
+
+    Optional<User> findByNickname(String nickname);
+    Optional<User> findByNicknameAndIsDel(String nickname, boolean isDel);
 }

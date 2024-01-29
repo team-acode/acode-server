@@ -14,4 +14,5 @@ import java.util.List;
 public interface FragranceFamilyRepository extends JpaRepository<FragranceFamily, Long>, FragranceFamilyRepositoryCustom {
     @Query("SELECT ff.family FROM FragranceFamily ff WHERE ff.fragrance = :fragrance")
     List<Family> findByFragrance(@Param("fragrance") Fragrance fragrance);
+
 }

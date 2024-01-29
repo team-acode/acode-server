@@ -25,7 +25,7 @@ public class IngredientRepositoryImpl implements IngredientRepositoryCustom{
                         ingredient.acode
                 ))
                 .from(ingredient)
-                .where(ingredient.id.in(5, 100, 80, 1, 102))
+                .where(ingredient.id.in(5, 100, 80, 1, 8))
                 .fetch();
     }
 }

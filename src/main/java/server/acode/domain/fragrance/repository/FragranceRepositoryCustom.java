@@ -1,11 +1,17 @@
 package server.acode.domain.fragrance.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
+import server.acode.domain.family.dto.response.DisplayFragrance;
 
 import java.util.List;
 
 @Repository
 public interface FragranceRepositoryCustom {
+
+    Page<DisplayFragrance> searchByIngredient(String ingredientName, Pageable pageable);
+
     List<Long> extractByConcentration(String concentration1, String concentration2);
 
     List<Long> extractByConcentrationOr(String concentration1, String concentration2);
@@ -13,6 +19,7 @@ public interface FragranceRepositoryCustom {
     List<Long> extractBySeason(String season1, String season2, List<Long> fragranceIdList);
 
     List<Long> extractBySeasonOr(String season1, String season2, List<Long> fragranceIdList);
+
 
     List<Long> extractByConcentrationAndSeason(String concentraionCond, String seasonCond);
 

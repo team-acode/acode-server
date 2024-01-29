@@ -20,12 +20,14 @@ import java.util.Date;
 import java.time.Duration;
 
 import server.acode.global.auth.security.CustomUserDetailService;
+import server.acode.global.inmemory.RedisDao;
 
 @Component
 @RequiredArgsConstructor
 public class JwtTokenProvider implements InitializingBean {
     private Key key;
     private final CustomUserDetailService customUserDetailsService;
+    private final RedisDao redisDao;
 
     @Value("${token.secret}")
     private String secret;
@@ -51,6 +53,28 @@ public class JwtTokenProvider implements InitializingBean {
                 .setExpiration(new Date(now.getTime() + ACCESS_TOKEN_EXPIRATION_TIME)) // set Expire Time
                 .signWith(SignatureAlgorithm.HS256, this.key) // 비밀키로 서명
                 .compact();
+    }
+
+    // JWT RefreshToken 생성
+    public String createRefreshToken(String authKey, String role) {
+        Date now = new Date();
+        Date expiration = new Date(now.getTime() + REFRESH_TOKEN_EXPIRATION_TIME);
+
+        //TODO redis에 저장
+        Claims claims = Jwts.claims().setSubject(authKey); // JWT payload 에 저장되는 정보단위
+        claims.put("role", role); // 정보는 key/value 쌍으로 저장
+
+        String refreshToken = Jwts.builder()
+                .setClaims(claims) // 정보 저장
+                .setIssuer("Acode")
+                .setIssuedAt(now) // 토큰 발행 시간 정보
+                .setExpiration(expiration) // set Expire Time
+                .signWith(SignatureAlgorithm.HS256, this.key) // 비밀키로 서명
+                .compact();
+
+        redisDao.setValues(refreshToken, authKey, Duration.between(Instant.now(), expiration.toInstant()));
+
+        return refreshToken;
     }
 
     public Authentication getAuthentication(String token) {

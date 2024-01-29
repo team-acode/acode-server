@@ -68,7 +68,7 @@ public class FragranceService {
                 .orElseThrow(() -> new CustomException(ErrorCode.FRAGRANCE_NOT_FOUND));
 
         if (userDetails != null) {
-            User user = userRepository.findByAuthKey(userDetails.getUsername())
+            User user = userRepository.findById(Long.valueOf(userDetails.getUsername()))
                     .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
             isScraped = scrapRepository.findByUserAndFragrance(user, fragrance).isPresent();
         }
@@ -386,8 +386,8 @@ public class FragranceService {
 
 
     @Transactional
-    public ResponseEntity<?> scrap(Long fragranceId, CustomUserDetails userDetails) {
-        User user = userRepository.findByAuthKey(userDetails.getUsername())
+    public ResponseEntity<?> scrap(Long fragranceId, Long userId) {
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
         Fragrance fragrance = fragranceRepository.findById(fragranceId)
                 .orElseThrow(() -> new CustomException(ErrorCode.FRAGRANCE_NOT_FOUND));

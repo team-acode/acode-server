@@ -31,4 +31,5 @@ public class ReviewIntensity extends BaseTimeEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fragrance_id")
     private Fragrance fragrance;
+
 }

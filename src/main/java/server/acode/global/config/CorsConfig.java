@@ -18,6 +18,8 @@ public class CorsConfig implements WebMvcConfigurer {
         allowedOriginPatterns.add("http://localhost:8080");
         allowedOriginPatterns.add("https://abcode.shop");
         allowedOriginPatterns.add("https://abcode.shop/");
+        allowedOriginPatterns.add("https://acode-fragrance.com");
+        allowedOriginPatterns.add("https://acode-fragrance.com/");
         String[] patterns = allowedOriginPatterns.toArray(String[]::new);
         registry.addMapping("/**")
                 .allowedMethods("*")

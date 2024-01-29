@@ -22,58 +22,66 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class UserService {
 
     private final UserRepository userRepository;
     private final ReviewRepository reviewRepository;
     private final ScrapRepository scrapRepository;
 
-
-
-    @Transactional
-    public void updateNickname(String nickname, String authKey) {
-
-        User byAuthKey = userRepository.findByAuthKey(authKey)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-
-        byAuthKey.updateNickname(nickname);
-        userRepository.save(byAuthKey);
+    public synchronized void synchronizedUpdateNickname(String nickname, Long userId){
+        updateNickname(nickname, userId);
     }
 
-    public PreviewUserInfo getUserInfo(String authKey){
+    @Transactional
+    public void updateNickname(String nickname, Long userId) {
+        checkNickname(nickname);
 
-        User byAuthKey = userRepository.findByAuthKey(authKey)
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        List<PreviewScrap> previewScrap = scrapRepository.getScrapPreview(byAuthKey.getId());
+        user.updateNickname(nickname);
+        userRepository.save(user);
+    }
+
+    @Transactional(readOnly = true)
+    public void checkNickname(String nickname) {
+        userRepository.findByNicknameAndIsDel(nickname, false).ifPresent(user -> {
+            throw new CustomException(ErrorCode.NICKNAME_ALREADY_USED);
+        });
+    }
+
+    @Transactional(readOnly = true)
+    public PreviewUserInfo getUserInfo(Long userId){
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        List<PreviewScrap> previewScrap = scrapRepository.getScrapPreview(userId);
 
         PreviewUserInfo info = PreviewUserInfo.builder()
-                .nickname(byAuthKey.getNickname())
-                .reviewCnt(reviewRepository.countByUserId(byAuthKey.getId()))
+                .nickname(user.getNickname())
+                .reviewCnt(reviewRepository.countByUserId(userId))
                 .scraps(previewScrap)
                 .build();
 
         return info;
     }
 
-    public PageableResponse getScrapList(String authKey, PageRequest pageRequest){
+    @Transactional(readOnly = true)
+    public PageableResponse getScrapList(Long userId, PageRequest pageRequest){
         Pageable pageable = pageRequest.of(); // pageable 객체로 변환
 
-        User byAuthKey = userRepository.findByAuthKey(authKey)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-
-        Page<DisplayScrap> result = scrapRepository.getScrap(byAuthKey.getId(), pageable);
+        Page<DisplayScrap> result = scrapRepository.getScrap(userId, pageable);
         return new PageableResponse(result.getContent(), result.getTotalPages(), result.getTotalElements());
     }
 
-    public PageableResponse getReviewList(String authKey, PageRequest pageRequest) {
+    @Transactional(readOnly = true)
+    public PageableResponse getReviewList(Long userId, PageRequest pageRequest) {
         Pageable pageable = pageRequest.of(); // pageable 객체로 변환
 
-        User byAuthKey = userRepository.findByAuthKey(authKey)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-
-        Page<DisplayReview> result = reviewRepository.getDisplayReview(byAuthKey.getId(), pageable);
+        Page<DisplayReview> result = reviewRepository.getDisplayReview(userId, pageable);
         return new PageableResponse(result.getContent(), result.getTotalPages(), result.getTotalElements());
     }
+
+
 }

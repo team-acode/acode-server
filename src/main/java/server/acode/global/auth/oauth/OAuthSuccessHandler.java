@@ -29,6 +29,7 @@ public class OAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
         OAuth2User oAuth2User = (OAuth2User)authentication.getPrincipal();
 
         String accessToken = jwtTokenProvider.createAccessToken(oAuth2User.getName(), "USER_ROLE"); // 토큰 생성
+        String refreshToken = jwtTokenProvider.createRefreshToken(oAuth2User.getName(), "USER_ROLE");
         System.out.println(accessToken);
 
         Optional<User> byAuthKey = userRepository.findByAuthKey(oAuth2User.getName());
@@ -37,6 +38,8 @@ public class OAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
         String targetUrl = UriComponentsBuilder.fromUriString(setRedirectUrl(request.getServerName()))
                 .queryParam("jwtAccessToken", accessToken)
+
+                .queryParam("jwtRefreshToken", refreshToken)
                 .queryParam("init", init.toString())
                 .build().toUriString();
 
