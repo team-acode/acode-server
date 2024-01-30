@@ -392,85 +392,77 @@ public class FragranceService {
         boolean isSoldOut = false;
         if (!hasText(fragrance.getLink1())) {
             isSoldOut = true;
-            return GetFragrancePurchase.builder().isSoldOut(isSoldOut).build();
+            return GetFragrancePurchase.builder()
+                    .isSoldOut(isSoldOut)
+                    .fragranceName(fragrance.getName())
+                    .brandName(fragrance.getBrand().getKorName())
+                    .build();
         }
 
         List<PurchaseInfo> purchaseList = new ArrayList<>();
-        PurchaseInfo purchaseInfo1 = PurchaseInfo.builder().link(fragrance.getLink1()).build();
-        if (purchaseInfo1.getLink().startsWith("https://www.sivillage")) {
-            purchaseInfo1.setImage(siVillage);
-        } else if (purchaseInfo1.getLink().contains(fragrance.getBrand().getEngName().replace(" ", "").toLowerCase())) { // 공홈
-            purchaseInfo1.setImage(fragrance.getBrand().getRoundImg());
-        } else if (fragrance.getBrand().getId() == 5L) { // 조말론
-            Brand brand = brandRepository.findById(5L).orElseThrow(() -> new CustomException(ErrorCode.BRAND_NOT_FOUND));
-            purchaseInfo1.setImage(brand.getRoundImg());
-        } else if (purchaseInfo1.getLink().startsWith("https://www.lotteon")) {
-            purchaseInfo1.setImage(lotteOn);
-        } else if (purchaseInfo1.getLink().startsWith("https://brand.naver.com/lg_perfumery")) {
-            purchaseInfo1.setImage(lg);
-        } else if (purchaseInfo1.getLink().startsWith("https://www.kurly")) {
-            purchaseInfo1.setImage(kurly);
-        } else {
-            throw new CustomException(ErrorCode.IMAGE_NOT_FOUND);
-        }
+        PurchaseInfo purchaseInfo1 = setPurchaseInfo(fragrance, fragrance.getLink1());
         purchaseList.add(purchaseInfo1);
 
         if (hasText(fragrance.getLink2())) {
-            PurchaseInfo purchaseInfo2 = PurchaseInfo.builder().link(fragrance.getLink2()).build();
-            if (purchaseInfo2.getLink().startsWith("https://www.sivillage")) {
-                purchaseInfo2.setImage(siVillage);
-            } else if (purchaseInfo2.getLink().contains(fragrance.getBrand().getEngName().replace(" ", "").toLowerCase())) { // 공홈
-                purchaseInfo2.setImage(fragrance.getBrand().getRoundImg());
-            } else if (fragrance.getBrand().getId() == 5L) { // 조말론
-                Brand brand = brandRepository.findById(5L).orElseThrow(() -> new CustomException(ErrorCode.BRAND_NOT_FOUND));
-                purchaseInfo2.setImage(brand.getRoundImg());
-            } else if (purchaseInfo2.getLink().startsWith("https://www.lotteon")) {
-                purchaseInfo2.setImage(lotteOn);
-            } else if (purchaseInfo2.getLink().startsWith("https://brand.naver.com/lg_perfumery")) {
-                purchaseInfo2.setImage(lg);
-            } else if (purchaseInfo2.getLink().startsWith("https://www.kurly")) {
-                purchaseInfo2.setImage(kurly);
-            } else {
-                throw new CustomException(ErrorCode.IMAGE_NOT_FOUND);
-            }
+            PurchaseInfo purchaseInfo2 = setPurchaseInfo(fragrance, fragrance.getLink2());
             purchaseList.add(purchaseInfo2);
         } else {
             return GetFragrancePurchase.builder()
                     .isSoldOut(isSoldOut)
+                    .fragranceName(fragrance.getName())
+                    .brandName(fragrance.getBrand().getKorName())
                     .purchaseList(purchaseList)
                     .build();
         }
 
         if (hasText(fragrance.getLink3())) {
-            PurchaseInfo purchaseInfo3 = PurchaseInfo.builder().link(fragrance.getLink3()).build();
-            if (purchaseInfo3.getLink().startsWith("https://www.sivillage")) {
-                purchaseInfo3.setImage(siVillage);
-            } else if (purchaseInfo3.getLink().contains(fragrance.getBrand().getEngName().replace(" ", "").toLowerCase())) { // 공홈
-                purchaseInfo3.setImage(fragrance.getBrand().getRoundImg());
-            } else if (fragrance.getBrand().getId() == 5L) { // 조말론
-                Brand brand = brandRepository.findById(5L).orElseThrow(() -> new CustomException(ErrorCode.BRAND_NOT_FOUND));
-                purchaseInfo3.setImage(brand.getRoundImg());
-            } else if (purchaseInfo3.getLink().startsWith("https://www.lotteon")) {
-                purchaseInfo3.setImage(lotteOn);
-            } else if (purchaseInfo3.getLink().startsWith("https://brand.naver.com/lg_perfumery")) {
-                purchaseInfo3.setImage(lg);
-            } else if (purchaseInfo3.getLink().startsWith("https://www.kurly")) {
-                purchaseInfo3.setImage(kurly);
-            } else {
-                throw new CustomException(ErrorCode.IMAGE_NOT_FOUND);
-            }
+            PurchaseInfo purchaseInfo3 = setPurchaseInfo(fragrance, fragrance.getLink3());
             purchaseList.add(purchaseInfo3);
         } else {
             return GetFragrancePurchase.builder()
                     .isSoldOut(isSoldOut)
+                    .fragranceName(fragrance.getName())
+                    .brandName(fragrance.getBrand().getKorName())
                     .purchaseList(purchaseList)
                     .build();
         }
 
         return GetFragrancePurchase.builder()
                 .isSoldOut(isSoldOut)
+                .fragranceName(fragrance.getName())
+                .brandName(fragrance.getBrand().getKorName())
                 .purchaseList(purchaseList)
                 .build();
+    }
+
+    private PurchaseInfo setPurchaseInfo(Fragrance fragrance, String link) {
+        PurchaseInfo purchaseInfo = PurchaseInfo.builder().link(link).build();
+
+        if (purchaseInfo.getLink().startsWith("https://www.sivillage")) {
+            purchaseInfo.setImage(siVillage);
+            purchaseInfo.setTitle("S.I.VILLAGE 신세계인터내셔날 공식몰");
+        } else if (purchaseInfo.getLink().contains(fragrance.getBrand().getEngName().replace(" ", "").toLowerCase())) { // 공홈
+            purchaseInfo.setImage(fragrance.getBrand().getRoundImg());
+//            StringBuilder sb = new StringBuilder(fragrance.getBrand().getEngName()).append(" ").append(fragrance.getBrand().getKorName());
+            purchaseInfo.setTitle(fragrance.getBrand().getEngName() + " " + fragrance.getBrand().getKorName());
+        } else if (fragrance.getBrand().getId() == 5L) { // 조말론
+            Brand brand = brandRepository.findById(5L).orElseThrow(() -> new CustomException(ErrorCode.BRAND_NOT_FOUND));
+            purchaseInfo.setImage(brand.getRoundImg());
+            purchaseInfo.setTitle("JO MALONE LONDON 조말론 런던");
+        } else if (purchaseInfo.getLink().startsWith("https://www.lotteon")) {
+            purchaseInfo.setImage(lotteOn);
+            purchaseInfo.setTitle("LOTTE ON 롯데온");
+        } else if (purchaseInfo.getLink().startsWith("https://brand.naver.com/lg_perfumery")) {
+            purchaseInfo.setImage(lg);
+            purchaseInfo.setTitle("LG생활건강");
+        } else if (purchaseInfo.getLink().startsWith("https://www.kurly")) {
+            purchaseInfo.setImage(kurly);
+            purchaseInfo.setTitle("KURLY 컬리");
+        } else {
+            throw new CustomException(ErrorCode.IMAGE_NOT_FOUND);
+        }
+
+        return purchaseInfo;
     }
 
 
