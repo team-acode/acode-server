@@ -8,6 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class PurchaseInfo {
+    private String title;
     private String link;
     private String image;
 }

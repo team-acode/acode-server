@@ -11,5 +11,7 @@ import java.util.List;
 @Builder
 public class GetFragrancePurchase {
     private boolean isSoldOut;
+    private String fragranceName;
+    private String brandName;
     private List<PurchaseInfo> purchaseList;
 }
