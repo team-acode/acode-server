@@ -1,6 +1,7 @@
 package server.acode.domain.fragrance.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -10,8 +11,10 @@ import server.acode.domain.family.dto.SimilarFragranceOrCond;
 import server.acode.domain.family.entity.Family;
 import server.acode.domain.family.repository.FragranceFamilyRepository;
 import server.acode.domain.fragrance.dto.response.*;
+import server.acode.domain.fragrance.entity.Brand;
 import server.acode.domain.fragrance.entity.Capacity;
 import server.acode.domain.fragrance.entity.Fragrance;
+import server.acode.domain.fragrance.repository.BrandRepository;
 import server.acode.domain.fragrance.repository.CapacityRepository;
 import server.acode.domain.fragrance.repository.FragranceRepository;
 import server.acode.domain.ingredient.entity.Ingredient;
@@ -36,6 +39,8 @@ import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.springframework.util.StringUtils.*;
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -58,6 +63,20 @@ public class FragranceService {
     private final ReviewStyleRepository reviewStyleRepository;
 
     private final UserRepository userRepository;
+
+    private final BrandRepository brandRepository;
+
+    @Value("${store.image.siVillage}")
+    String siVillage;
+
+    @Value("${store.image.lotteOn}")
+    String lotteOn;
+
+    @Value("${store.image.kurly}")
+    String kurly;
+
+    @Value("${store.image.lg}")
+    String lg;
 
 
     @Transactional
@@ -369,7 +388,89 @@ public class FragranceService {
     public GetFragrancePurchase getFragrancePurchase(Long fragranceId) {
         Fragrance fragrance = fragranceRepository.findById(fragranceId)
                 .orElseThrow(() -> new CustomException(ErrorCode.FRAGRANCE_NOT_FOUND));
-        return GetFragrancePurchase.from(fragrance);
+
+        boolean isSoldOut = false;
+        if (!hasText(fragrance.getLink1())) {
+            isSoldOut = true;
+            return GetFragrancePurchase.builder().isSoldOut(isSoldOut).build();
+        }
+
+        List<PurchaseInfo> purchaseList = new ArrayList<>();
+        PurchaseInfo purchaseInfo1 = PurchaseInfo.builder().link(fragrance.getLink1()).build();
+        if (purchaseInfo1.getLink().startsWith("https://www.sivillage")) {
+            purchaseInfo1.setImage(siVillage);
+        } else if (purchaseInfo1.getLink().contains(fragrance.getBrand().getEngName().replace(" ", "").toLowerCase())) { // 공홈
+            purchaseInfo1.setImage(fragrance.getBrand().getRoundImg());
+        } else if (fragrance.getBrand().getId() == 5L) { // 조말론
+            Brand brand = brandRepository.findById(5L).orElseThrow(() -> new CustomException(ErrorCode.BRAND_NOT_FOUND));
+            purchaseInfo1.setImage(brand.getRoundImg());
+        } else if (purchaseInfo1.getLink().startsWith("https://www.lotteon")) {
+            purchaseInfo1.setImage(lotteOn);
+        } else if (purchaseInfo1.getLink().startsWith("https://brand.naver.com/lg_perfumery")) {
+            purchaseInfo1.setImage(lg);
+        } else if (purchaseInfo1.getLink().startsWith("https://www.kurly")) {
+            purchaseInfo1.setImage(kurly);
+        } else {
+            throw new CustomException(ErrorCode.IMAGE_NOT_FOUND);
+        }
+        purchaseList.add(purchaseInfo1);
+
+        if (hasText(fragrance.getLink2())) {
+            PurchaseInfo purchaseInfo2 = PurchaseInfo.builder().link(fragrance.getLink2()).build();
+            if (purchaseInfo2.getLink().startsWith("https://www.sivillage")) {
+                purchaseInfo2.setImage(siVillage);
+            } else if (purchaseInfo2.getLink().contains(fragrance.getBrand().getEngName().replace(" ", "").toLowerCase())) { // 공홈
+                purchaseInfo2.setImage(fragrance.getBrand().getRoundImg());
+            } else if (fragrance.getBrand().getId() == 5L) { // 조말론
+                Brand brand = brandRepository.findById(5L).orElseThrow(() -> new CustomException(ErrorCode.BRAND_NOT_FOUND));
+                purchaseInfo2.setImage(brand.getRoundImg());
+            } else if (purchaseInfo2.getLink().startsWith("https://www.lotteon")) {
+                purchaseInfo2.setImage(lotteOn);
+            } else if (purchaseInfo2.getLink().startsWith("https://brand.naver.com/lg_perfumery")) {
+                purchaseInfo2.setImage(lg);
+            } else if (purchaseInfo2.getLink().startsWith("https://www.kurly")) {
+                purchaseInfo2.setImage(kurly);
+            } else {
+                throw new CustomException(ErrorCode.IMAGE_NOT_FOUND);
+            }
+            purchaseList.add(purchaseInfo2);
+        } else {
+            return GetFragrancePurchase.builder()
+                    .isSoldOut(isSoldOut)
+                    .purchaseList(purchaseList)
+                    .build();
+        }
+
+        if (hasText(fragrance.getLink3())) {
+            PurchaseInfo purchaseInfo3 = PurchaseInfo.builder().link(fragrance.getLink3()).build();
+            if (purchaseInfo3.getLink().startsWith("https://www.sivillage")) {
+                purchaseInfo3.setImage(siVillage);
+            } else if (purchaseInfo3.getLink().contains(fragrance.getBrand().getEngName().replace(" ", "").toLowerCase())) { // 공홈
+                purchaseInfo3.setImage(fragrance.getBrand().getRoundImg());
+            } else if (fragrance.getBrand().getId() == 5L) { // 조말론
+                Brand brand = brandRepository.findById(5L).orElseThrow(() -> new CustomException(ErrorCode.BRAND_NOT_FOUND));
+                purchaseInfo3.setImage(brand.getRoundImg());
+            } else if (purchaseInfo3.getLink().startsWith("https://www.lotteon")) {
+                purchaseInfo3.setImage(lotteOn);
+            } else if (purchaseInfo3.getLink().startsWith("https://brand.naver.com/lg_perfumery")) {
+                purchaseInfo3.setImage(lg);
+            } else if (purchaseInfo3.getLink().startsWith("https://www.kurly")) {
+                purchaseInfo3.setImage(kurly);
+            } else {
+                throw new CustomException(ErrorCode.IMAGE_NOT_FOUND);
+            }
+            purchaseList.add(purchaseInfo3);
+        } else {
+            return GetFragrancePurchase.builder()
+                    .isSoldOut(isSoldOut)
+                    .purchaseList(purchaseList)
+                    .build();
+        }
+
+        return GetFragrancePurchase.builder()
+                .isSoldOut(isSoldOut)
+                .purchaseList(purchaseList)
+                .build();
     }
 
 
