@@ -8,13 +8,13 @@ public class FragranceInfo {
     private Long fragranceId;
     private String thumbnail;
     private String fragranceName;
-    private String korBrand;
+    private String brandName;
 
     @QueryProjection
     public FragranceInfo(Long fragranceId, String thumbnail, String fragranceName, String korBrand) {
         this.fragranceId = fragranceId;
         this.thumbnail = thumbnail;
         this.fragranceName = fragranceName;
-        this.korBrand = korBrand;
+        this.brandName = korBrand;
     }
 }

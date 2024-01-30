@@ -1,7 +1,6 @@
 package server.acode.domain.fragrance.dto.response;
 
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import server.acode.domain.fragrance.entity.Fragrance;
@@ -18,7 +17,7 @@ public class GetFragranceResponse {
     private String image1;
     private String image2;
 
-    private String korBrand;
+    private String brandName;
     private String fragranceName;
     private String concentration;
 
@@ -26,13 +25,12 @@ public class GetFragranceResponse {
     private List<CapacityInfo> capacityList;
     private List<String> style;
 
-//    @Builder
     public GetFragranceResponse(Fragrance fragrance, boolean isScraped, List<FamilyInfo> familyList, List<CapacityInfo> capacityList) {
         this.fragranceId = fragrance.getId();
         this.thumbnail = fragrance.getThumbnail();
         this.image1 = fragrance.getImage1();
         this.image2 = fragrance.getImage2();
-        this.korBrand = fragrance.getBrand().getKorName();
+        this.brandName = fragrance.getBrand().getKorName();
         this.fragranceName = fragrance.getName();
         this.concentration = fragrance.getConcentration().name();
         this.style = Arrays.asList(fragrance.getStyle().split(", "));

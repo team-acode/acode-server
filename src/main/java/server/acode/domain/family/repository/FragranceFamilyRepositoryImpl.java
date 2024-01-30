@@ -110,7 +110,7 @@ public class FragranceFamilyRepositoryImpl implements FragranceFamilyRepositoryC
                         fragrance.id.as("fragranceId"),
                         fragrance.thumbnail,
                         fragrance.name.as("fragranceName"),
-                        fragrance.brand.korName
+                        fragrance.brand.korName.as("brandName")
                 ))
                 .from(fragranceFamily)
                 .join(fragranceFamily.fragrance, fragrance)
@@ -146,7 +146,7 @@ public class FragranceFamilyRepositoryImpl implements FragranceFamilyRepositoryC
                         fragrance.id.as("fragranceId"),
                         fragrance.thumbnail,
                         fragrance.name.as("fragranceName"),
-                        fragrance.brand.korName
+                        fragrance.brand.korName.as("brandName")
                 ))
                 .from(fragranceFamily)
                 .join(fragranceFamily.fragrance, fragrance)
@@ -168,7 +168,7 @@ public class FragranceFamilyRepositoryImpl implements FragranceFamilyRepositoryC
                         fragrance.id.as("fragranceId"),
                         fragrance.thumbnail,
                         fragrance.name.as("fragranceName"),
-                        fragrance.brand.korName
+                        fragrance.brand.korName.as("brandName")
                 ))
                 .from(fragranceFamily)
                 .join(fragranceFamily.fragrance, fragrance)
@@ -252,7 +252,7 @@ public class FragranceFamilyRepositoryImpl implements FragranceFamilyRepositoryC
                         fragrance.id.as("fragranceId"),
                         fragrance.thumbnail,
                         fragrance.name.as("fragranceName"),
-                        fragrance.brand.korName
+                        fragrance.brand.korName.as("brandName")
                 )).distinct()
                 .from(fragranceFamily)
                 .where(
