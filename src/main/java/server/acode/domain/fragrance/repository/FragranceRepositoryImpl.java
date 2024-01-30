@@ -60,19 +60,6 @@ public class FragranceRepositoryImpl implements FragranceRepositoryCustom {
     }
 
 
-    @Override
-    public List<Long> extractByConcentrationAndSeason(String concentrationCond, String seasonCond) {
-        return queryFactory
-                .select(fragrance.id)
-                .from(fragrance)
-                .where(
-                        fragrance.concentration.eq(Concentration.valueOf(concentrationCond)),
-                        fragrance.season.containsIgnoreCase(seasonCond)
-                )
-                .fetch();
-    }
-
-
 
     @Override
     public List<Long> extractByConcentration(String concentration1, String concentration2) {
@@ -105,6 +92,12 @@ public class FragranceRepositoryImpl implements FragranceRepositoryCustom {
     }
 
 
+    private BooleanExpression fragranceIdIn(List<Long> fragranceIdList) {
+        return fragranceIdList.isEmpty()
+                ? null
+                : fragrance.id.in(fragranceIdList);
+    }
+
 
     @Override
     public List<Long> extractBySeason(String season1, String season2, List<Long> fragranceIdList) {
@@ -112,7 +105,7 @@ public class FragranceRepositoryImpl implements FragranceRepositoryCustom {
                 .select(fragrance.id)
                 .from(fragrance)
                 .where(
-                        fragrance.id.in(fragranceIdList),
+                        fragranceIdIn(fragranceIdList),
                         seasonContains(season1),
                         seasonContains(season2)
                 )
@@ -124,7 +117,7 @@ public class FragranceRepositoryImpl implements FragranceRepositoryCustom {
         return queryFactory.select(fragrance.id)
                 .from(fragrance)
                 .where(
-                        fragrance.id.in(fragranceIdList),
+                        fragranceIdIn(fragranceIdList),
                         seasonContains(season1)
                                 .or(seasonContains(season2))
                 )
@@ -145,7 +138,7 @@ public class FragranceRepositoryImpl implements FragranceRepositoryCustom {
                 .select(fragrance.id)
                 .from(fragrance)
                 .where(
-                        fragrance.id.in(fragranceIdList),
+                        fragranceIdIn(fragranceIdList),
                         scentContains(scent1),
                         scentContains(scent2)
                 )
@@ -158,7 +151,7 @@ public class FragranceRepositoryImpl implements FragranceRepositoryCustom {
                 .select(fragrance.id)
                 .from(fragrance)
                 .where(
-                        fragrance.id.in(fragranceIdList),
+                        fragranceIdIn(fragranceIdList),
                         scentContains(scent1)
                                 .or(scentContains(scent2))
                 )
@@ -179,7 +172,7 @@ public class FragranceRepositoryImpl implements FragranceRepositoryCustom {
                 .select(fragrance.id)
                 .from(fragrance)
                 .where(
-                        fragrance.id.in(fragranceIdList),
+                        fragranceIdIn(fragranceIdList),
                         styleContains(style1),
                         styleContains(style2)
                 )
@@ -192,7 +185,7 @@ public class FragranceRepositoryImpl implements FragranceRepositoryCustom {
                 .select(fragrance.id)
                 .from(fragrance)
                 .where(
-                        fragrance.id.in(fragranceIdList),
+                        fragranceIdIn(fragranceIdList),
                         styleContains(style1)
                                 .or(styleContains(style2))
                 )
@@ -204,19 +197,5 @@ public class FragranceRepositoryImpl implements FragranceRepositoryCustom {
                 ? fragrance.style.contains(style)
                 : null;
     }
-
-
-//    @Override
-//    public List<Long> extractByStyle(String style, List<Long> fragranceIdList) {
-//        return queryFactory
-//                .select(fragrance.id)
-//                .from(fragrance)
-//                .where(
-//                        fragrance.id.in(fragranceIdList),
-//                        fragrance.style.containsIgnoreCase(style)
-//                )
-//                .fetch();
-//    }
-
 
 }

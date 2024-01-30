@@ -182,13 +182,19 @@ public class FragranceFamilyRepositoryImpl implements FragranceFamilyRepositoryC
     }
 
 
+    private BooleanExpression fragranceIdIn(List<Long> fragranceIdList) {
+        return fragranceIdList.isEmpty()
+                ? null
+                : fragrance.id.in(fragranceIdList);
+    }
+
     @Override
     public List<Long> extractByMainFamily(String mainFamily1, String mainFamily2, List<Long> fragranceIdList) {
         return queryFactory
                 .select(fragranceFamily.fragrance.id) //.distinct()
                 .from(fragranceFamily)
                 .where(
-                        fragrance.id.in(fragranceIdList),
+                        fragranceIdIn(fragranceIdList),
                         mainFamilyNameEq(mainFamily1),
                         mainFamilyNameEq(mainFamily2)
                 )
@@ -201,7 +207,7 @@ public class FragranceFamilyRepositoryImpl implements FragranceFamilyRepositoryC
                 .select(fragranceFamily.fragrance.id)
                 .from(fragranceFamily)
                 .where(
-                        fragrance.id.in(fragranceIdList),
+                        fragranceIdIn(fragranceIdList),
                         mainFamilyNameEq(mainFamily1)
                                 .or(mainFamilyNameEq(mainFamily2))
                 )
