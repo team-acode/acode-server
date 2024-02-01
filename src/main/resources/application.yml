@@ -60,3 +60,10 @@ cloud:
 
 presignedUrlDuration: ${PRESIGNED_URL_DURATION}
 kakaoAdminKey: ${KAKAO_ADMIN_KEY}
+
+store:
+  image:
+    siVillage: ${STORE_IMAGE_SIVILLAGE}
+    lotteOn: ${STORE_IMAGE_LOTTEON}
+    kurly: ${STORE_IMAGE_KURLY}
+    lg: ${STORE_IMAGE_LG}
