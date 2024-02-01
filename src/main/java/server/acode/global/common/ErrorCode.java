@@ -25,7 +25,7 @@ public enum ErrorCode {
 
 
     /* 403 FORBIDDEN */
-
+    NOT_ADMIN(HttpStatus.FORBIDDEN, "관리자가 아닙니다."),
 
 
     /* 404 NOT FOUND */
