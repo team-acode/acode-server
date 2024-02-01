@@ -290,4 +290,17 @@ public class ExtractService {
 
         return null;
     }
+
+
+    private List<Long> extractFragranceIdListV3(KeywordCond cond) {
+        return null;
+    }
+
+    private String getValueAtIndex(List<String> condList, int index) {
+        try {
+            return condList.get(index);
+        } catch (IndexOutOfBoundsException e) {
+            return "";
+        }
+    }
 }
