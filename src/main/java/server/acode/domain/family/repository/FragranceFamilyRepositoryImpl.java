@@ -110,7 +110,8 @@ public class FragranceFamilyRepositoryImpl implements FragranceFamilyRepositoryC
                         fragrance.id.as("fragranceId"),
                         fragrance.thumbnail,
                         fragrance.name.as("fragranceName"),
-                        fragrance.brand.korName.as("brandName")
+                        fragrance.brand.korName.as("brandName"),
+                        fragrance.concentration
                 ))
                 .from(fragranceFamily)
                 .join(fragranceFamily.fragrance, fragrance)
@@ -146,8 +147,8 @@ public class FragranceFamilyRepositoryImpl implements FragranceFamilyRepositoryC
                         fragrance.id.as("fragranceId"),
                         fragrance.thumbnail,
                         fragrance.name.as("fragranceName"),
-                        fragrance.brand.korName.as("brandName")
-                ))
+                        fragrance.brand.korName.as("brandName"),
+                        fragrance.concentration))
                 .from(fragranceFamily)
                 .join(fragranceFamily.fragrance, fragrance)
                 .where(
@@ -168,8 +169,8 @@ public class FragranceFamilyRepositoryImpl implements FragranceFamilyRepositoryC
                         fragrance.id.as("fragranceId"),
                         fragrance.thumbnail,
                         fragrance.name.as("fragranceName"),
-                        fragrance.brand.korName.as("brandName")
-                ))
+                        fragrance.brand.korName.as("brandName"),
+                        fragrance.concentration))
                 .from(fragranceFamily)
                 .join(fragranceFamily.fragrance, fragrance)
                 .where(
@@ -252,8 +253,8 @@ public class FragranceFamilyRepositoryImpl implements FragranceFamilyRepositoryC
                         fragrance.id.as("fragranceId"),
                         fragrance.thumbnail,
                         fragrance.name.as("fragranceName"),
-                        fragrance.brand.korName.as("brandName")
-                )).distinct()
+                        fragrance.brand.korName.as("brandName"),
+                        fragrance.concentration)).distinct()
                 .from(fragranceFamily)
                 .where(
                         fragranceNameContains(cond.getSearch())
