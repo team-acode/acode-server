@@ -70,7 +70,8 @@ public class FragranceFamilyRepositoryImpl implements FragranceFamilyRepositoryC
                         fragrance.id.as("fragranceId"),
                         brand.korName.as("brandName"),
                         fragrance.name.as("fragranceName"),
-                        fragrance.thumbnail
+                        fragrance.thumbnail,
+                        fragrance.concentration
                 ))
                 .from(fragranceFamily)
                 .join(fragranceFamily.fragrance, fragrance)

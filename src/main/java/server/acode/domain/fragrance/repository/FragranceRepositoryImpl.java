@@ -38,7 +38,8 @@ public class FragranceRepositoryImpl implements FragranceRepositoryCustom {
                         fragrance.id.as("fragranceId"),
                         brand.korName.as("brandName"),
                         fragrance.name.as("fragranceName"),
-                        fragrance.thumbnail
+                        fragrance.thumbnail,
+                        fragrance.concentration
                 ))
                 .from(fragrance)
                 .join(fragrance.brand, brand)
