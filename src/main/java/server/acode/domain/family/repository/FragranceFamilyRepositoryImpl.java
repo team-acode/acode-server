@@ -238,7 +238,8 @@ public class FragranceFamilyRepositoryImpl implements FragranceFamilyRepositoryC
                                 fragrance.name,
                                 fragrance.brand.korName,
                                 fragranceFamily.family.korName,
-                                fragrance.thumbnail
+                                fragrance.thumbnail,
+                                fragrance.concentration
                         )
                 )
                 .from(fragranceFamily)
