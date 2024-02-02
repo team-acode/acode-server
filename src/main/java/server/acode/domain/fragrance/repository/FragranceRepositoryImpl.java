@@ -132,6 +132,17 @@ public class FragranceRepositoryImpl implements FragranceRepositoryCustom {
                 .fetch();
     }
 
+    @Override
+    public List<Long> extractByOnlySeasonOr(String season1, String season2) {
+        return queryFactory.select(fragrance.id)
+                .from(fragrance)
+                .where(
+                        seasonContains(season1)
+                        .or(seasonContains(season2))
+                )
+                .fetch();
+    }
+
     private BooleanExpression seasonContains(String season) {
         return hasText(season)
                 ? fragrance.season.contains(season)
@@ -154,6 +165,18 @@ public class FragranceRepositoryImpl implements FragranceRepositoryCustom {
     }
 
     @Override
+    public List<Long> extractByOnlyScent(String scent1, String scent2) {
+        return queryFactory
+                .select(fragrance.id)
+                .from(fragrance)
+                .where(
+                        scentContains(scent1),
+                        scentContains(scent2)
+                )
+                .fetch();
+    }
+
+    @Override
     public List<Long> extractByScentOr(String scent1, String scent2, List<Long> fragranceIdList) {
         return queryFactory
                 .select(fragrance.id)
@@ -162,6 +185,18 @@ public class FragranceRepositoryImpl implements FragranceRepositoryCustom {
                         fragrance.id.in(fragranceIdList),
                         scentContains(scent1)
                                 .or(scentContains(scent2))
+                )
+                .fetch();
+    }
+
+    @Override
+    public List<Long> extractByOnlyScentOr(String scent1, String scent2) {
+        return queryFactory
+                .select(fragrance.id)
+                .from(fragrance)
+                .where(
+                        scentContains(scent1)
+                        .or(scentContains(scent2))
                 )
                 .fetch();
     }
@@ -188,6 +223,18 @@ public class FragranceRepositoryImpl implements FragranceRepositoryCustom {
     }
 
     @Override
+    public List<Long> extractByOnlyStyle(String style1, String style2) {
+        return queryFactory
+                .select(fragrance.id)
+                .from(fragrance)
+                .where(
+                        styleContains(style1),
+                        styleContains(style2)
+                )
+                .fetch();
+    }
+
+    @Override
     public List<Long> extractByStyleOr(String style1, String style2, List<Long> fragranceIdList) {
         return queryFactory
                 .select(fragrance.id)
@@ -199,6 +246,19 @@ public class FragranceRepositoryImpl implements FragranceRepositoryCustom {
                 )
                 .fetch();
     }
+
+    @Override
+    public List<Long> extractByOnlyStyleOr(String style1, String style2) {
+        return queryFactory
+                .select(fragrance.id)
+                .from(fragrance)
+                .where(
+                        styleContains(style1)
+                        .or(styleContains(style2))
+                )
+                .fetch();
+    }
+
 
     private BooleanExpression styleContains(String style) {
         return hasText(style)

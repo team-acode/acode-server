@@ -23,15 +23,25 @@ public interface FragranceRepositoryCustom {
 
     List<Long> extractByConcentrationAndSeason(String concentraionCond, String seasonCond);
 
+    List<Long> extractByOnlySeasonOr(String season1, String season2);
+
     List<Long> extractByScent(String scent1, String scent2, List<Long> fragranceIdList);
+
+    List<Long> extractByOnlyScent(String scent1, String scent2);
 
     List<Long> extractByScentOr(String scent1, String scent2, List<Long> fragranceIdList);
 
 //    List<Long> extractByScent(String scent, List<Long> fragranceIdList);
 
+    List<Long> extractByOnlyScentOr(String scent1, String scent2);
+
     List<Long> extractByStyle(String style1, String style2, List<Long> fragranceIdList);
 
+    List<Long> extractByOnlyStyle(String style1, String style2);
+
     List<Long> extractByStyleOr(String style1, String style2, List<Long> fragranceIdList);
+
+    List<Long> extractByOnlyStyleOr(String style1, String style2);
 
 //    List<Long> extractByStyle(String style, List<Long> fragranceIdList);
 }

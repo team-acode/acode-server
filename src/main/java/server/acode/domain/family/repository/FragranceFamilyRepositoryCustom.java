@@ -37,4 +37,5 @@ public interface FragranceFamilyRepositoryCustom {
     List<ExtractFragrance> extractFragrance(List<Long> familyIdList);
 
     Page<FragranceInfo> searchFragrance(SearchCond cond, String additionalFamily, Pageable pageable);
+    List<Long> extractByOnlyMainFamilyOr(String mainFamily1, String mainFamily2);
 }

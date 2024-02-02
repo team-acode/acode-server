@@ -210,6 +210,18 @@ public class FragranceFamilyRepositoryImpl implements FragranceFamilyRepositoryC
                 .fetch();
     }
 
+    @Override
+    public List<Long> extractByOnlyMainFamilyOr(String mainFamily1, String mainFamily2) {
+        return queryFactory
+                .select(fragranceFamily.fragrance.id)
+                .from(fragranceFamily)
+                .where(
+                        mainFamilyNameEq(mainFamily1)
+                        .or(mainFamilyNameEq(mainFamily2))
+                )
+                .fetch();
+    }
+
     private BooleanExpression mainFamilyNameEq(String mainFamily) {
         return hasText(mainFamily)
                 ? fragranceFamily.family.mainFamily.name.eq(mainFamily)
