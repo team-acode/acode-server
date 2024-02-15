@@ -6,12 +6,12 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class PreviewScrap {
+public class ScrapPreviewDto {
     private Long fragranceId;
     private String thumbnail;
 
     @QueryProjection
-    public PreviewScrap(Long fragranceId, String thumbnail){
+    public ScrapPreviewDto(Long fragranceId, String thumbnail){
         this.fragranceId = fragranceId;
         this.thumbnail = thumbnail;
     }

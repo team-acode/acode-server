@@ -11,7 +11,7 @@ import server.acode.domain.fragrance.entity.Brand;
 import server.acode.domain.fragrance.entity.Concentration;
 import server.acode.domain.fragrance.entity.Fragrance;
 import server.acode.domain.fragrance.repository.FragranceRepository;
-import server.acode.domain.user.dto.response.DisplayScrap;
+import server.acode.domain.user.dto.response.ScrapDto;
 import server.acode.domain.user.entity.Scrap;
 import server.acode.domain.user.entity.User;
 
@@ -58,7 +58,7 @@ class ScrapRepositoryImplTest {
 
         // when
         PageRequest pageRequest = PageRequest.of(0, 10);
-        Page<DisplayScrap> results = scrapRepository.getScrap(user.getId(), pageRequest);
+        Page<ScrapDto> results = scrapRepository.getScrap(user.getId(), pageRequest);
 
         //then
         assertThat(results.getTotalElements()).isEqualTo(1);

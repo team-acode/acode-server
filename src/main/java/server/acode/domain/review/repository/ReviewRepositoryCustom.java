@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 import server.acode.domain.fragrance.dto.response.ReviewInfo;
 import server.acode.domain.fragrance.dto.response.ReviewPreview;
 import server.acode.domain.fragrance.entity.Fragrance;
-import server.acode.domain.user.dto.response.DisplayReview;
+import server.acode.domain.user.dto.response.ReviewDto;
 
 import java.util.List;
 
@@ -16,5 +16,5 @@ public interface ReviewRepositoryCustom {
 
     Page<ReviewInfo> getReviewInfoPage(Long fragranceId, Pageable pageable);
 
-    Page<DisplayReview> getDisplayReview(Long userId, Pageable pageable);
+    Page<ReviewDto> getDisplayReview(Long userId, Pageable pageable);
 }

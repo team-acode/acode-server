@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import server.acode.domain.family.dto.response.HomeFragrance;
+import server.acode.domain.family.dto.response.HomeFragranceDto;
 import server.acode.domain.family.service.HomeService;
 import server.acode.domain.ingredient.dto.response.IngredientOfTheDay;
 
@@ -25,8 +25,8 @@ public class HomeController {
     @Operation(summary = "계열별 향수 최대 6개",
             description = "아직 포스터 이미지가 준비되지 않아 우디에만 테스트용으로 넣어놨습니다 우디로 테스트 해주세요")
     @GetMapping("/home")
-    public List<HomeFragrance> searchV1(@RequestParam String family){
-        return homeService.search(family);
+    public List<HomeFragranceDto> searchMainFragranceV1(@RequestParam String family){
+        return homeService.searchMainFragrance(family);
     }
 
     @Operation(summary = "오늘의 추천 향료")

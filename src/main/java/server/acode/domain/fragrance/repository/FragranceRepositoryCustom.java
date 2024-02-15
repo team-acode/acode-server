@@ -3,14 +3,14 @@ package server.acode.domain.fragrance.repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
-import server.acode.domain.family.dto.response.DisplayFragrance;
+import server.acode.domain.family.dto.response.FragranceCatalogDto;
 
 import java.util.List;
 
 @Repository
 public interface FragranceRepositoryCustom {
 
-    Page<DisplayFragrance> searchByIngredient(String ingredientName, Pageable pageable);
+    Page<FragranceCatalogDto> searchByIngredient(String ingredientName, Pageable pageable);
 
     List<Long> extractByConcentration(String concentration1, String concentration2);
 

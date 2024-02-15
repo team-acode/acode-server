@@ -8,7 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
-import server.acode.domain.family.dto.response.DisplayFragrance;
+import server.acode.domain.family.dto.response.FragranceCatalogDto;
 import server.acode.domain.family.dto.response.QDisplayFragrance;
 import server.acode.domain.fragrance.entity.Concentration;
 
@@ -31,9 +31,9 @@ public class FragranceRepositoryImpl implements FragranceRepositoryCustom {
     }
 
     @Override
-    public Page<DisplayFragrance> searchByIngredient(String ingredientName, Pageable pageable) {
+    public Page<FragranceCatalogDto> searchByIngredient(String ingredientName, Pageable pageable) {
 
-        QueryResults<DisplayFragrance> results = queryFactory
+        QueryResults<FragranceCatalogDto> results = queryFactory
                 .select(new QDisplayFragrance(
                         fragrance.id.as("fragranceId"),
                         brand.korName.as("brandName"),
@@ -54,7 +54,7 @@ public class FragranceRepositoryImpl implements FragranceRepositoryCustom {
                 .groupBy(fragrance.id)
                 .fetchResults();
 
-        List<DisplayFragrance> content = results.getResults();
+        List<FragranceCatalogDto> content = results.getResults();
         long total = results.getTotal();
 
         return new PageImpl<>(content, pageable, total);

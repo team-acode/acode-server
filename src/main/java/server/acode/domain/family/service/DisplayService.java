@@ -37,47 +37,47 @@ public class DisplayService {
     private final FragranceRepository fragranceRepository;
 
 
-    public PageableResponse searchFragranceList(FragranceFilterCond cond, PageRequest pageRequest){
+    public PageableResponse searchFragranceByBrandAndFamily(FragranceFilterCond cond, PageRequest pageRequest){
         Pageable pageable = pageRequest.of();
 
         String additionalFamily = null; // 추가 계열 변수 초기화
-        // family에 값이 들어온 경우 값 처리
+
+        // family에 값이 들어온 경우 split 처리
         if(hasText(cond.getFamily())) {
             String[] parts = cond.getFamily().split("\\s+", 2);
             cond.setFamily(parts.length > 0 ? parts[0] : null);
             additionalFamily = parts.length > 1 ? parts[1] : null;
         }
 
-        Page<DisplayFragrance> result = fragranceFamilyRepository.searchByFilter(cond, additionalFamily, pageable); // 향수 조회
+        Page<FragranceCatalogDto> result = fragranceFamilyRepository.searchByBrandAndFamily(cond, additionalFamily, pageable); // 향수 조회
         return new PageableResponse(result.getContent(), result.getTotalPages(), result.getTotalElements());
 
     }
 
-    public PageableResponse searchFragranceListByIngredient(String ingredient, PageRequest pageRequest){
+    public PageableResponse searchFragranceByIngredient(String ingredient, PageRequest pageRequest){
         Pageable pageable = pageRequest.of(); // pageable 객체로 변환
 
-        Page<DisplayFragrance> result = fragranceRepository.searchByIngredient(ingredient, pageable);
+        Page<FragranceCatalogDto> result = fragranceRepository.searchByIngredient(ingredient, pageable);
         return new PageableResponse(result.getContent(), result.getTotalPages(), result.getTotalElements());
-
     }
 
-    public DisplayBrand getBrandContent(String brandName){
+    public BrandDetailsDto getBrandContent(String brandName){
         // 존재하는지 확인 후 조회
         if(!brandRepository.existsByKorName(brandName)) throw new CustomException(ErrorCode.BRAND_NOT_FOUND);
         Brand find = brandRepository.findByKorName(brandName);
 
-        return DisplayBrand.from(find);
+        return BrandDetailsDto.from(find);
     }
 
-    public DisplayFamily getFamilyContent(String family) {
+    public FamilyDetailsDto getFamilyContent(String family) {
         // 존재하는지 확인 후 조회
         if(!familyRepository.existsByKorName(family)) throw new CustomException(ErrorCode.FAMILY_NOT_FOUND);
         Family find = familyRepository.findByKorName(family);
 
-        return DisplayFamily.from(find);
+        return FamilyDetailsDto.from(find);
     }
 
-    public DisplayIngredient getIngredientContent(String ingredient) {
+    public IngredientDetailsDto getIngredientContent(String ingredient) {
         // 향료가 존재하는지 확인 후 조회
         if(!ingredientRepository.existsByKorName(ingredient)) throw new CustomException(ErrorCode.INGREDIENT_NOT_FOUND);
         Ingredient findIngredient = ingredientRepository.findByKorName(ingredient);
@@ -86,6 +86,6 @@ public class DisplayService {
         IngredientType findIngredientType = ingredientTypeRepository.findById(findIngredient.getIngredientType().getId())
                 .orElseThrow(()-> new CustomException(ErrorCode.INGREDIENT_TYPE_NOT_FOUND));
 
-        return DisplayIngredient.from(findIngredient, findIngredientType);
+        return IngredientDetailsDto.from(findIngredient, findIngredientType);
     }
 }

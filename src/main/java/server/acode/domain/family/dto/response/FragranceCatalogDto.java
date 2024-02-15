@@ -5,7 +5,7 @@ import lombok.Data;
 import server.acode.domain.fragrance.entity.Concentration;
 
 @Data
-public class DisplayFragrance {
+public class FragranceCatalogDto {
 
     private Long fragranceId;
     private String brandName; // 브랜드 이름
@@ -14,7 +14,7 @@ public class DisplayFragrance {
     private String concentration;
 
     @QueryProjection
-    public DisplayFragrance (Long fragranceId, String brandName, String fragranceName, String thumbnail, Concentration concentration){
+    public FragranceCatalogDto(Long fragranceId, String brandName, String fragranceName, String thumbnail, Concentration concentration){
         this.fragranceId = fragranceId;
         this.brandName = brandName;
         this.fragranceName = fragranceName;

@@ -54,7 +54,7 @@ public class AuthService {
 
     public ResponseEntity signin(String code, boolean developer) throws JsonProcessingException {
         String kakaoAccessToken = getKakaoAccessToken(code, developer);
-        String userInfo = getUserInfo(kakaoAccessToken);
+        String userInfo = getKakaoInfo(kakaoAccessToken);
 
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(userInfo);
@@ -118,7 +118,7 @@ public class AuthService {
 
     }
 
-    private String getUserInfo(String accessToken) {
+    private String getKakaoInfo(String accessToken) {
         // header 생성
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
