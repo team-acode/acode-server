@@ -15,8 +15,8 @@ import server.acode.domain.family.dto.SimilarFragranceOrCond;
 import server.acode.domain.family.dto.request.FragranceFilterCond;
 import server.acode.domain.family.dto.response.FragranceCatalogDto;
 import server.acode.domain.family.dto.response.HomeFragranceDto;
-import server.acode.domain.family.dto.response.QDisplayFragrance;
-import server.acode.domain.family.dto.response.QHomeFragrance;
+import server.acode.domain.family.dto.response.QFragranceCatalogDto;
+import server.acode.domain.family.dto.response.QHomeFragranceDto;
 import server.acode.domain.family.entity.QFragranceFamily;
 import server.acode.domain.fragrance.dto.request.SearchCond;
 import server.acode.domain.fragrance.dto.response.*;
@@ -41,7 +41,7 @@ public class FragranceFamilyRepositoryImpl implements FragranceFamilyRepositoryC
     @Override
     public List<HomeFragranceDto> search(String familyName) {
         return queryFactory
-                .select(new QHomeFragrance(
+                .select(new QHomeFragranceDto(
                         fragrance.id.as("fragranceId"),
                         fragrance.name.as("fragranceName"),
                         brand.korName.as("korBrand"),
@@ -66,7 +66,7 @@ public class FragranceFamilyRepositoryImpl implements FragranceFamilyRepositoryC
 
         //TODO 카운트 쿼리 분리
         QueryResults<FragranceCatalogDto> results = queryFactory
-                .select(new QDisplayFragrance(
+                .select(new QFragranceCatalogDto(
                         fragrance.id.as("fragranceId"),
                         brand.korName.as("brandName"),
                         fragrance.name.as("fragranceName"),

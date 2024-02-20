@@ -26,7 +26,7 @@ public class ScrapRepositoryImpl implements ScrapRepositoryCustom{
     @Override
     public List<ScrapPreviewDto> getScrapPreview(Long userId){
         return queryFactory
-                .select(new QPreviewScrap(
+                .select(new QScrapPreviewDto(
                         fragrance.id,
                         fragrance.thumbnail
                 ))
@@ -42,7 +42,7 @@ public class ScrapRepositoryImpl implements ScrapRepositoryCustom{
     @Override
     public Page<ScrapDto> getScrap(Long userId, Pageable pageable){
         QueryResults<ScrapDto> results = queryFactory
-                .select(new QDisplayScrap(
+                .select(new QScrapDto(
                         scrap.fragrance.id.as("fragranceId"),
                         scrap.fragrance.name.as("fragranceName"),
                         scrap.fragrance.brand.korName.as("brandName"),

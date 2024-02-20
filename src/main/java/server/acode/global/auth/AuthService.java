@@ -37,21 +37,6 @@ public class AuthService {
     @Value("${KAKAO_REDIRECT_URL}")
     private String redirectedUrl;
 
-    public void checkUser(Long userId){
-        /**
-         * 사용자 정보 이용하는 부분 모두
-         * Long userId = SecurityUtil.getCurrentUserId();
-         *
-         * User user = userRepository.findById(userId)
-         *       .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-         * 으로 수정해야함
-         */
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-
-        System.out.println("user = " + user.getNickname());
-    }
-
     public ResponseEntity signin(String code, boolean developer) throws JsonProcessingException {
         String kakaoAccessToken = getKakaoAccessToken(code, developer);
         String userInfo = getKakaoInfo(kakaoAccessToken);

@@ -9,7 +9,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import server.acode.domain.family.dto.response.FragranceCatalogDto;
-import server.acode.domain.family.dto.response.QDisplayFragrance;
+import server.acode.domain.family.dto.response.QFragranceCatalogDto;
 import server.acode.domain.fragrance.entity.Concentration;
 
 import java.util.List;
@@ -34,7 +34,7 @@ public class FragranceRepositoryImpl implements FragranceRepositoryCustom {
     public Page<FragranceCatalogDto> searchByIngredient(String ingredientName, Pageable pageable) {
 
         QueryResults<FragranceCatalogDto> results = queryFactory
-                .select(new QDisplayFragrance(
+                .select(new QFragranceCatalogDto(
                         fragrance.id.as("fragranceId"),
                         brand.korName.as("brandName"),
                         fragrance.name.as("fragranceName"),

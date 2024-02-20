@@ -14,8 +14,8 @@ import server.acode.domain.fragrance.dto.response.QReviewPreview;
 import server.acode.domain.fragrance.dto.response.ReviewInfo;
 import server.acode.domain.fragrance.dto.response.ReviewPreview;
 import server.acode.domain.fragrance.entity.Fragrance;
+import server.acode.domain.user.dto.response.QReviewDto;
 import server.acode.domain.user.dto.response.ReviewDto;
-import server.acode.domain.user.dto.response.QDisplayReview;
 
 import java.util.List;
 
@@ -86,7 +86,7 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
     @Override
     public Page<ReviewDto> getDisplayReview(Long userId, Pageable pageable){
         QueryResults<ReviewDto> results = queryFactory
-                .select(new QDisplayReview(
+                .select(new QReviewDto(
                         review.id,
                         review.fragrance.id,
                         review.fragrance.name,
