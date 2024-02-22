@@ -50,14 +50,14 @@ public class ReviewController {
     @DeleteMapping("/review/{reviewId}")
     public void deleteReview(@PathVariable Long reviewId){
         Long userId= SecurityUtil.getCurrentUserId();
-        reviewService.deleteReview(reviewId, userId);
+        reviewService.deleteCustomerReview(reviewId, userId);
     }
 
     @Operation(summary = "리뷰 삭제/관리자용")
     @DeleteMapping("/reviewDeveloper/{reviewId}")
     public void deleteReviewDeveloper(@PathVariable Long reviewId){
         Long userId= SecurityUtil.getCurrentUserId();
-        reviewService.deleteReviewDeveloper(reviewId, userId);
+        reviewService.deleteAdminReview(reviewId, userId);
     }
 
     @Operation(summary = "관리자용입니다")

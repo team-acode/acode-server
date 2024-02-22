@@ -8,10 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import server.acode.domain.fragrance.entity.Fragrance;
 import server.acode.domain.fragrance.repository.FragranceRepository;
 import server.acode.domain.review.dto.request.RegisterReviewRequest;
-import server.acode.domain.user.entity.User;
-import server.acode.global.exception.CustomException;
 
-import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -42,7 +39,7 @@ class ReviewServiceTest {
 
         });
         service.execute(() -> {
-            reviewService.deleteReview(3L, 1L);
+            reviewService.deleteCustomerReview(3L, 1L);
             latch.countDown();
         });
 

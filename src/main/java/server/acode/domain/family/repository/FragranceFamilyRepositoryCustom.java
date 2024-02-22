@@ -18,7 +18,7 @@ import java.util.List;
 public interface FragranceFamilyRepositoryCustom {
     List<HomeFragranceDto> search(String familyName);
 
-    Page<FragranceCatalogDto> searchByBrandAndFamily(FragranceFilterCond cond, String additionalFamily, Pageable pageable);
+    Page<FragranceCatalogDto> searchByBrandAndFamily(FragranceFilterCond cond, Pageable pageable);
 
     List<Long> searchFamilyByFragranceId(Long fragranceId);
 

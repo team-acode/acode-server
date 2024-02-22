@@ -33,7 +33,7 @@ public class UserController {
             description = "중복되는 닉네임이 있다면 409 에러 반환됩니다.")
     @PostMapping("/users/nickname")
     public void checkNickname(@RequestBody @Valid NicknameRequest request){
-        userService.checkNickname(request.getNickname());
+        userService.checkDuplicatedNickname(request.getNickname());
     }
 
 

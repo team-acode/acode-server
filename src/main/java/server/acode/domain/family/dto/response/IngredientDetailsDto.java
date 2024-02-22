@@ -30,14 +30,14 @@ public class IngredientDetailsDto {
         this.icon = icon;
     }
 
-    public static IngredientDetailsDto from(Ingredient ingredient, IngredientType type){
+    public static IngredientDetailsDto from(Ingredient ingredient){
         return new IngredientDetailsDto(ingredient.getKorName(),
                 ingredient.getEngName(),
                 ingredient.getAcode(),
                 ingredient.getKeyword(),
                 ingredient.getSummary(),
                 ingredient.getBackgroundImg(),
-                type.getKorName(),
-                type.getIcon());
+                ingredient.getIngredientType().getKorName(),
+                ingredient.getIngredientType().getIcon());
     }
 }

@@ -186,17 +186,17 @@ public class ReviewService {
         return ResponseEntity.ok().build();
     }
 
-    public void deleteReview(Long reviewId, Long userId) {
+    public void deleteCustomerReview(Long reviewId, Long userId) {
 
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new CustomException(ErrorCode.REVIEW_NOT_FOUND));
 
         if (review.getUser().getId() == userId) {
-            deleteReviewLogic(review);
+            deleteReview(review);
         } else { throw new CustomException(ErrorCode.REVIEW_AUTHOR_MISMATCH); }
     }
 
-    public void deleteReviewDeveloper(Long reviewId, Long userId) {
+    public void deleteAdminReview(Long reviewId, Long userId) {
 
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new CustomException(ErrorCode.REVIEW_NOT_FOUND));
@@ -205,12 +205,18 @@ public class ReviewService {
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         if (user.getRole().equals(Role.ROLE_ADMIN)){
-            deleteReviewLogic(review);
+            deleteReview(review);
         } else { throw new CustomException(ErrorCode.NOT_ADMIN);}
 
     }
 
-    private void deleteReviewLogic(Review review){
+    private void deleteReview(Review review){
+        updateReviewStatistics(review);
+        fragranceRepository.decreaseReview(review.getRate(), review.getFragrance().getId()); // Fragrance 테이블의 reviewCnt -= 1
+        reviewRepository.delete(review); // Review 테이블 hard-delete
+    }
+
+    private void updateReviewStatistics(Review review){
         /**
          *  ReviewSeason, ReviewLongevity, ReviewIntensity, ReviewStyle에 해당하는 컬럼 값 -= 1
          */
@@ -226,16 +232,5 @@ public class ReviewService {
         String styleList = review.getStyle().toLowerCase();
         List<String> styles = Arrays.asList(styleList.split(", "));
         styles.forEach(style -> reviewUpdateRepository.updateStyle(style, review.getFragrance().getId(), -1));
-
-
-        /**
-         * Fragrance 테이블의 reviewCnt -= 1
-         */
-        fragranceRepository.decreaseReview(review.getRate(), review.getFragrance().getId());
-
-        /**
-         * Review 테이블 삭제
-         */
-        reviewRepository.delete(review);
     }
 }

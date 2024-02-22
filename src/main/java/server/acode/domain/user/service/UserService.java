@@ -34,7 +34,7 @@ public class UserService {
 
     @Transactional
     public void updateNickname(String nickname, Long userId) {
-        checkNickname(nickname);
+        checkDuplicatedNickname(nickname);
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
@@ -44,7 +44,7 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public void checkNickname(String nickname) {
+    public void checkDuplicatedNickname(String nickname) {
         userRepository.findByNicknameAndIsDel(nickname, false).ifPresent(user -> {
             throw new CustomException(ErrorCode.NICKNAME_ALREADY_USED);
         });
@@ -82,6 +82,5 @@ public class UserService {
         Page<ReviewDto> result = reviewRepository.getDisplayReview(userId, pageable);
         return new PageableResponse(result.getContent(), result.getTotalPages(), result.getTotalElements());
     }
-
 
 }

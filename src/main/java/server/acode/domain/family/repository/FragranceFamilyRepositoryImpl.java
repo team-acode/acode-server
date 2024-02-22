@@ -62,7 +62,7 @@ public class FragranceFamilyRepositoryImpl implements FragranceFamilyRepositoryC
     }
 
     @Override
-    public Page<FragranceCatalogDto> searchByBrandAndFamily(FragranceFilterCond cond, String additionalFamily, Pageable pageable) {
+    public Page<FragranceCatalogDto> searchByBrandAndFamily(FragranceFilterCond cond, Pageable pageable) {
 
         //TODO 카운트 쿼리 분리
         QueryResults<FragranceCatalogDto> results = queryFactory
@@ -79,7 +79,7 @@ public class FragranceFamilyRepositoryImpl implements FragranceFamilyRepositoryC
                 .join(fragrance.brand, brand)
                 .where(brandNameEq(cond.getBrand()),
                         familyNameEq(cond.getFamily()),
-                        additionalFamilyNameEq(additionalFamily)
+                        additionalFamilyNameEq(cond.getAdditionalFamily())
                 )
                 .groupBy(fragrance.id)
                 .offset(pageable.getOffset())

@@ -14,9 +14,7 @@ import server.acode.domain.fragrance.entity.Brand;
 import server.acode.domain.fragrance.repository.BrandRepository;
 import server.acode.domain.fragrance.repository.FragranceRepository;
 import server.acode.domain.ingredient.entity.Ingredient;
-import server.acode.domain.ingredient.entity.IngredientType;
 import server.acode.domain.ingredient.repository.IngredientRepository;
-import server.acode.domain.ingredient.repository.IngredientTypeRepository;
 import server.acode.global.common.ErrorCode;
 import server.acode.global.common.PageRequest;
 import server.acode.global.exception.CustomException;
@@ -32,26 +30,26 @@ public class DisplayService {
     private final FamilyRepository familyRepository;
     private final BrandRepository brandRepository;
     private final IngredientRepository ingredientRepository;
-    private final IngredientTypeRepository ingredientTypeRepository;
     private final FragranceFamilyRepository fragranceFamilyRepository;
     private final FragranceRepository fragranceRepository;
 
 
     public PageableResponse searchFragranceByBrandAndFamily(FragranceFilterCond cond, PageRequest pageRequest){
         Pageable pageable = pageRequest.of();
+        parseFilterCond(cond);
 
-        String additionalFamily = null; // 추가 계열 변수 초기화
+        Page<FragranceCatalogDto> result = fragranceFamilyRepository.searchByBrandAndFamily(cond, pageable); // 향수 조회
+        return new PageableResponse(result.getContent(), result.getTotalPages(), result.getTotalElements());
+    }
 
-        // family에 값이 들어온 경우 split 처리
+    private FragranceFilterCond parseFilterCond(FragranceFilterCond cond){
         if(hasText(cond.getFamily())) {
             String[] parts = cond.getFamily().split("\\s+", 2);
             cond.setFamily(parts.length > 0 ? parts[0] : null);
-            additionalFamily = parts.length > 1 ? parts[1] : null;
+            cond.setAdditionalFamily(parts.length > 1 ? parts[1] : null);
         }
 
-        Page<FragranceCatalogDto> result = fragranceFamilyRepository.searchByBrandAndFamily(cond, additionalFamily, pageable); // 향수 조회
-        return new PageableResponse(result.getContent(), result.getTotalPages(), result.getTotalElements());
-
+        return cond;
     }
 
     public PageableResponse searchFragranceByIngredient(String ingredient, PageRequest pageRequest){
@@ -82,10 +80,6 @@ public class DisplayService {
         if(!ingredientRepository.existsByKorName(ingredient)) throw new CustomException(ErrorCode.INGREDIENT_NOT_FOUND);
         Ingredient findIngredient = ingredientRepository.findByKorName(ingredient);
 
-        // 향료에 해당하는 향료 타입이 존재하는지 확인 후 조회
-        IngredientType findIngredientType = ingredientTypeRepository.findById(findIngredient.getIngredientType().getId())
-                .orElseThrow(()-> new CustomException(ErrorCode.INGREDIENT_TYPE_NOT_FOUND));
-
-        return IngredientDetailsDto.from(findIngredient, findIngredientType);
+        return IngredientDetailsDto.from(findIngredient);
     }
 }
