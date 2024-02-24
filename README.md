@@ -1,5 +1,8 @@
 
-# ACODE 어코드 <a href="https://acode-fragrance.com/acode"><img src="https://github.com/team-acode/acode-server/assets/90557277/c224b837-0cad-4c05-afe3-b5694410e4e4" align="left" width="100"></a>
+# <a href="https://acode-fragrance.com/acode"><img src="https://github.com/team-acode/acode-server/assets/90557277/c224b837-0cad-4c05-afe3-b5694410e4e4" align="left" width="100"></a> ACODE 어코드
+향을 새로이 풀어내다, 나를 위한 향을 찾아주는 프레그런스 큐레이션 플랫폼 
+
+<br><br>
 
 <p align="center" width="100%">
     <img src="https://github.com/team-acode/acode-server/assets/90557277/1d3a3c1f-8b72-473c-84fa-f343ad958b6c" width="30%">
