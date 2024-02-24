@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import server.acode.domain.family.entity.Family;
 import server.acode.domain.family.repository.FamilyRepository;
 import server.acode.domain.family.repository.FragranceFamilyRepository;
+import server.acode.domain.fragrance.dto.Extract;
 import server.acode.domain.fragrance.dto.request.KeywordCond;
 import server.acode.domain.fragrance.dto.response.ExtractFamily;
 import server.acode.domain.fragrance.dto.response.ExtractFragrance;
@@ -28,13 +29,6 @@ public class ExtractService {
     private final FragranceRepository fragranceRepository;
     private final FragranceFamilyRepository fragranceFamilyRepository;
     private final FamilyRepository familyRepository;
-    private static List<Long> one;
-    private static List<Long> two;
-    private static List<Long> three;
-    private static List<Long> fourAnd;
-    private static List<Long> fourOr;
-    private static List<Long> fiveAnd;
-    private static List<Long> fiveOr;
 
     public ExtractResponse extractFamily(KeywordCond cond) {
         List<Long> fragranceIdList = extractFragranceIdList(cond);
@@ -77,6 +71,7 @@ public class ExtractService {
      */
     public List<Long> newExtractFragranceIdList(KeywordCond cond) {
         /* concentration */
+        List<Long> one;
         if(cond.getConcentration().size() == 2){
             one = fragranceRepository.extractByConcentrationOr(cond.getConcentration().get(0), cond.getConcentration().get(1));
         } else {
@@ -84,6 +79,7 @@ public class ExtractService {
         }
 
         /* season */
+        List<Long> two;
         if(cond.getSeason().size() == 2){
             two = fragranceRepository.extractByOnlySeasonOr(cond.getSeason().get(0), cond.getSeason().get(1));
         } else {
@@ -91,6 +87,7 @@ public class ExtractService {
         }
 
         /* main family */
+        List<Long> three;
         if(cond.getMainFamily().size() == 2){
             three = fragranceFamilyRepository.extractByOnlyMainFamilyOr(cond.getMainFamily().get(0), cond.getMainFamily().get(1));
         } else {
@@ -98,73 +95,17 @@ public class ExtractService {
         }
 
         /* scent */
-        fourAnd = fragranceRepository.extractByOnlyScent(cond.getScent().get(0), cond.getScent().get(1));
-        fourOr = fragranceRepository.extractByOnlyScentOr(cond.getScent().get(0), cond.getScent().get(1));
+        List<Long> fourAnd = fragranceRepository.extractByOnlyScent(cond.getScent().get(0), cond.getScent().get(1));
+        List<Long> fourOr = fragranceRepository.extractByOnlyScentOr(cond.getScent().get(0), cond.getScent().get(1));
 
         /* style */
-        fiveAnd = fragranceRepository.extractByOnlyStyle(cond.getStyle().get(0), cond.getStyle().get(1));
-        fiveOr = fragranceRepository.extractByOnlyStyleOr(cond.getStyle().get(0), cond.getStyle().get(1));
+        List<Long> fiveAnd = fragranceRepository.extractByOnlyStyle(cond.getStyle().get(0), cond.getStyle().get(1));
+        List<Long> fiveOr = fragranceRepository.extractByOnlyStyleOr(cond.getStyle().get(0), cond.getStyle().get(1));
 
-        return dfs(1, fragranceRepository.extractByConcentration(null, null)); // 모든 향수 id를 list에 넣어서 시작
+        Extract extract = new Extract(one, two, three, fourAnd, fourOr, fiveAnd, fiveOr);
+        return extract.dfs(1, fragranceRepository.extractByConcentration(null, null)); // 모든 향수 id를 list에 넣어서 시작
 
     }
-
-    private List<Long> dfs(int idx, List<Long> now){
-        List<Long> result = new ArrayList<>(now);
-
-        // 다섯번째 노드 도달
-        if(idx == 5){
-            result.retainAll(fiveAnd);
-            if(result.isEmpty()) {
-                result = new ArrayList<>(now);
-                result.retainAll(fiveOr);
-                if(result.isEmpty()){
-                    return null; // 해당하는 값 없음
-                }
-                return result; // OR 결과 있음
-            }
-            else{
-                return result; } // AND 결과 있음
-        }
-
-        result.retainAll(relevant(idx)); // sout idx
-
-        // 4번째 노드는 AND 포함 결과 없을 때 OR 확인 필요
-        if(idx == 4 && result.isEmpty()){
-            result = new ArrayList<>(now);
-            result.retainAll(relevant(5));
-        }
-        System.out.println(idx + " : " + "result = "+result);
-
-
-
-        if(!result.isEmpty()) {
-            for (int i = idx + 1; i <= 5; i++) {
-                List<Long> newResult = dfs(i, result);
-                System.out.println(i + " : " + "new result = "+newResult);
-
-                // 아래 노드에서 다 포함하는 결과가 있다면 그걸로 리턴
-                if(newResult!=null) {
-                    return newResult;
-                }
-            }
-            return result;
-        }
-        return null; // 해당하는 값 없음
-    }
-
-    private List<Long> relevant(int idx){
-        switch (idx){
-            case 1: return one;
-            case 2: return two;
-            case 3: return three;
-            case 4: return fourAnd;
-            case 5: return fourOr;
-        }
-        return null;
-    }
-
-
 
     private ExtractResponse getExtractResult (List<Long> familyIdList){
         List<Family> families = familyRepository.findByIdIn(familyIdList);
