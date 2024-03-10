@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,7 @@ import server.acode.global.inmemory.RedisDao;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class AuthService {
 
     private final RedisDao redisDao;
@@ -61,7 +63,6 @@ public class AuthService {
         return new ResponseEntity<>(token, init);
     }
 
-    // TODO Redirect url 숨기기
     private String getKakaoAccessToken(String code, boolean developer) throws JsonProcessingException {
         // header 생성
         HttpHeaders headers = new HttpHeaders();
@@ -98,7 +99,7 @@ public class AuthService {
         // access_token의 값을 읽어오기
         String accessToken = jsonNode.get("access_token").asText();
 
-        System.out.println("Access Token: " + accessToken);
+        log.info("Access Token: " + accessToken);
         return accessToken;
 
     }

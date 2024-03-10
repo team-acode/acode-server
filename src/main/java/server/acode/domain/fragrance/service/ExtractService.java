@@ -32,24 +32,14 @@ public class ExtractService {
 
     public ExtractResponse extractFamily(KeywordCond cond) {
         List<Long> fragranceIdList = extractFragranceIdList(cond);
-        System.out.println("\nfragranceIdList = " + fragranceIdList + "\n");
-
         List<FamilyCountDto> familyCountDtoList = fragranceFamilyRepository.countFamily(fragranceIdList);
-        for (FamilyCountDto familyCountDto : familyCountDtoList) {
-            System.out.println("familyCountDto = " + familyCountDto);
-        }
 
         List<Long> familyIdList = familyCountDtoList.stream()
                 .filter(familyCountDto -> familyCountDto.getCount().equals(familyCountDtoList.get(0).getCount()))
                 .map(FamilyCountDto::getFamilyId)
                 .toList();
 
-        System.out.println("\n");
-        for (Long l : familyIdList) {
-            System.out.println("familyId = " + l);
-        }
-
-        // 계열이 세 개 이상
+        // 계열이 세 개 이상인 경우 세 개만 랜덤 선택
         if (familyIdList.size() > 3) {
             Random random = new Random();
             List<Long> customFamilyIdList = random.ints(0, familyIdList.size())
@@ -59,17 +49,15 @@ public class ExtractService {
                     .collect(Collectors.toList());
 
             return getExtractResult(customFamilyIdList);
-
         }
 
         return getExtractResult(familyIdList);
-
     }
 
     /**
      * 꼼꼼로직 반영한 새 로직
      */
-    public List<Long> newExtractFragranceIdList(KeywordCond cond) {
+    public List<Long> extractFragranceIdListV2(KeywordCond cond) {
         /* concentration */
         List<Long> one;
         if(cond.getConcentration().size() == 2){
@@ -104,32 +92,7 @@ public class ExtractService {
 
         Extract extract = new Extract(one, two, three, fourAnd, fourOr, fiveAnd, fiveOr);
         return extract.dfs(1, fragranceRepository.extractByConcentration(null, null)); // 모든 향수 id를 list에 넣어서 시작
-
     }
-
-    private ExtractResponse getExtractResult (List<Long> familyIdList){
-        List<Family> families = familyRepository.findByIdIn(familyIdList);
-        List<ExtractFamily> extractFamilies = families.stream()
-                .map(ExtractFamily::from)
-                .collect(Collectors.toList());
-
-        List<ExtractFragrance> fragrances = fragranceFamilyRepository.extractFragrance(familyIdList);
-
-        // 향수가 세 개 이상인 경우
-        if (fragrances.size() > 5) {
-            Random random = new Random();
-            List<ExtractFragrance> collect = random.ints(0, fragrances.size())
-                    .distinct()
-                    .limit(5)
-                    .mapToObj(fragrances::get)
-                    .collect(Collectors.toList());
-
-            return new ExtractResponse(extractFamilies, collect);
-        }
-
-        return new ExtractResponse(extractFamilies, fragrances);
-    }
-
 
 
     private List<Long> extractFragranceIdList(KeywordCond cond) {
@@ -258,5 +221,30 @@ public class ExtractService {
 
         System.out.println("\nRETURN Q5");
         return fragranceIdList1;
+    }
+
+
+
+    private ExtractResponse getExtractResult (List<Long> familyIdList){
+        List<Family> families = familyRepository.findByIdIn(familyIdList);
+        List<ExtractFamily> extractFamilies = families.stream()
+                .map(ExtractFamily::from)
+                .collect(Collectors.toList());
+
+        List<ExtractFragrance> fragrances = fragranceFamilyRepository.extractFragrance(familyIdList);
+
+        // 향수가 다섯 개 이상인 경우
+        if (fragrances.size() > 5) {
+            Random random = new Random();
+            List<ExtractFragrance> collect = random.ints(0, fragrances.size())
+                    .distinct()
+                    .limit(5)
+                    .mapToObj(fragrances::get)
+                    .collect(Collectors.toList());
+
+            return new ExtractResponse(extractFamilies, collect);
+        }
+
+        return new ExtractResponse(extractFamilies, fragrances);
     }
 }

@@ -36,7 +36,7 @@ public class DisplayService {
 
     public PageableResponse searchFragranceByBrandAndFamily(FragranceFilterCond cond, PageRequest pageRequest){
         Pageable pageable = pageRequest.of();
-        parseFilterCond(cond);
+        cond = parseFilterCond(cond);
 
         Page<FragranceCatalogDto> result = fragranceFamilyRepository.searchByBrandAndFamily(cond, pageable); // 향수 조회
         return new PageableResponse(result.getContent(), result.getTotalPages(), result.getTotalElements());
