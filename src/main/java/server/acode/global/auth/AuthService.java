@@ -39,15 +39,22 @@ public class AuthService {
     @Value("${KAKAO_REDIRECT_URL}")
     private String redirectedUrl;
 
-    public ResponseEntity signin(String code, boolean developer) throws JsonProcessingException {
-        String kakaoAccessToken = getKakaoAccessToken(code, developer);
+    public ResponseEntity signin(String code, boolean developer) {
+        String kakaoAccessToken = "";
+        try {
+            kakaoAccessToken = getKakaoAccessToken(code, developer);
+        } catch (JsonProcessingException e){
+            log.error("카카오 소셜 로그인에서 JsonProcessingException이 발생하였습니다." + e.toString());
+        } /** 이거는 하위 함수에서 체크 예외 발생하는 거 */
+
         String userInfo = getKakaoInfo(kakaoAccessToken);
+        String authKey = "";
+        try {
+            authKey = parseKakaoAuthKey(userInfo); // authKey 값을 추출
+        } catch (JsonProcessingException e){
+            log.error("카카오 소셜 로그인에서 JsonProcessingException이 발생하였습니다." + e.toString());
+        } /** 이거는 하위 함수에서 체크 예외 발생하는 거 */
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode jsonNode = objectMapper.readTree(userInfo);
-
-        // id 값을 추출
-        String authKey = jsonNode.get("id").toString();
 
         HttpStatus init = HttpStatus.OK;
         if(!userRepository.existsByAuthKeyAndIsDel(authKey, false)) {
@@ -79,19 +86,24 @@ public class AuthService {
         } else {
             params.add("redirect_uri", redirectedUrl); // 배포용 redirect uri
         }
-        System.out.println(code);
 
         // header + body
         HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(params, headers);
 
         // http 요청하기
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String> response = restTemplate.exchange(
-                "https://kauth.kakao.com/oauth/token",
-                HttpMethod.POST,
-                httpEntity,
-                String.class
-        );
+        ResponseEntity<String> response;
+        try {
+            response = restTemplate.exchange(
+                    "https://kauth.kakao.com/oauth/token",
+                    HttpMethod.POST,
+                    httpEntity,
+                    String.class
+            );
+        } catch (Exception e){
+            log.error("사용자의 카카오 로그인 인증 코드가 유효하지 않습니다.: " + e.toString());
+            throw new CustomException(ErrorCode.INVALID_AUTHENTICATION_CODE);
+        } /** 이거는 unchecked 예외 처리*/
 
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(response.getBody());
@@ -120,6 +132,16 @@ public class AuthService {
         );
 
        return response.getBody();
+    }
+
+    private String parseKakaoAuthKey(String kakaoUserInfo) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode jsonNode = null;
+        jsonNode = objectMapper.readTree(kakaoUserInfo);
+
+        // id 값을 추출
+        String authKey = jsonNode.get("id").toString();
+        return authKey;
     }
 
     private User createUser(String authKey){
