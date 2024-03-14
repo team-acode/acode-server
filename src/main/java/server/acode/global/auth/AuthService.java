@@ -40,21 +40,9 @@ public class AuthService {
     private String redirectedUrl;
 
     public ResponseEntity signin(String code, boolean developer) {
-        String kakaoAccessToken = "";
-        try {
-            kakaoAccessToken = getKakaoAccessToken(code, developer);
-        } catch (JsonProcessingException e){
-            log.error("카카오 소셜 로그인에서 JsonProcessingException이 발생하였습니다." + e.toString());
-        } /** 이거는 하위 함수에서 체크 예외 발생하는 거 */
-
+        String kakaoAccessToken = sendGetKakaoAccessToken(code, developer);
         String userInfo = getKakaoInfo(kakaoAccessToken);
-        String authKey = "";
-        try {
-            authKey = parseKakaoAuthKey(userInfo); // authKey 값을 추출
-        } catch (JsonProcessingException e){
-            log.error("카카오 소셜 로그인에서 JsonProcessingException이 발생하였습니다." + e.toString());
-        } /** 이거는 하위 함수에서 체크 예외 발생하는 거 */
-
+        String authKey = sendParseKakaoAuthKey(userInfo);
 
         HttpStatus init = HttpStatus.OK;
         if(!userRepository.existsByAuthKeyAndIsDel(authKey, false)) {
@@ -70,7 +58,17 @@ public class AuthService {
         return new ResponseEntity<>(token, init);
     }
 
-    private String getKakaoAccessToken(String code, boolean developer) throws JsonProcessingException {
+
+    private String sendGetKakaoAccessToken(String code, boolean developer){
+        // 오류 처리 코드
+        try {
+            return tryGetKakaoAccessToken(code, developer);
+        } catch (JsonProcessingException e) {
+            throw new CustomException(ErrorCode.JSON_PARSING_ERROR);
+        }
+    }
+
+    private String tryGetKakaoAccessToken(String code, boolean developer) throws JsonProcessingException {
         // header 생성
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
@@ -103,7 +101,7 @@ public class AuthService {
         } catch (Exception e){
             log.error("사용자의 카카오 로그인 인증 코드가 유효하지 않습니다.: " + e.toString());
             throw new CustomException(ErrorCode.INVALID_AUTHENTICATION_CODE);
-        } /** 이거는 unchecked 예외 처리*/
+        }
 
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(response.getBody());
@@ -134,10 +132,18 @@ public class AuthService {
        return response.getBody();
     }
 
-    private String parseKakaoAuthKey(String kakaoUserInfo) throws JsonProcessingException {
+    private String sendParseKakaoAuthKey(String kakaoUserInfo){
+        try {
+            return tryParseKakaoAuthKey(kakaoUserInfo);
+        } catch (JsonProcessingException e) {
+            throw new CustomException(ErrorCode.JSON_PARSING_ERROR);
+        }
+    }
+
+    private String tryParseKakaoAuthKey(String kakaoUserInfo) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = null;
-        jsonNode = objectMapper.readTree(kakaoUserInfo);
+        jsonNode = objectMapper.readTree(kakaoUserInfo); // 예외 발생 지점
 
         // id 값을 추출
         String authKey = jsonNode.get("id").toString();
