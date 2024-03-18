@@ -40,9 +40,9 @@ public class AuthService {
     private String redirectedUrl;
 
     public ResponseEntity signin(String code, boolean developer) {
-        String kakaoAccessToken = sendGetKakaoAccessToken(code, developer);
+        String kakaoAccessToken = getKakaoAccessToken(code, developer);
         String userInfo = getKakaoInfo(kakaoAccessToken);
-        String authKey = sendParseKakaoAuthKey(userInfo);
+        String authKey = sendParseValue(userInfo, "id");
 
         HttpStatus init = HttpStatus.OK;
         if(!userRepository.existsByAuthKeyAndIsDel(authKey, false)) {
@@ -58,17 +58,7 @@ public class AuthService {
         return new ResponseEntity<>(token, init);
     }
 
-
-    private String sendGetKakaoAccessToken(String code, boolean developer){
-        // 오류 처리 코드
-        try {
-            return tryGetKakaoAccessToken(code, developer);
-        } catch (JsonProcessingException e) {
-            throw new CustomException(ErrorCode.JSON_PARSING_ERROR);
-        }
-    }
-
-    private String tryGetKakaoAccessToken(String code, boolean developer) throws JsonProcessingException {
+    private String getKakaoAccessToken(String code, boolean developer){
         // header 생성
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
@@ -103,15 +93,9 @@ public class AuthService {
             throw new CustomException(ErrorCode.INVALID_AUTHENTICATION_CODE);
         }
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode jsonNode = objectMapper.readTree(response.getBody());
-
-        // access_token의 값을 읽어오기
-        String accessToken = jsonNode.get("access_token").asText();
-
+        String accessToken = sendParseValue(response.getBody(), "access_token");
         log.info("Access Token: " + accessToken);
         return accessToken;
-
     }
 
     private String getKakaoInfo(String accessToken) {
@@ -132,22 +116,22 @@ public class AuthService {
        return response.getBody();
     }
 
-    private String sendParseKakaoAuthKey(String kakaoUserInfo){
+    private String sendParseValue(String jsonInfo, String parsingKey){
         try {
-            return tryParseKakaoAuthKey(kakaoUserInfo);
+            return tryToParseValue(jsonInfo, parsingKey);
         } catch (JsonProcessingException e) {
             throw new CustomException(ErrorCode.JSON_PARSING_ERROR);
         }
     }
 
-    private String tryParseKakaoAuthKey(String kakaoUserInfo) throws JsonProcessingException {
+    private String tryToParseValue(String jsonInfo, String parsingKey) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = null;
-        jsonNode = objectMapper.readTree(kakaoUserInfo); // 예외 발생 지점
+        jsonNode = objectMapper.readTree(jsonInfo); // 예외 발생 지점
 
         // id 값을 추출
-        String authKey = jsonNode.get("id").toString();
-        return authKey;
+        String parsingValue = jsonNode.get(parsingKey).toString();
+        return parsingValue;
     }
 
     private User createUser(String authKey){
