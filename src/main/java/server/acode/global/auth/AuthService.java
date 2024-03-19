@@ -120,6 +120,7 @@ public class AuthService {
         try {
             return tryToParseValue(jsonInfo, parsingKey);
         } catch (JsonProcessingException e) {
+            log.error("카카오 응답 과정 중 json parsing error: " + e.toString());
             throw new CustomException(ErrorCode.JSON_PARSING_ERROR);
         }
     }
