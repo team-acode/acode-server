@@ -14,7 +14,7 @@ import java.util.Objects;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 //@Where(clause = "is_del = false")
-@Table(indexes = @Index(name = "idx_user_authkey", columnList = "auth_key"))
+//@Table(indexes = @Index(name = "idx_user_authkey", columnList = "auth_key"))
 public class User extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
