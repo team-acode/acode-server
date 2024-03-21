@@ -22,6 +22,7 @@ public enum ErrorCode {
 
 
     /* 401 UNAUTHORIZED */
+    EXPIRED_TOKEN_EXCEPTION(HttpStatus.UNAUTHORIZED, "만료된 토큰입니다."),
     TOKEN_VALIDATION_EXCEPTION(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰입니다."),
 
 

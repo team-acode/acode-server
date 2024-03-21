@@ -39,7 +39,7 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        user.updateNickname(nickname);
+        user.setNickname(nickname);
         userRepository.save(user);
     }
 

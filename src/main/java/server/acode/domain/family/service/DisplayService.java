@@ -60,25 +60,22 @@ public class DisplayService {
     }
 
     public BrandDetailsDto getBrandContent(String brandName){
-        // 존재하는지 확인 후 조회
-        if(!brandRepository.existsByKorName(brandName)) throw new CustomException(ErrorCode.BRAND_NOT_FOUND);
-        Brand find = brandRepository.findByKorName(brandName);
+        Brand find = brandRepository.findByKorName(brandName)
+                .orElseThrow(() -> new CustomException(ErrorCode.BRAND_NOT_FOUND));
 
         return BrandDetailsDto.from(find);
     }
 
     public FamilyDetailsDto getFamilyContent(String family) {
-        // 존재하는지 확인 후 조회
-        if(!familyRepository.existsByKorName(family)) throw new CustomException(ErrorCode.FAMILY_NOT_FOUND);
-        Family find = familyRepository.findByKorName(family);
+        Family find = familyRepository.findByKorName(family)
+                .orElseThrow(() -> new CustomException(ErrorCode.FAMILY_NOT_FOUND));
 
         return FamilyDetailsDto.from(find);
     }
 
     public IngredientDetailsDto getIngredientContent(String ingredient) {
-        // 향료가 존재하는지 확인 후 조회
-        if(!ingredientRepository.existsByKorName(ingredient)) throw new CustomException(ErrorCode.INGREDIENT_NOT_FOUND);
-        Ingredient findIngredient = ingredientRepository.findByKorName(ingredient);
+        Ingredient findIngredient = ingredientRepository.findByKorName(ingredient)
+                .orElseThrow(() -> new CustomException(ErrorCode.INGREDIENT_NOT_FOUND));
 
         return IngredientDetailsDto.from(findIngredient);
     }

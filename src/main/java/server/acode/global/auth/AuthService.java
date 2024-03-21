@@ -154,7 +154,7 @@ public class AuthService {
 
 
         // soft-delete
-        currentUser.updateIsDel(true);
+        currentUser.setIsDel(true);
         userRepository.save(currentUser);
 
         /** 카카오 unlink 처리 **/

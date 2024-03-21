@@ -5,7 +5,6 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Where;
 import server.acode.global.common.BaseTimeEntity;
 
 import java.util.Objects;
@@ -14,7 +13,7 @@ import java.util.Objects;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 //@Where(clause = "is_del = false")
-//@Table(indexes = @Index(name = "idx_user_authkey", columnList = "auth_key"))
+@Table(indexes = @Index(name = "idx_user_authkey", columnList = "auth_key"))
 public class User extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,11 +46,11 @@ public class User extends BaseTimeEntity {
         this.isDel = false;
     }
 
-    public void updateNickname(String newOne) {
+    public void setNickname(String newOne) {
         this.nickname = newOne;
     }
 
-    public void updateIsDel(boolean delColumn){
+    public void setIsDel(boolean delColumn){
         this.isDel = delColumn;
     }
 }

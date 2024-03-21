@@ -77,9 +77,7 @@ class UserServiceTest {
         //then
         User user1 = userRepository.findById(1L).get();
         User user2 = userRepository.findById(2L).get();
-        System.out.println("user1 = " + user1.getNickname());
-        System.out.println("user2 = " + user2.getNickname());
-        assertThat(user1.getNickname()).isNotEqualTo(user2.getNickname());
 
+        assertThat(user1.getNickname()).isNotEqualTo(user2.getNickname());
     }
 }

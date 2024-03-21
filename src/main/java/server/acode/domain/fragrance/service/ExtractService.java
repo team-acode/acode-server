@@ -31,7 +31,7 @@ public class ExtractService {
     private final FamilyRepository familyRepository;
 
     public ExtractResponse extractFamily(KeywordCond cond) {
-        List<Long> fragranceIdList = extractFragranceIdList(cond);
+        List<Long> fragranceIdList = extractFragranceIdListV2(cond);
         List<FamilyCountDto> familyCountDtoList = fragranceFamilyRepository.countFamily(fragranceIdList);
 
         List<Long> familyIdList = familyCountDtoList.stream()
