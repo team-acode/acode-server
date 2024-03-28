@@ -9,6 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 import server.acode.domain.fragrance.entity.Fragrance;
 import server.acode.domain.fragrance.repository.FragranceRepository;
 import server.acode.domain.review.dto.request.RegisterReviewRequest;
+import server.acode.domain.review.entity.ReviewSeason;
+import server.acode.domain.review.repository.ReviewSeasonRepository;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -22,6 +24,7 @@ class ReviewServiceTest {
 
     @Autowired ReviewService reviewService;
     @Autowired FragranceRepository fragranceRepository;
+    @Autowired ReviewSeasonRepository reviewSeasonRepository;
 
     @DisplayName("리뷰 작성/ 삭제가 여러 스레드에서 일어날 때 reviewCnt 일관성 유지 테스트")
     @Test
@@ -36,12 +39,11 @@ class ReviewServiceTest {
         //when
         service.execute(() -> {
             RegisterReviewRequest request = new RegisterReviewRequest(3, "very good", "SPRING", "ONEHOUR", "WEAK", "CHIC");
-            reviewService.registerReview(1L, request,1L);
+            reviewService.registerReview(1L, request,2L);
             latch.countDown();
-
         });
         service.execute(() -> {
-            reviewService.deleteCustomerReview(3L, 1L);
+            reviewService.deleteCustomerReview(1L, 1L);
             latch.countDown();
         });
 
@@ -50,7 +52,9 @@ class ReviewServiceTest {
 
         //then
         Fragrance fragrance = fragranceRepository.findById(1L).get();
-        assertThat(fragrance.getReviewCnt()).isEqualTo(1);
+        ReviewSeason season = reviewSeasonRepository.findByFragrance(fragrance).get();
 
+        assertThat(fragrance.getReviewCnt()).isEqualTo(1);
+        assertThat(season.getSpring()).isEqualTo(1);
     }
 }
