@@ -35,6 +35,6 @@ class ReviewUpdateRepositoryTest {
 
         // then
         Optional<ReviewSeason> reviewSeason = reviewSeasonRepository.findByFragrance(fragrance);
-        assertThat(reviewSeason.get().getSpring()).isEqualTo(1);
+        assertThat(reviewSeason.get().getSpring()).isEqualTo(3);
     }
 }

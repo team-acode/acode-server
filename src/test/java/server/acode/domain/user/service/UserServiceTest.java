@@ -50,8 +50,13 @@ class UserServiceTest {
 
         //when
         service.execute(() -> {
-            userService.synchronizedUpdateNickname("same", 1L);
-            latch.countDown();
+            try {
+                userService.synchronizedUpdateNickname("same", 1L);
+            } catch (CustomException e) {
+
+            } finally {
+                latch.countDown();
+            }
         });
         service.execute(() -> {
             try {
