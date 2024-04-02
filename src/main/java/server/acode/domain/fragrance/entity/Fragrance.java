@@ -2,6 +2,7 @@ package server.acode.domain.fragrance.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.jpa.repository.Lock;
 import server.acode.global.common.BaseTimeEntity;
 
 @Entity
@@ -53,4 +54,9 @@ public class Fragrance extends BaseTimeEntity {
     private String style;  // 스타일
     private String season;  // 계절감
     private String scent;  // 향
+
+    public void updateRateSum(int rate, int cnt){
+        rateSum += rate;
+        reviewCnt += cnt;
+    }
 }

@@ -32,7 +32,6 @@ public class ReviewService {
     private final ReviewLongevityRepository reviewLongevityRepository;
     private final ReviewIntensityRepository reviewIntensityRepository;
     private final ReviewStyleRepository reviewStyleRepository;
-    private final ReviewUpdateRepository reviewUpdateRepository;
 
     public ResponseEntity<?> registerReview(Long fragranceId, RegisterReviewRequest registerReviewRequest, Long userId) {
         User user = userRepository.findById(userId)
@@ -186,6 +185,10 @@ public class ReviewService {
         return ResponseEntity.ok().build();
     }
 
+
+    /**
+     * 리뷰 삭제
+     */
     public void deleteCustomerReview(Long reviewId, Long userId) {
 
         Review review = reviewRepository.findById(reviewId)
@@ -211,26 +214,42 @@ public class ReviewService {
     }
 
     private void deleteReview(Review review){
-        updateReviewStatistics(review);
-        fragranceRepository.decreaseReview(review.getRate(), review.getFragrance().getId()); // Fragrance 테이블의 reviewCnt -= 1
-        reviewRepository.delete(review); // Review 테이블 hard-delete
-    }
+        /**
+         * 향수의 리뷰 별점 총 합 -= 리뷰 별 점
+         * 비관적 락을 위한 업데이트용 find method 호출
+         */
+        Fragrance fragrance = fragranceRepository.findWithPessimisticLockById(review.getFragrance().getId())
+                .orElseThrow();
+        fragrance.updateRateSum(0 - review.getRate(), -1);
 
-    private void updateReviewStatistics(Review review){
+
         /**
          *  ReviewSeason, ReviewLongevity, ReviewIntensity, ReviewStyle에 해당하는 컬럼 값 -= 1
          */
         String season = review.getSeason().toString().toLowerCase();
-        reviewUpdateRepository.updateSeason(season, review.getFragrance().getId(), -1);
+        ReviewSeason reviewSeason = reviewSeasonRepository.findByFragrance(fragrance).get();
+        reviewSeason.updateVariable(season, -1);
+
 
         String longevity = review.getLongevity().toString().toLowerCase(); // 지속성
-        reviewUpdateRepository.updateLongevity(longevity, review.getFragrance().getId(), -1);
+        ReviewLongevity reviewLongevity = reviewLongevityRepository.findByFragrance(fragrance).get();
+        reviewLongevity.updateVariable(longevity, -1);
+
 
         String intensity = review.getIntensity().toString().toLowerCase(); // 향의 세기
-        reviewUpdateRepository.updateIntensity(intensity, review.getFragrance().getId(), -1);
+        ReviewIntensity reviewIntensity = reviewIntensityRepository.findByFragrance(fragrance).get();
+        reviewIntensity.updateVariable(intensity, -1);
+
 
         String styleList = review.getStyle().toLowerCase();
-        List<String> styles = Arrays.asList(styleList.split(", "));
-        styles.forEach(style -> reviewUpdateRepository.updateStyle(style, review.getFragrance().getId(), -1));
+        String[] styles = styleList.split(", ");
+        ReviewStyle reviewStyle = reviewStyleRepository.findByFragrance(fragrance).get();
+        reviewStyle.updateVariable(styles, -1);
+
+        /**
+         * review 테이블 hard-delete
+         */
+        reviewRepository.delete(review);
     }
+
 }

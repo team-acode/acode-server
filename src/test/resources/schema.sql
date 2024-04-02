@@ -73,6 +73,7 @@ CREATE TABLE review_intensity (
      strong INT DEFAULT 0,
      intense INT DEFAULT 0,
      fragrance_id BIGINT,
+     version BIGINT DEFAULT 0L,
      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
      modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
      FOREIGN KEY (fragrance_id) REFERENCES fragrance(fragrance_id)
@@ -85,6 +86,7 @@ CREATE TABLE review_longevity (
      halfday INT DEFAULT 0,
      fullday INT DEFAULT 0,
      fragrance_id BIGINT,
+     version BIGINT DEFAULT 0L,
      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
      modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
      FOREIGN KEY (fragrance_id) REFERENCES fragrance(fragrance_id)
@@ -99,6 +101,7 @@ CREATE TABLE review_season (
      winter INT DEFAULT 0,
      all_seasons INT DEFAULT 0,
      fragrance_id BIGINT,
+     version BIGINT DEFAULT 0L,
      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
      modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
      FOREIGN KEY (fragrance_id) REFERENCES fragrance(fragrance_id)
@@ -130,6 +133,7 @@ CREATE TABLE review_style (
      soft INT DEFAULT 0,
      cozy INT DEFAULT 0,
      fragrance_id BIGINT,
+     version BIGINT DEFAULT 0L,
      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
      modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
      FOREIGN KEY (fragrance_id) REFERENCES fragrance(fragrance_id)
