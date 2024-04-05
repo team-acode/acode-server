@@ -1,5 +1,6 @@
 package server.acode.domain.review.service;
 
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +33,7 @@ public class ReviewService {
     private final ReviewLongevityRepository reviewLongevityRepository;
     private final ReviewIntensityRepository reviewIntensityRepository;
     private final ReviewStyleRepository reviewStyleRepository;
+    private final EntityManager em;
 
     public ResponseEntity<?> registerReview(Long fragranceId, RegisterReviewRequest registerReviewRequest, Long userId) {
         User user = userRepository.findById(userId)
@@ -218,14 +220,16 @@ public class ReviewService {
          * 향수의 리뷰 별점 총 합 -= 리뷰 별 점
          * 비관적 락을 위한 업데이트용 find method 호출
          */
-        Fragrance fragrance = fragranceRepository.findWithPessimisticLockById(review.getFragrance().getId())
-                .orElseThrow();
-        fragrance.updateRateSum(0 - review.getRate(), -1);
+        Long frgranceId = review.getFragrance().getId();
+        fragranceRepository.findWithPessimisticLockById(frgranceId);
+        fragranceRepository.updateFragranceForReview(frgranceId, 0-review.getRate(), -1);
 
 
         /**
          *  ReviewSeason, ReviewLongevity, ReviewIntensity, ReviewStyle에 해당하는 컬럼 값 -= 1
          */
+        Fragrance fragrance = fragranceRepository.findById(frgranceId).orElseThrow();
+
         String season = review.getSeason().toString().toLowerCase();
         ReviewSeason reviewSeason = reviewSeasonRepository.findByFragrance(fragrance).get();
         reviewSeason.updateVariable(season, -1);

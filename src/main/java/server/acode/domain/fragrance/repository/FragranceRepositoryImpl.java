@@ -2,8 +2,10 @@ package server.acode.domain.fragrance.repository;
 
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.LockModeType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -28,6 +30,18 @@ public class FragranceRepositoryImpl implements FragranceRepositoryCustom {
 
     public FragranceRepositoryImpl(EntityManager em) {
         this.queryFactory = new JPAQueryFactory(em);
+    }
+
+    @Override
+    public void findWithPessimisticLockById(Long fragranceId) {
+        queryFactory.select(
+                fragrance.rateSum,
+                fragrance.reviewCnt
+                )
+                .from(fragrance)
+                .where(fragrance.id.eq(fragranceId))
+                .setLockMode(LockModeType.PESSIMISTIC_WRITE)
+                .fetchOne();
     }
 
     @Override
