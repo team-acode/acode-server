@@ -4,7 +4,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import server.acode.domain.family.dto.response.FragranceCatalogDto;
-import server.acode.domain.fragrance.dto.ReviewUpdateDto;
 
 import java.util.List;
 
