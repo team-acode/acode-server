@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.jpa.repository.Lock;
 import server.acode.domain.fragrance.entity.Fragrance;
 import server.acode.global.common.BaseTimeEntity;
 
@@ -82,7 +83,85 @@ public class ReviewStyle extends BaseTimeEntity {
     @Column(columnDefinition = "integer default 0")
     private int cozy; //포근한
 
+    @Version
+    private Long version;
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fragrance_id")
     private Fragrance fragrance;
+
+    public void updateVariable(String[] styles, int value){
+        // TODO 확장성 높이기
+        for (int i = 0; i < styles.length; i++) {
+            switch (styles[i]){
+                case "chic":
+                    chic += value;
+                    break;
+                case "mature":
+                    mature += value;
+                    break;
+                case "luxurious":
+                    luxurious += value;
+                    break;
+                case "elegant":
+                    elegant += value;
+                    break;
+                case "masculine":
+                    masculine += value;
+                    break;
+                case "comfortable":
+                    comfortable += value;
+                    break;
+                case "serene":
+                    serene += value;
+                    break;
+                case "light":
+                    light += value;
+                    break;
+                case "neutral":
+                    neutral += value;
+                    break;
+                case "friendly":
+                    friendly += value;
+                    break;
+                case "clean":
+                    clean += value;
+                    break;
+                case "sensual":
+                    sensual += value;
+                    break;
+                case "delicate":
+                    delicate += value;
+                    break;
+                case "lively":
+                    lively += value;
+                    break;
+                case "lovely":
+                    lovely += value;
+                    break;
+                case "bright":
+                    bright += value;
+                    break;
+                case "radiant":
+                    radiant += value;
+                    break;
+                case "feminine":
+                    feminine += value;
+                    break;
+                case "innocent":
+                    innocent += value;
+                    break;
+                case "weighty":
+                    weighty += value;
+                    break;
+                case "soft":
+                    soft += value;
+                    break;
+                case "cozy":
+                    cozy += value;
+                    break;
+            }
+
+        }
+    }
 }

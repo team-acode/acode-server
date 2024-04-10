@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,7 @@ import server.acode.global.inmemory.RedisDao;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class AuthService {
 
     private final RedisDao redisDao;
@@ -37,30 +39,10 @@ public class AuthService {
     @Value("${KAKAO_REDIRECT_URL}")
     private String redirectedUrl;
 
-    public void checkUser(Long userId){
-        /**
-         * 사용자 정보 이용하는 부분 모두
-         * Long userId = SecurityUtil.getCurrentUserId();
-         *
-         * User user = userRepository.findById(userId)
-         *       .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-         * 으로 수정해야함
-         */
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-
-        System.out.println("user = " + user.getNickname());
-    }
-
-    public ResponseEntity signin(String code, boolean developer) throws JsonProcessingException {
+    public ResponseEntity signin(String code, boolean developer) {
         String kakaoAccessToken = getKakaoAccessToken(code, developer);
-        String userInfo = getUserInfo(kakaoAccessToken);
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode jsonNode = objectMapper.readTree(userInfo);
-
-        // id 값을 추출
-        String authKey = jsonNode.get("id").toString();
+        String userInfo = getKakaoInfo(kakaoAccessToken);
+        String authKey = sendParseValue(userInfo, "id");
 
         HttpStatus init = HttpStatus.OK;
         if(!userRepository.existsByAuthKeyAndIsDel(authKey, false)) {
@@ -76,8 +58,7 @@ public class AuthService {
         return new ResponseEntity<>(token, init);
     }
 
-    // TODO Redirect url 숨기기
-    private String getKakaoAccessToken(String code, boolean developer) throws JsonProcessingException {
+    private String getKakaoAccessToken(String code, boolean developer){
         // header 생성
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
@@ -93,32 +74,31 @@ public class AuthService {
         } else {
             params.add("redirect_uri", redirectedUrl); // 배포용 redirect uri
         }
-        System.out.println(code);
 
         // header + body
         HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(params, headers);
 
         // http 요청하기
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String> response = restTemplate.exchange(
-                "https://kauth.kakao.com/oauth/token",
-                HttpMethod.POST,
-                httpEntity,
-                String.class
-        );
+        ResponseEntity<String> response;
+        try {
+            response = restTemplate.exchange(
+                    "https://kauth.kakao.com/oauth/token",
+                    HttpMethod.POST,
+                    httpEntity,
+                    String.class
+            );
+        } catch (Exception e){
+            log.error("사용자의 카카오 로그인 인증 코드가 유효하지 않습니다.: " + e.toString());
+            throw new CustomException(ErrorCode.INVALID_AUTHENTICATION_CODE);
+        }
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode jsonNode = objectMapper.readTree(response.getBody());
-
-        // access_token의 값을 읽어오기
-        String accessToken = jsonNode.get("access_token").asText();
-
-        System.out.println("Access Token: " + accessToken);
+        String accessToken = sendParseValue(response.getBody(), "access_token");
+        log.info("Access Token: " + accessToken);
         return accessToken;
-
     }
 
-    private String getUserInfo(String accessToken) {
+    private String getKakaoInfo(String accessToken) {
         // header 생성
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
@@ -134,6 +114,25 @@ public class AuthService {
         );
 
        return response.getBody();
+    }
+
+    private String sendParseValue(String jsonInfo, String parsingKey){
+        try {
+            return tryToParseValue(jsonInfo, parsingKey);
+        } catch (JsonProcessingException e) {
+            log.error("카카오 응답 과정 중 json parsing error: " + e.toString());
+            throw new CustomException(ErrorCode.JSON_PARSING_ERROR);
+        }
+    }
+
+    private String tryToParseValue(String jsonInfo, String parsingKey) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode jsonNode = null;
+        jsonNode = objectMapper.readTree(jsonInfo); // 예외 발생 지점
+
+        // id 값을 추출
+        String parsingValue = jsonNode.get(parsingKey).toString();
+        return parsingValue;
     }
 
     private User createUser(String authKey){
@@ -155,7 +154,7 @@ public class AuthService {
 
 
         // soft-delete
-        currentUser.updateIsDel(true);
+        currentUser.setIsDel(true);
         userRepository.save(currentUser);
 
         /** 카카오 unlink 처리 **/

@@ -5,8 +5,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import server.acode.domain.family.dto.SimilarFragranceOrCond;
 import server.acode.domain.family.dto.request.FragranceFilterCond;
-import server.acode.domain.family.dto.response.DisplayFragrance;
-import server.acode.domain.family.dto.response.HomeFragrance;
+import server.acode.domain.family.dto.response.FragranceCatalogDto;
+import server.acode.domain.family.dto.response.HomeFragranceDto;
 import server.acode.domain.fragrance.dto.request.SearchCond;
 import server.acode.domain.fragrance.dto.response.ExtractFragrance;
 import server.acode.domain.fragrance.dto.response.FamilyCountDto;
@@ -16,9 +16,9 @@ import java.util.List;
 
 @Repository
 public interface FragranceFamilyRepositoryCustom {
-    List<HomeFragrance> search(String familyName);
+    List<HomeFragranceDto> search(String familyName);
 
-    Page<DisplayFragrance> searchByFilter(FragranceFilterCond cond, String additionalFamily, Pageable pageable);
+    Page<FragranceCatalogDto> searchByBrandAndFamily(FragranceFilterCond cond, Pageable pageable);
 
     List<Long> searchFamilyByFragranceId(Long fragranceId);
 

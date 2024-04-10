@@ -7,10 +7,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import server.acode.domain.family.dto.response.PageableResponse;
 import server.acode.domain.review.repository.ReviewRepository;
-import server.acode.domain.user.dto.response.DisplayReview;
-import server.acode.domain.user.dto.response.DisplayScrap;
-import server.acode.domain.user.dto.response.PreviewScrap;
-import server.acode.domain.user.dto.response.PreviewUserInfo;
+import server.acode.domain.user.dto.response.ReviewDto;
+import server.acode.domain.user.dto.response.ScrapDto;
+import server.acode.domain.user.dto.response.ScrapPreviewDto;
+import server.acode.domain.user.dto.response.UserBasicInfoDto;
 import server.acode.domain.user.entity.User;
 import server.acode.domain.user.repository.ScrapRepository;
 import server.acode.domain.user.repository.UserRepository;
@@ -34,44 +34,44 @@ public class UserService {
 
     @Transactional
     public void updateNickname(String nickname, Long userId) {
-        checkNickname(nickname);
+        checkDuplicatedNickname(nickname);
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        user.updateNickname(nickname);
+        user.setNickname(nickname);
         userRepository.save(user);
     }
 
     @Transactional(readOnly = true)
-    public void checkNickname(String nickname) {
+    public void checkDuplicatedNickname(String nickname) {
         userRepository.findByNicknameAndIsDel(nickname, false).ifPresent(user -> {
             throw new CustomException(ErrorCode.NICKNAME_ALREADY_USED);
         });
     }
 
     @Transactional(readOnly = true)
-    public PreviewUserInfo getUserInfo(Long userId){
+    public UserBasicInfoDto getUserBasicInfo(Long userId){
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        List<PreviewScrap> previewScrap = scrapRepository.getScrapPreview(userId);
+        List<ScrapPreviewDto> scrapPreview = scrapRepository.getScrapPreview(userId);
 
-        PreviewUserInfo info = PreviewUserInfo.builder()
+        UserBasicInfoDto response = UserBasicInfoDto.builder()
                 .nickname(user.getNickname())
                 .reviewCnt(reviewRepository.countByUserId(userId))
-                .scraps(previewScrap)
+                .scraps(scrapPreview)
                 .build();
 
-        return info;
+        return response;
     }
 
     @Transactional(readOnly = true)
     public PageableResponse getScrapList(Long userId, PageRequest pageRequest){
         Pageable pageable = pageRequest.of(); // pageable 객체로 변환
 
-        Page<DisplayScrap> result = scrapRepository.getScrap(userId, pageable);
+        Page<ScrapDto> result = scrapRepository.getScrap(userId, pageable);
         return new PageableResponse(result.getContent(), result.getTotalPages(), result.getTotalElements());
     }
 
@@ -79,9 +79,8 @@ public class UserService {
     public PageableResponse getReviewList(Long userId, PageRequest pageRequest) {
         Pageable pageable = pageRequest.of(); // pageable 객체로 변환
 
-        Page<DisplayReview> result = reviewRepository.getDisplayReview(userId, pageable);
+        Page<ReviewDto> result = reviewRepository.getDisplayReview(userId, pageable);
         return new PageableResponse(result.getContent(), result.getTotalPages(), result.getTotalElements());
     }
-
 
 }

@@ -1,5 +1,6 @@
 package server.acode.domain.review.service;
 
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +33,7 @@ public class ReviewService {
     private final ReviewLongevityRepository reviewLongevityRepository;
     private final ReviewIntensityRepository reviewIntensityRepository;
     private final ReviewStyleRepository reviewStyleRepository;
-    private final ReviewUpdateRepository reviewUpdateRepository;
+    private final EntityManager em;
 
     public ResponseEntity<?> registerReview(Long fragranceId, RegisterReviewRequest registerReviewRequest, Long userId) {
         User user = userRepository.findById(userId)
@@ -186,17 +187,21 @@ public class ReviewService {
         return ResponseEntity.ok().build();
     }
 
-    public void deleteReview(Long reviewId, Long userId) {
+
+    /**
+     * 리뷰 삭제
+     */
+    public void deleteCustomerReview(Long reviewId, Long userId) {
 
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new CustomException(ErrorCode.REVIEW_NOT_FOUND));
 
         if (review.getUser().getId() == userId) {
-            deleteReviewLogic(review);
+            deleteReview(review);
         } else { throw new CustomException(ErrorCode.REVIEW_AUTHOR_MISMATCH); }
     }
 
-    public void deleteReviewDeveloper(Long reviewId, Long userId) {
+    public void deleteAdminReview(Long reviewId, Long userId) {
 
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new CustomException(ErrorCode.REVIEW_NOT_FOUND));
@@ -205,37 +210,50 @@ public class ReviewService {
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         if (user.getRole().equals(Role.ROLE_ADMIN)){
-            deleteReviewLogic(review);
+            deleteReview(review);
         } else { throw new CustomException(ErrorCode.NOT_ADMIN);}
 
     }
 
-    private void deleteReviewLogic(Review review){
+    private void deleteReview(Review review){
+        /**
+         * 향수의 리뷰 별점 총 합 -= 리뷰 별 점
+         * 비관적 락을 위한 업데이트용 find method 호출
+         */
+        Long frgranceId = review.getFragrance().getId();
+        fragranceRepository.findWithPessimisticLockById(frgranceId);
+        fragranceRepository.updateFragranceForReview(frgranceId, 0-review.getRate(), -1);
+
+
         /**
          *  ReviewSeason, ReviewLongevity, ReviewIntensity, ReviewStyle에 해당하는 컬럼 값 -= 1
          */
+        Fragrance fragrance = fragranceRepository.findById(frgranceId).orElseThrow();
+
         String season = review.getSeason().toString().toLowerCase();
-        reviewUpdateRepository.updateSeason(season, review.getFragrance().getId(), -1);
+        ReviewSeason reviewSeason = reviewSeasonRepository.findByFragrance(fragrance).get();
+        reviewSeason.updateVariable(season, -1);
+
 
         String longevity = review.getLongevity().toString().toLowerCase(); // 지속성
-        reviewUpdateRepository.updateLongevity(longevity, review.getFragrance().getId(), -1);
+        ReviewLongevity reviewLongevity = reviewLongevityRepository.findByFragrance(fragrance).get();
+        reviewLongevity.updateVariable(longevity, -1);
+
 
         String intensity = review.getIntensity().toString().toLowerCase(); // 향의 세기
-        reviewUpdateRepository.updateIntensity(intensity, review.getFragrance().getId(), -1);
+        ReviewIntensity reviewIntensity = reviewIntensityRepository.findByFragrance(fragrance).get();
+        reviewIntensity.updateVariable(intensity, -1);
+
 
         String styleList = review.getStyle().toLowerCase();
-        List<String> styles = Arrays.asList(styleList.split(", "));
-        styles.forEach(style -> reviewUpdateRepository.updateStyle(style, review.getFragrance().getId(), -1));
-
-
-        /**
-         * Fragrance 테이블의 reviewCnt -= 1
-         */
-        fragranceRepository.decreaseReview(review.getRate(), review.getFragrance().getId());
+        String[] styles = styleList.split(", ");
+        ReviewStyle reviewStyle = reviewStyleRepository.findByFragrance(fragrance).get();
+        reviewStyle.updateVariable(styles, -1);
 
         /**
-         * Review 테이블 삭제
+         * review 테이블 hard-delete
          */
         reviewRepository.delete(review);
     }
+
 }

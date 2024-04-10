@@ -13,10 +13,10 @@ import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 import server.acode.domain.family.dto.SimilarFragranceOrCond;
 import server.acode.domain.family.dto.request.FragranceFilterCond;
-import server.acode.domain.family.dto.response.DisplayFragrance;
-import server.acode.domain.family.dto.response.HomeFragrance;
-import server.acode.domain.family.dto.response.QDisplayFragrance;
-import server.acode.domain.family.dto.response.QHomeFragrance;
+import server.acode.domain.family.dto.response.FragranceCatalogDto;
+import server.acode.domain.family.dto.response.HomeFragranceDto;
+import server.acode.domain.family.dto.response.QFragranceCatalogDto;
+import server.acode.domain.family.dto.response.QHomeFragranceDto;
 import server.acode.domain.family.entity.QFragranceFamily;
 import server.acode.domain.fragrance.dto.request.SearchCond;
 import server.acode.domain.fragrance.dto.response.*;
@@ -39,9 +39,9 @@ public class FragranceFamilyRepositoryImpl implements FragranceFamilyRepositoryC
     }
 
     @Override
-    public List<HomeFragrance> search(String familyName) {
+    public List<HomeFragranceDto> search(String familyName) {
         return queryFactory
-                .select(new QHomeFragrance(
+                .select(new QHomeFragranceDto(
                         fragrance.id.as("fragranceId"),
                         fragrance.name.as("fragranceName"),
                         brand.korName.as("korBrand"),
@@ -62,11 +62,11 @@ public class FragranceFamilyRepositoryImpl implements FragranceFamilyRepositoryC
     }
 
     @Override
-    public Page<DisplayFragrance> searchByFilter(FragranceFilterCond cond, String additionalFamily, Pageable pageable) {
+    public Page<FragranceCatalogDto> searchByBrandAndFamily(FragranceFilterCond cond, Pageable pageable) {
 
         //TODO 카운트 쿼리 분리
-        QueryResults<DisplayFragrance> results = queryFactory
-                .select(new QDisplayFragrance(
+        QueryResults<FragranceCatalogDto> results = queryFactory
+                .select(new QFragranceCatalogDto(
                         fragrance.id.as("fragranceId"),
                         brand.korName.as("brandName"),
                         fragrance.name.as("fragranceName"),
@@ -79,7 +79,7 @@ public class FragranceFamilyRepositoryImpl implements FragranceFamilyRepositoryC
                 .join(fragrance.brand, brand)
                 .where(brandNameEq(cond.getBrand()),
                         familyNameEq(cond.getFamily()),
-                        additionalFamilyNameEq(additionalFamily)
+                        additionalFamilyNameEq(cond.getAdditionalFamily())
                 )
                 .groupBy(fragrance.id)
                 .offset(pageable.getOffset())
@@ -87,7 +87,7 @@ public class FragranceFamilyRepositoryImpl implements FragranceFamilyRepositoryC
                 .fetchResults();
 
 
-        List<DisplayFragrance> content = results.getResults();
+        List<FragranceCatalogDto> content = results.getResults();
         long total = results.getTotal();
 
         return new PageImpl<>(content, pageable, total);

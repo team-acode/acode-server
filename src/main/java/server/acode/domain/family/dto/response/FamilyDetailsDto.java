@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Getter
-public class DisplayFamily {
+public class FamilyDetailsDto {
     private String korName;
     private String engName;
     private List<String> keyword;
@@ -15,7 +15,7 @@ public class DisplayFamily {
     private String background;
     private String icon;
 
-    private DisplayFamily(String korName, String engName, String keyword, String summary, String background, String icon){
+    private FamilyDetailsDto(String korName, String engName, String keyword, String summary, String background, String icon){
         this.korName = korName;
         this.engName = engName;
         this.keyword = Arrays.asList(keyword.split(", "));
@@ -24,8 +24,8 @@ public class DisplayFamily {
         this.icon = icon;
     }
 
-    public static DisplayFamily from(Family family){
-        return new DisplayFamily(family.getKorName(),
+    public static FamilyDetailsDto from(Family family){
+        return new FamilyDetailsDto(family.getKorName(),
                 family.getEngName(),
                 family.getKeyword(),
                 family.getSummary(),

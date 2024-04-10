@@ -53,4 +53,5 @@ public class Fragrance extends BaseTimeEntity {
     private String style;  // 스타일
     private String season;  // 계절감
     private String scent;  // 향
+
 }

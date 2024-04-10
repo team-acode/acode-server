@@ -2,14 +2,16 @@ package server.acode.domain.fragrance.repository;
 
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.LockModeType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
-import server.acode.domain.family.dto.response.DisplayFragrance;
-import server.acode.domain.family.dto.response.QDisplayFragrance;
+import server.acode.domain.family.dto.response.FragranceCatalogDto;
+import server.acode.domain.family.dto.response.QFragranceCatalogDto;
 import server.acode.domain.fragrance.entity.Concentration;
 
 import java.util.List;
@@ -31,10 +33,22 @@ public class FragranceRepositoryImpl implements FragranceRepositoryCustom {
     }
 
     @Override
-    public Page<DisplayFragrance> searchByIngredient(String ingredientName, Pageable pageable) {
+    public void findWithPessimisticLockById(Long fragranceId) {
+        queryFactory.select(
+                fragrance.rateSum,
+                fragrance.reviewCnt
+                )
+                .from(fragrance)
+                .where(fragrance.id.eq(fragranceId))
+                .setLockMode(LockModeType.PESSIMISTIC_WRITE)
+                .fetchOne();
+    }
 
-        QueryResults<DisplayFragrance> results = queryFactory
-                .select(new QDisplayFragrance(
+    @Override
+    public Page<FragranceCatalogDto> searchByIngredient(String ingredientName, Pageable pageable) {
+
+        QueryResults<FragranceCatalogDto> results = queryFactory
+                .select(new QFragranceCatalogDto(
                         fragrance.id.as("fragranceId"),
                         brand.korName.as("brandName"),
                         fragrance.name.as("fragranceName"),
@@ -54,7 +68,7 @@ public class FragranceRepositoryImpl implements FragranceRepositoryCustom {
                 .groupBy(fragrance.id)
                 .fetchResults();
 
-        List<DisplayFragrance> content = results.getResults();
+        List<FragranceCatalogDto> content = results.getResults();
         long total = results.getTotal();
 
         return new PageImpl<>(content, pageable, total);

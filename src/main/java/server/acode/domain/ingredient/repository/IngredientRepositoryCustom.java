@@ -7,5 +7,5 @@ import java.util.List;
 
 @Repository
 public interface IngredientRepositoryCustom {
-    List<IngredientOfTheDay> getTodayIngreient();
+    List<IngredientOfTheDay> getIngredientsOfTheDay();
 }

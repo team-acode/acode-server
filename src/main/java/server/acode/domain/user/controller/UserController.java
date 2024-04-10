@@ -4,15 +4,11 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import server.acode.domain.family.dto.response.PageableResponse;
-import server.acode.domain.user.dto.response.PreviewUserInfo;
+import server.acode.domain.user.dto.response.UserBasicInfoDto;
 import server.acode.domain.user.service.UserService;
 import server.acode.domain.user.dto.request.NicknameRequest;
-import server.acode.global.auth.security.CustomUserDetails;
 import server.acode.global.common.PageRequest;
 import server.acode.global.util.SecurityUtil;
 
@@ -37,15 +33,15 @@ public class UserController {
             description = "중복되는 닉네임이 있다면 409 에러 반환됩니다.")
     @PostMapping("/users/nickname")
     public void checkNickname(@RequestBody @Valid NicknameRequest request){
-        userService.checkNickname(request.getNickname());
+        userService.checkDuplicatedNickname(request.getNickname());
     }
 
 
     @Operation(summary = "마이페이지 기본 정보")
     @GetMapping("/mypage")
-    public PreviewUserInfo getUserInfo(){
+    public UserBasicInfoDto getUserBasicInfo(){
         Long userId = SecurityUtil.getCurrentUserId();
-        return userService.getUserInfo(userId);
+        return userService.getUserBasicInfo(userId);
     }
 
     @Operation(summary = "마이페이지 스크랩 리스트업",

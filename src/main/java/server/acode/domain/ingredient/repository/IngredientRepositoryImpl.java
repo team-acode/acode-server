@@ -18,7 +18,7 @@ public class IngredientRepositoryImpl implements IngredientRepositoryCustom{
 
     public IngredientRepositoryImpl(EntityManager em) { this.queryFactory = new JPAQueryFactory(em); }
     @Override
-    public List<IngredientOfTheDay> getTodayIngreient() {
+    public List<IngredientOfTheDay> getIngredientsOfTheDay() {
         return queryFactory
                 .select(new QIngredientOfTheDay(
                         ingredient.korName.as("ingredientName"),

@@ -18,9 +18,11 @@ public enum ErrorCode {
     BRAND_NOT_FOUND(HttpStatus.BAD_REQUEST,"해당 브랜드를 찾을 수 없습니다." ),
     SEARCH_NOT_FOUND(HttpStatus.BAD_REQUEST, "검색어가 필요합니다"),
     REVIEW_NOT_FOUND(HttpStatus.BAD_REQUEST, "해당 리뷰를 찾을 수 없습니다."),
+    INVALID_AUTHENTICATION_CODE(HttpStatus.BAD_REQUEST, "유효한 인증 코드가 아닙니다."),
 
 
     /* 401 UNAUTHORIZED */
+    EXPIRED_TOKEN_EXCEPTION(HttpStatus.UNAUTHORIZED, "만료된 토큰입니다."),
     TOKEN_VALIDATION_EXCEPTION(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰입니다."),
 
 
@@ -40,12 +42,12 @@ public enum ErrorCode {
     /* 409 CONFLICT */
     UNLINK_FAIL(HttpStatus.CONFLICT, "UNLINK 도중 실패했습니다."),
     NICKNAME_ALREADY_USED(HttpStatus.CONFLICT, "이미 존재하는 닉네임입니다."),
-    REVIEW_AUTHOR_MISMATCH(HttpStatus.CONFLICT, "리뷰 작성자와 일치하지 않는 사용자입니다.");
+    REVIEW_AUTHOR_MISMATCH(HttpStatus.CONFLICT, "리뷰 작성자와 일치하지 않는 사용자입니다."),
 //    Review author mismatch
 
 
     /* 500 INTERNAL SERVER ERROR */
-//    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "관리자에게 문의 바랍니다.");
+    JSON_PARSING_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "JSON parsing 에러입니다.");
 
     private final HttpStatus httpStatus;
     private final String message;

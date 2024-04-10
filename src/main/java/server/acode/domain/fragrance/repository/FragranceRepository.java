@@ -10,6 +10,11 @@ import server.acode.domain.fragrance.entity.Fragrance;
 @Repository
 public interface FragranceRepository extends JpaRepository<Fragrance, Long>, FragranceRepositoryCustom {
     @Modifying
+    @Query("UPDATE Fragrance f SET f.reviewCnt = f.reviewCnt + :cnt, f.rateSum = f.rateSum + :rate WHERE f.id = :fragranceId")
+    void updateFragranceForReview(@Param("fragranceId") Long fragranceId,
+                                  @Param("rate") int rate,
+                                  @Param("cnt") int cnt);
+    @Modifying
     @Query("UPDATE Fragrance f SET f.view = f.view + 1 WHERE f.id = :fragranceId")
     void updateFragranceView(@Param("fragranceId") Long fragranceId);
 

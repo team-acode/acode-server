@@ -8,5 +8,6 @@ import lombok.Setter;
 public class FragranceFilterCond {
     private String brand;
     private String family;
+    private String additionalFamily;
     private String ingredient;
 }

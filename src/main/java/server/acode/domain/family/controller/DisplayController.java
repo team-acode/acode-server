@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import static org.springframework.util.StringUtils.*;
 import org.springframework.web.bind.annotation.RestController;
 import server.acode.domain.family.dto.request.FragranceFilterCond;
-import server.acode.domain.family.dto.response.DisplayBrand;
-import server.acode.domain.family.dto.response.DisplayFamily;
-import server.acode.domain.family.dto.response.DisplayIngredient;
+import server.acode.domain.family.dto.response.BrandDetailsDto;
+import server.acode.domain.family.dto.response.FamilyDetailsDto;
+import server.acode.domain.family.dto.response.IngredientDetailsDto;
 import server.acode.domain.family.dto.response.PageableResponse;
 import server.acode.domain.family.service.DisplayService;
 import server.acode.global.common.PageRequest;
@@ -31,31 +31,31 @@ public class DisplayController {
                     "계열 두 개 검색 시에는 두 계열 사이 공백 한 칸 (url 상으로는 %20) 넣어주세요. " +
                     "페이지는 파라미터 없을 시 기본 page = 1, size = 10입니다.")
     @GetMapping("/display")
-    public PageableResponse displayV1(FragranceFilterCond cond, PageRequest pageRequest){
+    public PageableResponse displayFragranceV1(FragranceFilterCond cond, PageRequest pageRequest){
 
         // param에 따라 계열별/브랜드별 or 추천향료별 분기
         PageableResponse response = hasText(cond.getIngredient())
-                ? displayService.searchFragranceListByIngredient(cond.getIngredient(), pageRequest)
-                : displayService.searchFragranceList(cond, pageRequest);
+                ? displayService.searchFragranceByIngredient(cond.getIngredient(), pageRequest)
+                : displayService.searchFragranceByBrandAndFamily(cond, pageRequest);
 
         return response;
     }
 
     @Operation(summary = "브랜드 설명")
     @GetMapping("/display/brand/{brand}")
-    public DisplayBrand displayBrandV1(@PathVariable("brand") String brand){
+    public BrandDetailsDto displayBrandV1(@PathVariable("brand") String brand){
         return displayService.getBrandContent(brand);
     }
 
     @Operation(summary = "계열 설명")
     @GetMapping("/display/family/{family}")
-    public DisplayFamily displayFamilyV1(@PathVariable("family") String family){
+    public FamilyDetailsDto displayFamilyV1(@PathVariable("family") String family){
         return displayService.getFamilyContent(family);
     }
 
     @Operation(summary = "향료 설명")
     @GetMapping("/display/ingredient/{ingredient}")
-    public DisplayIngredient displayIngredientV1(@PathVariable("ingredient") String ingredient){
+    public IngredientDetailsDto displayIngredientV1(@PathVariable("ingredient") String ingredient){
         return displayService.getIngredientContent(ingredient);
     }
 
