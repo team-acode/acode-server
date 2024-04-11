@@ -40,6 +40,7 @@ create table fragrance(
     style VARCHAR(255),
     season VARCHAR(255),
     scent VARCHAR(255),
+    version BIGINT DEFAULT 0L,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     CONSTRAINT fk_brand FOREIGN KEY (brand_id) REFERENCES brand(brand_id)

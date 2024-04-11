@@ -221,15 +221,12 @@ public class ReviewService {
          * 비관적 락을 위한 업데이트용 find method 호출
          */
         Long frgranceId = review.getFragrance().getId();
-        fragranceRepository.findWithPessimisticLockById(frgranceId);
-        fragranceRepository.updateFragranceForReview(frgranceId, 0-review.getRate(), -1);
-
+        Fragrance fragrance = fragranceRepository.findById(frgranceId).orElseThrow();
+        fragrance.updateForReview(0-review.getRate(), -1);
 
         /**
          *  ReviewSeason, ReviewLongevity, ReviewIntensity, ReviewStyle에 해당하는 컬럼 값 -= 1
          */
-        Fragrance fragrance = fragranceRepository.findById(frgranceId).orElseThrow();
-
         String season = review.getSeason().toString().toLowerCase();
         ReviewSeason reviewSeason = reviewSeasonRepository.findByFragrance(fragrance).get();
         reviewSeason.updateVariable(season, -1);

@@ -54,4 +54,12 @@ public class Fragrance extends BaseTimeEntity {
     private String season;  // 계절감
     private String scent;  // 향
 
+    @Version
+    private Long version;
+
+    public void updateForReview(int rate, int cnt){
+        rateSum += rate;
+        reviewCnt += cnt;
+    }
+
 }
