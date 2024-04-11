@@ -9,6 +9,7 @@ import server.acode.global.common.BaseTimeEntity;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
+@Table(indexes = @Index(name = "idx_fragrance_brand_id", columnList = "brand_id"))
 public class Fragrance extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
