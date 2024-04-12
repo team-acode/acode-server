@@ -217,8 +217,7 @@ public class ReviewService {
 
     private void deleteReview(Review review){
         /**
-         * 향수의 리뷰 별점 총 합 -= 리뷰 별 점
-         * 비관적 락을 위한 업데이트용 find method 호출
+         * 향수의 리뷰 별점 총 합 -= 리뷰 별점, 향수의 리뷰 카운트 수 -= 1
          */
         Long frgranceId = review.getFragrance().getId();
         Fragrance fragrance = fragranceRepository.findById(frgranceId).orElseThrow();
