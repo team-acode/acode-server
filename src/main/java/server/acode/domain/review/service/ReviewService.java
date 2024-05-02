@@ -217,19 +217,15 @@ public class ReviewService {
 
     private void deleteReview(Review review){
         /**
-         * 향수의 리뷰 별점 총 합 -= 리뷰 별 점
-         * 비관적 락을 위한 업데이트용 find method 호출
+         * 향수의 리뷰 별점 총 합 -= 리뷰 별점, 향수의 리뷰 카운트 수 -= 1
          */
         Long frgranceId = review.getFragrance().getId();
-        fragranceRepository.findWithPessimisticLockById(frgranceId);
-        fragranceRepository.updateFragranceForReview(frgranceId, 0-review.getRate(), -1);
-
+        Fragrance fragrance = fragranceRepository.findById(frgranceId).orElseThrow();
+        fragrance.updateForReview(0-review.getRate(), -1);
 
         /**
          *  ReviewSeason, ReviewLongevity, ReviewIntensity, ReviewStyle에 해당하는 컬럼 값 -= 1
          */
-        Fragrance fragrance = fragranceRepository.findById(frgranceId).orElseThrow();
-
         String season = review.getSeason().toString().toLowerCase();
         ReviewSeason reviewSeason = reviewSeasonRepository.findByFragrance(fragrance).get();
         reviewSeason.updateVariable(season, -1);

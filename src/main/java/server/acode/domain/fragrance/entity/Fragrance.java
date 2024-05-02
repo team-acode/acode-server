@@ -9,6 +9,7 @@ import server.acode.global.common.BaseTimeEntity;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
+@Table(indexes = @Index(name = "idx_fragrance_brand_id", columnList = "brand_id"))
 public class Fragrance extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -53,5 +54,13 @@ public class Fragrance extends BaseTimeEntity {
     private String style;  // 스타일
     private String season;  // 계절감
     private String scent;  // 향
+
+    @Version
+    private Long version;
+
+    public void updateForReview(int rate, int cnt){
+        rateSum += rate;
+        reviewCnt += cnt;
+    }
 
 }

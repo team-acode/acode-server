@@ -9,7 +9,7 @@ import server.acode.global.common.BaseTimeEntity;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(indexes = @Index(name = "idx_family_korname", columnList = "kor_name"))
+// CREATE INDEX idx_family_korname ON FAMILY (kor_name(6));
 public class Family extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

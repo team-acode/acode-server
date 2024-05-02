@@ -11,6 +11,7 @@ import server.acode.global.common.BaseTimeEntity;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(indexes = @Index(name = "idx_reviewstyle_fragrance_id", columnList = "fragrance_id"))
 public class ReviewStyle extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

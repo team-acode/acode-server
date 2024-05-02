@@ -10,6 +10,8 @@ import server.acode.global.common.BaseTimeEntity;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(indexes = {@Index(name = "idx_basenote_fragance_id", columnList = "fragrance_id"),
+        @Index(name = "idx_basenote_ingredient_id", columnList = "ingredient_id")})
 public class BaseNote extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
